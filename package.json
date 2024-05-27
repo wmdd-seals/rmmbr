@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +11,7 @@
   "license": "MIT",
   "devDependencies": {
     "husky": "^9.0.11",
+    "live-server": "^1.2.2",
     "prettier": "^3.2.5",
     "vite": "^5.2.11",
     "vitest": "^1.6.0"
