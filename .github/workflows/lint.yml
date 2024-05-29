@@ -1,4 +1,4 @@
-name: TypeScript typecheck
+name: Linting
 
 on:
   push:
@@ -39,5 +39,5 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm install
 
-      - name: Check typescript types
-        run: npm run types:check
+      - name: Check linting
+        run: npm run lint:check
