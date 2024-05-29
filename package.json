@@ -8,12 +8,18 @@
     "dev": "tsc --watch & live-server ./app",
     "test:unit": "vitest run"
   },
-  "author": "",
+  "author": "Rasul Omarov, Tomoki Kaneko, Natsuko Ogata",
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^9.3.0",
+    "eslint": "^9.3.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "globals": "^15.3.0",
     "husky": "^9.0.11",
     "live-server": "^1.2.2",
     "prettier": "^3.2.5",
+    "typescript-eslint": "^8.0.0-alpha",
     "vitest": "^1.6.0"
   }
 }
