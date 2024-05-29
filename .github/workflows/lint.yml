@@ -1,4 +1,4 @@
-name: Linting
+name: ESLint
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: ['master']
 
 jobs:
-  types:
+  lint-check:
     runs-on: ubuntu-latest
 
     strategy:

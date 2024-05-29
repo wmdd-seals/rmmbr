@@ -1,4 +1,4 @@
-name: TypeScript typecheck
+name: TypeScript
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: ['master']
 
 jobs:
-  types:
+  type-check:
     runs-on: ubuntu-latest
 
     strategy:
