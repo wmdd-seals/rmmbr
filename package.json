@@ -2,11 +2,11 @@
   "name": "rmmbr",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "type": "module",
   "scripts": {
     "dev": "tsc --watch & live-server ./app",
-    "test:unit": "vitest run"
+    "test:unit": "vitest run",
+    "lint:check": "eslint ./app",
   },
   "author": "Rasul Omarov, Tomoki Kaneko, Natsuko Ogata",
   "license": "MIT",
