@@ -7,6 +7,7 @@ export default defineConfig({
         open: true,
         https: {}
     },
+    base: '/rmmbr/',
     plugins: [BasicSSL()],
     test: {
         globals: true,
