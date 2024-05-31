@@ -1,6 +1,6 @@
 import { firebaseApp } from './helpers/firebase.js'
 
-import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js'
+import { getFirestore } from 'firebase/firestore'
 
 const firestore = getFirestore(firebaseApp)
 
