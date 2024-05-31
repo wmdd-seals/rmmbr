@@ -5,27 +5,21 @@
         "target": "ES2020",
         "useDefineForClassFields": true,
         "module": "ESNext",
-        "lib": [
-            "ES2020",
-            "DOM",
-            "DOM.Iterable"
-        ],
+        "lib": ["ES2020", "DOM", "DOM.Iterable"],
         /* Bundler mode */
         "moduleResolution": "bundler",
         "allowImportingTsExtensions": true,
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
+        /* To shim types of client side code (https://vitejs.dev/guide/features.html#client-types) */
+        "types": ["vite/client"],
         /* Linting */
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true
     },
-    "include": [
-        "./src"
-    ],
-    "exclude": [
-        "./src/**/*.test.ts"
-    ]
+    "include": ["./src"],
+    "exclude": ["./src/**/*.test.ts"]
 }
