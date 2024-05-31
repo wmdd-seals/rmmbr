@@ -1,4 +1,3 @@
-/// <reference types="vite/client" />
 /// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import BasicSSL from '@vitejs/plugin-basic-ssl'
