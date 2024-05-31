@@ -24,7 +24,6 @@
         "globals": "^15.3.0",
         "happy-dom": "^14.11.2",
         "husky": "^9.0.11",
-        "live-server": "^1.2.2",
         "postcss": "^8.4.38",
         "prettier": "^3.2.5",
         "tailwindcss": "^3.4.3",
