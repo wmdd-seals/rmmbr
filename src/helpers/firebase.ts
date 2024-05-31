@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
-interface FirebaesConfig {
+
+type FirebaseConfig = {
     apiKey: string
     authDomain: string
     // The value of `databaseURL` depends on the location of the database
@@ -14,24 +15,21 @@ interface FirebaesConfig {
     // measurementId: string
 }
 
-/* Narrowing the type of each properties below */
-// Japanese article for narrowing(https://zenn.dev/estra/articles/typescript-narrowing)
-// English article for narrowing(https://medium.com/@hrishikesh.pandey9955/what-is-narrowing-in-typescript-047b4c450de4)
-const firebaseConfig: FirebaesConfig = {
+const firebaseConfig: FirebaseConfig = {
     apiKey: import.meta.env?.VITE_FIREBASE_API_KEY ?? '',
     authDomain: import.meta.env?.VITE_FIREBASE_AUTH_DOMAIN ?? '',
-    projectId: import.meta.env?.VITE_FIREBASE_PRO_JECTID ?? '',
+    projectId: import.meta.env?.VITE_FIREBASE_PROJECT_ID ?? '',
     storageBucket: import.meta.env?.VITE_FIREBASE_STORAGE_BUCKET ?? '',
-    messagingSenderId: import.meta.env?.VITE_FIREBASE_MESSAGING_SENDERID ?? '',
-    appId: import.meta.env?.VITE_FIREBASE_APP_I ?? ''
+    messagingSenderId: import.meta.env?.VITE_FIREBASE_MESSAGING_SENDER_ID ?? '',
+    appId: import.meta.env?.VITE_FIREBASE_APP_ID ?? ''
 }
 
 // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig)
+const firebase = initializeApp(firebaseConfig)
 
 // Initialize firestore SDK
-const firestore = getFirestore(firebaseApp)
+const firestore = getFirestore(firebase)
 // Initialize Authentication SDK
-const auth = getAuth(firebaseApp)
+const auth = getAuth(firebase)
 
-export { firebaseApp, firestore, auth }
+export { firebase, firestore, auth }

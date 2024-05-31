@@ -12,8 +12,6 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
-        /* To shim types of client side code (https://vitejs.dev/guide/features.html#client-types) */
-        "types": ["vite/client"],
         /* Linting */
         "strict": true,
         "noUnusedLocals": true,
