@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>rmmbr</title>
+
+        <!-- tailwind -->
+        <link rel="stylesheet" href="/public/index.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    </head>
+
+    <body class="text-center flex items-center justify-center min-h-screen">
+        <!-- Log In Page -->
+        <div class="max-w-sm w-4/5 mx-auto">
+            <h1 class="my-10 text-3xl font-bold">log in to rmmbr</h1>
+            <form action="#" method="post">
+                <div class="flex flex-col gap-3 mx-0">
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        name="userName"
+                        class="border-solid border-2 border-slate-300 rounded-md w-full p-1  focus:border-green-600 focus:outline-none"
+                    />
+                    <div
+                        class="flex items-center border-solid border-2 border-slate-300 rounded-md focus-within:border-green-600"
+                    >
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            name="password"
+                            id="password"
+                            class="w-full rounded-md p-1 focus:outline-none"
+                        />
+                        <div class="hidden">
+                            <i class="fa-regular fa-eye-slash p-1" id="closedEye"></i>
+                        </div>
+                        <div>
+                            <i class="fa-regular fa-eye p-1" id="openEye"></i>
+                        </div>
+                    </div>
+                    <input type="submit" value="Log In" class="bg-sky-950 text-white rounded-md w-full p-1" />
+                </div>
+            </form>
+
+            <p class="border-t-2 my-8 px-8">Don't have an account?<span class="font-bold ml-1">Sign up</span></p>
+        </div>
+
+        <script type="module" src="/src/main.ts"></script>
+        <script src="./login.ts"></script>
+    </body>
+</html>
