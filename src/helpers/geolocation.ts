@@ -2,6 +2,7 @@ type Location = () => Promise<[number, number] | null>
 
 /**
  *  Get user's location values via geolocation API
+ * TODO: add error handling
  * @returns [number, number] or null
  */
 export const getPosition: Location = async () => {
@@ -33,6 +34,7 @@ export const getPosition: Location = async () => {
                 default:
                     break
             }
+            // error handling coming here
             console.error({ error })
             result = null
         })
