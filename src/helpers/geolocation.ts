@@ -1,5 +1,8 @@
 type Location = [longitude: number, latitude: number]
 
+/**
+ * Ask users for the permissiono to use a browser API
+ */
 async function queryPermission(type: PermissionName): Promise<void> {
     await navigator.permissions.query({ name: type })
 }
