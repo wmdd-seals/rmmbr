@@ -16,10 +16,13 @@ export async function getCurrentGeolocation(): Promise<Location | null> {
     } catch (err) {
         switch ((err as GeolocationPositionError).code) {
             case 1: // PERMISSION_DENIED
+                // todo: ask the user for the permission of geolocation
                 break
             case 2: // POSITION_UNAVAILABLE
+                // todo: give error message
                 break
             case 3: // TIMEOUT
+                // todo: give error message
                 break
 
             default:
