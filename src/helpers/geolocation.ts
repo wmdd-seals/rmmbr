@@ -1,5 +1,9 @@
 type Location = [longitude: number, latitude: number]
 
+async function queryPermission(type: PermissionName): Promise<void> {
+    await navigator.permissions.query({ name: type })
+}
+
 /**
  *  Get user's location values via geolocation API
  */
@@ -14,9 +18,10 @@ export async function getCurrentGeolocation(): Promise<Location | null> {
         })
         return [coords.longitude, coords.latitude]
     } catch (err) {
+        console.log({ err })
         switch ((err as GeolocationPositionError).code) {
             case 1: // PERMISSION_DENIED
-                // todo: ask the user for the permission of geolocation
+                await queryPermission('geolocation')
                 break
             case 2: // POSITION_UNAVAILABLE
                 // todo: give error message
