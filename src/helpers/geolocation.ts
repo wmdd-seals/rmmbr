@@ -1,43 +1,30 @@
-type Location = () => Promise<[number, number] | null>
+type Location = [longitude: number, latitude: number]
 
 /**
  *  Get user's location values via geolocation API
- * TODO: add error handling
- * @returns [number, number] or null
  */
-export const getPosition: Location = async () => {
+export async function getCurrentGeolocation(): Promise<Location | null> {
     if (!navigator.geolocation) {
+        // error handling for not having geolocation API
         return null
     }
-    let result = null
-
-    const locationResolver = new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject)
-    })
-
-    await locationResolver
-        .then(position => {
-            result = [
-                (position as GeolocationPosition).coords.longitude,
-                (position as GeolocationPosition).coords.latitude
-            ]
+    try {
+        const { coords }: GeolocationPosition = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject)
         })
-        .catch((error: GeolocationPositionError) => {
-            switch (error.code) {
-                case 1: // PERMISSION_DENIED
-                    break
-                case 2: // POSITION_UNAVAILABLE
-                    break
-                case 3: // TIMEOUT
-                    break
+        return [coords.longitude, coords.latitude]
+    } catch (err) {
+        switch ((err as GeolocationPositionError).code) {
+            case 1: // PERMISSION_DENIED
+                break
+            case 2: // POSITION_UNAVAILABLE
+                break
+            case 3: // TIMEOUT
+                break
 
-                default:
-                    break
-            }
-            // error handling coming here
-            console.error({ error })
-            result = null
-        })
-
-    return result
+            default:
+                break
+        }
+        return null
+    }
 }
