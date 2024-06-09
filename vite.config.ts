@@ -28,6 +28,7 @@ export default defineConfig({
     },
     test: {
         globals: true,
+        dir: __dirname,
         environment: 'happy-dom'
     }
 })
