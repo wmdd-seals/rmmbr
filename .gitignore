@@ -3,4 +3,10 @@ node_modules
 .idea
 .env
 
+# firebase
+.firebaserc
+ui-debug.log
+firestore-debug.log
+firebase-debug.log
+
 dist

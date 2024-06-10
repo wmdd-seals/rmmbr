@@ -8,6 +8,7 @@
         "build": "tsc & vite build",
         "preview": "vite preview",
         "prod": "npm run build & vite preview",
+        "firebase-emurator:local": "cd ./firebase && firebase emulators:start",
         "test:unit": "vitest run",
         "lint:check": "eslint ./src",
         "types:check": "tsc --noEmit"
@@ -16,11 +17,14 @@
     "license": "MIT",
     "devDependencies": {
         "@eslint/js": "^9.3.0",
+        "@firebase/rules-unit-testing": "^3.0.3",
+        "@types/uuid": "^9.0.8",
         "@vitejs/plugin-basic-ssl": "^1.1.0",
         "autoprefixer": "^10.4.19",
         "eslint": "^9.3.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-prettier": "^5.1.3",
+        "firebase-tools": "^13.11.2",
         "globals": "^15.3.0",
         "happy-dom": "^14.11.2",
         "husky": "^9.0.11",

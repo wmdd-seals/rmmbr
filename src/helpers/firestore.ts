@@ -14,19 +14,19 @@ import {
 import { firestore } from './firebase'
 import { FirebaseError } from 'firebase/app'
 
-type collectionName = 'users' | 'memories' | 'mediaSrcs'
+export type collectionName = 'users' | 'memories' | 'mediaSrcs'
 
-type Converter = {
+export type Converter = {
     [key in collectionName]: () => FirestoreDataConverter<UserAccount | Memory | MediaSrc>
 }
 
-type UserAccount = {
+export type UserAccount = {
     email: string
     firstName: string
     lastName: string
 }
 
-type Memory = {
+export type Memory = {
     createdAt: Date | null
     deletedAt: Date | null
     memoryDate: Date
@@ -38,14 +38,14 @@ type Memory = {
     location: [number, number] | null
 }
 
-type MediaSrc = {
+export type MediaSrc = {
     type: 'audio' | 'img' | 'video' | 'text'
     path: string | null
     text: string | null
     createdAt: string
 }
 
-const converter = <T>(): FirestoreDataConverter<T, DocumentData> => ({
+export const converter = <T>(): FirestoreDataConverter<T, DocumentData> => ({
     toFirestore: (data: WithFieldValue<T>): WithFieldValue<DocumentData> => {
         return { data }
     },
@@ -54,7 +54,7 @@ const converter = <T>(): FirestoreDataConverter<T, DocumentData> => ({
     }
 })
 
-const converters: Converter = {
+export const converters: Converter = {
     users: converter<UserAccount>,
     memories: converter<Memory>,
     mediaSrcs: converter<MediaSrc>
