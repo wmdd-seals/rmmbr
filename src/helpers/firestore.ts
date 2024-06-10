@@ -1,15 +1,32 @@
-import { addDoc, collection, doc, getDoc } from 'firebase/firestore'
+import {
+    addDoc,
+    collection,
+    doc,
+    DocumentData,
+    DocumentReference,
+    FirestoreDataConverter,
+    getDoc,
+    QueryDocumentSnapshot,
+    setDoc,
+    SnapshotOptions,
+    WithFieldValue
+} from 'firebase/firestore'
 import { firestore } from './firebase'
-
-type MediaSrc = {
-    type: 'audio' | 'img' | 'video' | 'text'
-    path: string
-    createdAt: string
-}
+import { FirebaseError } from 'firebase/app'
 
 type collectionName = 'users' | 'memories' | 'mediaSrcs'
 
-type MemoryDocObj = {
+type Converter = {
+    [key in collectionName]: () => FirestoreDataConverter<UserAccount | Memory | MediaSrc>
+}
+
+type UserAccount = {
+    email: string
+    firstName: string
+    lastName: string
+}
+
+type Memory = {
     createdAt: Date | null
     deletedAt: Date | null
     memoryDate: Date
@@ -19,37 +36,71 @@ type MemoryDocObj = {
     title: string
     viewerIds: string[] | [] | null
     location: [number, number] | null
-    mediaSrcs: string[] // reference IDs for mediaSrcs subCollection
+}
+
+type MediaSrc = {
+    type: 'audio' | 'img' | 'video' | 'text'
+    path: string | null
+    text: string | null
+    createdAt: string
+}
+
+const converter = <T>(): FirestoreDataConverter<T, DocumentData> => ({
+    toFirestore: (data: WithFieldValue<T>): WithFieldValue<DocumentData> => {
+        return { data }
+    },
+    fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): T => {
+        return snapshot.data(options).value as T
+    }
+})
+
+const converters: Converter = {
+    users: converter<UserAccount>,
+    memories: converter<Memory>,
+    mediaSrcs: converter<MediaSrc>
 }
 
 /**
  * This function is for adding a firestore document(data). Not for updating.
- * @param collectionName You can refer collection names from firebase admin page (https://console.firebase.google.com/u/0/project/rmmbr-seals/firestore/databases/-default-/data/~2Fmemories~2FOk9q257ztt0lC9OqISYX)
- * @param dataObj This data object structure must be equivalent to the document of the collection you want to manipulate
+ * - ex.)
+ *   - When you add new doc with auto-generated ID call this function like this:
+ *     - addSingleDoc('collection1', dataObj)
+ *   - When you add new subCollection doc with auto-generated ID then call like this:
+ *     - addSingleDoc('collection1', dataObj, 'collection1's ID' 'subCollection')
  */
-export const addSingleDoc = async (collectionName: string, dataObj: MemoryDocObj): Promise<void> => {
+export const addSingleDoc = async (
+    collectionName: collectionName,
+    newData: Memory | UserAccount | MediaSrc,
+    ...pathSegments: string[] | []
+): Promise<DocumentReference | FirebaseError | void> => {
+    const converter = converters[collectionName]
+
     let result
-    const docRef = collection(firestore, collectionName)
-    await addDoc(docRef, dataObj)
-        .then(res => {
-            const dataReferences = {
-                collectionName: res.parent.type,
-                docId: res.id
-            }
-            result = dataReferences
-        })
-        .catch(err => {
+    try {
+        // If you want disignate
+        if (pathSegments.length > 0 && pathSegments.length % 2 !== 0) {
+            const dRef = doc(firestore, collectionName, ...pathSegments).withConverter(converter())
+            result = await setDoc(dRef, newData)
+        } else {
+            const cRef = collection(firestore, collectionName, ...pathSegments).withConverter(converter())
+            result = await addDoc(cRef, newData)
+        }
+    } catch (err) {
+        if (err instanceof FirebaseError) {
             console.log(err)
             result = err
-        })
+        }
+    }
+
     return result
 }
 
 /**
- * This function is for getting data from firestore
- * @param collectionName　You can refer collection names from firebase admin page (https://console.firebase.google.com/u/0/project/rmmbr-seals/firestore/databases/-default-/data/~2Fmemories~2FOk9q257ztt0lC9OqISYX)
- * @param keyParam
- * @returns
+ * update a doc in firestore
+ */
+
+/**
+ * get data from firestore
  */
 export const getSingleDoc = async (collectionName: collectionName, keyParam: string): Promise<object | null> => {
     const docRef = doc(firestore, collectionName, keyParam)

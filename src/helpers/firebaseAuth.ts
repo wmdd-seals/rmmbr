@@ -1,34 +1,33 @@
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut, User } from 'firebase/auth'
+import {
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    signOut,
+    User
+} from 'firebase/auth'
 import { auth } from './firebase'
+import { FirebaseError } from 'firebase/app'
+import { addSingleDoc } from './firestore'
 
 /**
  * This function is used for login with using email and password
- * @param {string} email
- * @param {string} password
  */
-const loginWithEmailAndPassword = async (email: string, password: string): Promise<User | null> => {
-    let result = null
-    await signInWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
-            // Signed in
-            const user = userCredential.user
-            result = user
-        })
-        .catch(error => {
-            // const errorCode = error.code
-            // const errorMessage = error.message
-            // const error
-            // TO DO: error handling
-        })
-    return result
+export async function loginWithEmailAndPassword(email: string, password: string): Promise<User | FirebaseError | void> {
+    try {
+        const { user } = await signInWithEmailAndPassword(auth, email, password)
+        return user
+    } catch (err) {
+        if (err instanceof FirebaseError) {
+            return err
+        }
+    }
 }
 
 /**
  * This function detects the user's authentication state changes
  * (https://firebase.google.com/docs/reference/js/v8/firebase.auth.Auth#onauthstatechanged)
- * @param {CallbackName} callback
  */
-const onAuthChange = (callback: (usr: User) => void): void | null => {
+export function onAuthChange(callback: (usr: User) => void): void | null {
     onAuthStateChanged(auth, usr => {
         if (usr) {
             // user is signed in
@@ -43,16 +42,48 @@ const onAuthChange = (callback: (usr: User) => void): void | null => {
 /**
  * This function let the user sign out
  */
-const logOutFirebase = (): void => {
-    signOut(auth)
-        .then(() => {
-            // redirect to login page
-            window.location.href = '/'
-        })
-        .catch(err => {
-            //
-            throw new Error(err)
-        })
+export async function logOutFirebase(): Promise<void> {
+    try {
+        await signOut(auth)
+        // redirect to login page
+        window.location.href = '/'
+    } catch (err) {
+        if (err instanceof FirebaseError) {
+            console.log('signout error:', err)
+        }
+    }
 }
 
-export { loginWithEmailAndPassword, onAuthChange, logOutFirebase }
+/**
+ * Sign up new user
+ */
+export async function signUpFirebase(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+): Promise<User | FirebaseError | void> {
+    let res
+    try {
+        // ↓add new user to firebase Authentication
+        const { user } = await createUserWithEmailAndPassword(auth, email, password)
+        res = user
+
+        // ↓login with firebase Authentication
+        await loginWithEmailAndPassword(email, password)
+
+        // ↓add new user to firestore
+        const newUserObj = {
+            email,
+            firstName,
+            lastName
+        }
+        if (res) await addSingleDoc('users', newUserObj)
+    } catch (err) {
+        if (err instanceof FirebaseError) {
+            return err
+        }
+    }
+
+    return res
+}
