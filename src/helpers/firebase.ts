@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
+import { getStorage } from 'firebase/storage'
 
 type FirebaseConfig = {
     apiKey: string
@@ -32,5 +33,7 @@ const firebase = initializeApp(firebaseConfig)
 const firestore = getFirestore(firebase)
 // Initialize Authentication SDK
 const auth = getAuth(firebase)
+// Initialize firestorage
+const storage = getStorage(firebase, import.meta.env?.VITE_FIREBASE_STORAGE_BUCKET_LINK)
 
-export { firebase, firestore, auth }
+export { firebase, firestore, auth, storage }
