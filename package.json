@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "vite --host",
         "build": "tsc & vite build",
+        "build:github": "tsc & VITE_DESTINATION=github vite build",
         "preview": "vite preview",
         "prod": "npm run build & vite preview",
         "test:unit": "vitest run",
