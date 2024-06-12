@@ -1,60 +1,23 @@
-import { it, expect, describe, beforeEach } from 'vitest'
+import { it, expect, describe, beforeEach, vi } from 'vitest'
 import { getFirestore, getTestEnv, setupTest } from '../../firebase/tests/test-setup'
 import * as testing from '@firebase/rules-unit-testing'
 import { v4 as uuidv4 } from 'uuid'
 
-import {
-    addDoc,
-    collection,
-    doc,
-    DocumentData,
-    DocumentReference,
-    FirestoreDataConverter,
-    QueryDocumentSnapshot,
-    setDoc,
-    SnapshotOptions,
-    WithFieldValue
-} from 'firebase/firestore'
+import { collection, addDoc, doc, DocumentReference, setDoc } from 'firebase/firestore'
 import { FirebaseError } from 'firebase/app'
-import { Converter, UserAccount, Memory, collectionName } from './firestore'
+import { UserAccount, Memory, collectionName, MediaSrc, converters } from './firestore'
+
+const firebaseModules = vi.hoisted(() =>
+    vi.fn(() => ({
+        auth: vi.fn()
+    }))
+)
+vi.mock('./firebase.ts', () => ({
+    firebaseModules
+}))
 
 // ----The below is basically copy & past from firestore.ts----
 // to fix: I tried to mock the doc reference with initialized firestore instance with vi.mock but it did not work. so here are the temporary workaround for it.
-
-type MediaSrc = {
-    type: 'audio' | 'img' | 'video' | 'text'
-    path: string | null
-    text: string | null
-    createdAt: string
-}
-
-const converter = <T>(): FirestoreDataConverter<T, DocumentData> => ({
-    toFirestore: (data: WithFieldValue<T>): WithFieldValue<DocumentData> => {
-        return { data }
-    },
-    fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): T => {
-        return snapshot.data(options).value as T
-    }
-})
-
-const converters: Converter = {
-    users: converter<UserAccount>,
-    memories: converter<Memory>,
-    mediaSrcs: converter<MediaSrc>
-}
-
-setupTest('rmmbr-seals')
-
-let firestoreInit: testing.RulesTestContext
-const userId = uuidv4()
-const userData = {
-    userId: userId,
-    firstName: 'Tomoki',
-    lastName: 'Kaneko',
-    email: 'aaaaa@gmail.com'
-}
-
-// to fix: I tried to mock the doc reference with initialized firestore instance with vi.mock but it did not work. so here is the temporary workaround for it.
 const addSingleDoc = async (
     collectionName: collectionName,
     newData: Memory | UserAccount | MediaSrc,
@@ -84,6 +47,21 @@ const addSingleDoc = async (
     return result
 }
 
+// ----The above is basically copy & past from firestore.ts----
+
+// ---Tests are below----
+
+setupTest('rmmbr-seals')
+
+let firestoreInit: testing.RulesTestContext
+const userId = uuidv4()
+const userData = {
+    userId: userId,
+    firstName: 'Tomoki',
+    lastName: 'Kaneko',
+    email: 'aaaaa@gmail.com'
+}
+
 const newDocObj = {
     createdAt: new Date(),
     deletedAt: null,
@@ -96,11 +74,8 @@ const newDocObj = {
     location: null
 }
 
-// ----The above is basically copy & past from firestore.ts----
-
-// ---Tests are below----
-
 const collectionId = 'users'
+
 describe('firestore.ts', () => {
     beforeEach(async () => {
         await getTestEnv().withSecurityRulesDisabled(context => {

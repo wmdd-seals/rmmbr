@@ -16,7 +16,7 @@
     npm run dev
     ```
 
-The app is now running at `https://localhost:5173/rmmbr/` (don't forget the slash at the end)
+The app is now running at `https://localhost:5173/`
 
 Open the `rmmbr` directory in your code editor of choice and start developing. Save your changes and the browser will update in real time!
 
@@ -50,7 +50,7 @@ Open the `rmmbr` directory in your code editor of choice and start developing. S
 
 4.  **Visit the app**
 
-    Your app is now running at `https://localhost:4173/rmmbr/` (don't forget the slash at the end)
+    Your app is now running at `https://localhost:4173/`
 
     Open it in your browser and see how the app will look like when you deploy it!
 
@@ -59,10 +59,10 @@ Open the `rmmbr` directory in your code editor of choice and start developing. S
 _how to run:_
 
 ```
-npm run firebase-emulator:local
 npm run test:unit
 ```
 
+This test uses Firebase Emulator Suite for mocking the firebase environment.
 If you faced the error below please try to download [Java JDK](https://www.oracle.com/java/technologies/downloads/#jdk22-mac) and try the above again.
 
 ```
@@ -74,7 +74,8 @@ emulators: firebase-tools no longer supports Java version before 11. Please upgr
 You should run the following commands as `npm run <command>` (e.g. `npm run test:unit`)
 
 -   `dev` - run a server in development mode
--   `build` - build the app
+-   `build` - build the app for production
+-   `build:github` - build the app for github pages
 -   `preview` - run a server in production mode (you have to `build` the app first)
 -   `prod` - run a server in production mode (combines `build` and `preview` commands)
 -   `test:unit` - run unit tests

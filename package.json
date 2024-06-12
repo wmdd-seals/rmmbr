@@ -6,10 +6,11 @@
     "scripts": {
         "dev": "vite --host",
         "build": "tsc & vite build",
+        "build:github": "tsc & VITE_DESTINATION=github vite build",
         "preview": "vite preview",
         "prod": "npm run build & vite preview",
-        "firebase-emurator:local": "cd ./firebase && firebase emulators:start",
-        "test:unit": "vitest run",
+        "test:unit": "firebase emulators:exec 'npm run test:_unit'",
+        "test:_unit": "vitest run",
         "lint:check": "eslint ./src",
         "types:check": "tsc --noEmit"
     },
