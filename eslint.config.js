@@ -20,7 +20,19 @@ export default [
             }
         },
         rules: {
-            '@typescript-eslint/explicit-function-return-type': 'error'
+            '@typescript-eslint/explicit-function-return-type': 'error',
+            '@typescript-eslint/return-await': ['error', 'in-try-catch'],
+            '@typescript-eslint/prefer-optional-chain': 'error',
+            '@typescript-eslint/await-thenable': 'error',
+            '@typescript-eslint/switch-exhaustiveness-check': 'error',
+            '@typescript-eslint/explicit-member-accessibility': 'error',
+            '@typescript-eslint/prefer-readonly': 'error',
+            '@typescript-eslint/require-array-sort-compare': ['warn', { ignoreStringArrays: true }],
+            '@typescript-eslint/no-confusing-void-expression': [
+                'error',
+                { ignoreArrowShorthand: true, ignoreVoidOperator: true }
+            ],
+            '@typescript-eslint/no-duplicate-enum-values': 'error'
         }
     }),
     eslintPluginPrettierRecommended
