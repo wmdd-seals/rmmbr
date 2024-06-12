@@ -2,8 +2,6 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, Us
 import { auth } from '../helpers/firebase'
 import { FirebaseError } from 'firebase/app'
 
-console.log(auth)
-
 type loginCred = {
     email: string
     password: string
