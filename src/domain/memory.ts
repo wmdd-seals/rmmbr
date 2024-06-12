@@ -1,4 +1,5 @@
 import { ID, Location, Maybe } from '#utils'
+import { User } from './user'
 
 export abstract class Memory {
     public abstract id: ID<string, 'memory-id'>
@@ -6,7 +7,7 @@ export abstract class Memory {
     public abstract description: Maybe<string>
     public abstract date: string
     public abstract location: Maybe<Location>
-    public abstract viewerIds: string[]
-    public abstract editorIds: string[]
-    public abstract ownerId: string
+    public abstract viewerIds: Array<User['id']>
+    public abstract editorIds: Array<User['id']>
+    public abstract ownerId: User['id']
 }
