@@ -1,39 +1,41 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User, Auth } from 'firebase/auth'
 import { auth } from '../helpers/firebase'
 import { FirebaseError } from 'firebase/app'
 
-type loginCred = {
+type LoginCred = {
     email: string
     password: string
 }
 
+type Options = {
+    onSuccess?: () => void
+}
+
 class UserApi {
-    private _currentUser: User | null
-    constructor(private _auth: typeof auth) {
-        this._currentUser = _auth.currentUser
+    constructor(private _auth: Auth) {
         this._auth = _auth
     }
 
-    // getter
-    get currentUser(): User | null {
-        return this._currentUser
+    async signUp(loginCred: LoginCred, options?: Options): Promise<void | FirebaseError> {
+        await createUserWithEmailAndPassword(this._auth, loginCred.email, loginCred.password)
+        if (options && options.onSuccess) {
+            options.onSuccess()
+        }
     }
 
-    async signUp(loginCred: loginCred): Promise<void | FirebaseError> {
-        const { user } = await createUserWithEmailAndPassword(this._auth, loginCred.email, loginCred.password)
-        this._currentUser = user
-    }
-
-    async signOut(): Promise<void> {
+    async signOut(options?: Options): Promise<void> {
         await signOut(this._auth)
-        this._currentUser = null
-        return
+        if (options && options.onSuccess) {
+            options.onSuccess()
+        }
     }
 
-    async signIn(loginCred: loginCred): Promise<void> {
-        const { user } = await signInWithEmailAndPassword(this._auth, loginCred.email, loginCred.password)
-        this._currentUser = user
+    async signIn(loginCred: LoginCred, options?: Options): Promise<void> {
+        await signInWithEmailAndPassword(this._auth, loginCred.email, loginCred.password)
+        if (options && options.onSuccess) {
+            options.onSuccess()
+        }
     }
 }
 
-export const user = new UserApi(auth)
+export const userApi = new UserApi(auth)
