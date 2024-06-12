@@ -1,6 +1,8 @@
 service cloud.firestore {
   match /databases/{database}/documents {
-    // removed all security rule. The security rule is managed in other way
-    allow read, write: if true;
+    match /{document=**} {
+      // removed all security rules. The security rules are managed in other way
+      allow read, write: if true;
+    }
   }
 }
