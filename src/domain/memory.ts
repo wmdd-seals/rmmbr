@@ -1,4 +1,4 @@
-import { ID, Location, Maybe } from '../utils'
+import { ID, Location, Maybe } from '#utils'
 
 export abstract class Memory {
     public abstract id: ID<string, 'memory-id'>
