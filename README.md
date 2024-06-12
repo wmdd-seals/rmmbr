@@ -73,14 +73,14 @@ emulators: firebase-tools no longer supports Java version before 11. Please upgr
 
 You should run the following commands as `npm run <command>` (e.g. `npm run test:unit`)
 
--   `dev` - run a server in development mode
--   `build` - build the app for production
--   `build:github` - build the app for github pages
--   `preview` - run a server in production mode (you have to `build` the app first)
--   `prod` - run a server in production mode (combines `build` and `preview` commands)
--   `test:unit` - run unit tests
--   `lint:check` - check linting rules
--   `types:check` - check for all TypeScript types in the project to be correct
+- `dev` - run a server in development mode
+- `build` - build the app for production
+- `build:github` - build the app for github pages
+- `preview` - run a server in production mode (you have to `build` the app first)
+- `prod` - run a server in production mode (combines `build` and `preview` commands)
+- `test:unit` - run unit tests
+- `lint:check` - check linting rules
+- `types:check` - check for all TypeScript types in the project to be correct
 
 ## Dev Stack
 
