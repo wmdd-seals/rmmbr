@@ -1,5 +1,5 @@
 import { it, expect, describe, beforeEach, vi } from 'vitest'
-import { getFirestore, getTestEnv, setupTest } from '../../firebase/tests/test-setup'
+import { getFirestore, getTestEnv, setupTest } from '../../firebaseTestSetup'
 import * as testing from '@firebase/rules-unit-testing'
 import { v4 as uuidv4 } from 'uuid'
 
