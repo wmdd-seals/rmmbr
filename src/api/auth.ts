@@ -4,6 +4,11 @@ import { FirebaseError } from 'firebase/app'
 
 console.log(auth)
 
+type loginCred = {
+    email: string
+    password: string
+}
+
 class Auth {
     constructor(private _currentUser: User | null) {
         this._currentUser = _currentUser
@@ -14,9 +19,9 @@ class Auth {
         return this._currentUser
     }
 
-    async signUpwithEmailAndPassword(email: string, password: string): Promise<void | FirebaseError> {
+    async signUpwithEmailAndPassword(loginCred: loginCred): Promise<void | FirebaseError> {
         try {
-            const { user } = await createUserWithEmailAndPassword(auth, email, password)
+            const { user } = await createUserWithEmailAndPassword(auth, loginCred.email, loginCred.password)
             this._currentUser = user
         } catch (err) {
             return err as FirebaseError
@@ -33,9 +38,9 @@ class Auth {
         }
     }
 
-    async loginWithEmailAndPassword(email: string, password: string): Promise<void | FirebaseError> {
+    async loginWithEmailAndPassword(loginCred: loginCred): Promise<void | FirebaseError> {
         try {
-            const { user } = await signInWithEmailAndPassword(auth, email, password)
+            const { user } = await signInWithEmailAndPassword(auth, loginCred.email, loginCred.password)
             this._currentUser = user
         } catch (err) {
             return err as FirebaseError
