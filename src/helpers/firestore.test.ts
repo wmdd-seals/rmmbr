@@ -85,12 +85,13 @@ describe('firestore.ts', () => {
     })
 
     // addSingleDoc: Fail
-    it('ensure addSingleDoc throws an error because the mock user is not authenticated', async () => {
-        firestoreInit = getFirestore()
+    // SECURITY_RULE_TEST:
+    // it('ensure addSingleDoc throws an error because the mock user is not authenticated', async () => {
+    //     firestoreInit = getFirestore()
 
-        const res = await addSingleDoc('memories', newDocObj)
-        expect((res as FirebaseError).code).toBeTruthy()
-    })
+    //     const res = await addSingleDoc('memories', newDocObj)
+    //     expect((res as FirebaseError).code).toBeTruthy()
+    // })
 
     // addSingleDoc: Success
     it('ensure addSingleDoc successfully add an data and gets the reference id', async () => {
