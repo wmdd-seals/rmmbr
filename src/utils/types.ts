@@ -6,3 +6,5 @@ export type ID<Base, Unique extends string> = Base & {
 }
 
 export type Location = [longitude: number, latitude: number]
+
+export type Maybe<T> = T | undefined | null
