@@ -5,15 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>rmmbr</title>
 
-        <!-- tailwind -->
-        <link rel="stylesheet" href="/public/index.css" />
+        <link rel="stylesheet" href="../app.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     </head>
 
     <body class="text-center flex items-center justify-center min-h-screen">
-        <!-- Log In Page -->
+
         <div class="max-w-sm w-4/5 mx-auto">
-            <h1 class="my-10 text-3xl font-bold">log in to rmmbr</h1>
+            <h1 class="my-10 text-3xl font-bold">sign in to rmmbr</h1>
             <form action="#" method="post">
                 <div class="flex flex-col gap-3 mx-0">
                     <input
@@ -39,14 +38,13 @@
                             <i class="fa-regular fa-eye p-1" id="openEye"></i>
                         </div>
                     </div>
-                    <input type="submit" value="Log In" class="bg-sky-950 text-white rounded-md w-full p-1" />
+                    <input type="submit" value="Sign In" class="bg-sky-950 text-white rounded-md w-full p-1" />
                 </div>
             </form>
 
             <p class="border-t-2 my-8 px-8">Don't have an account?<span class="font-bold ml-1">Sign up</span></p>
         </div>
 
-        <script type="module" src="/src/main.ts"></script>
-        <script src="./login.ts"></script>
+        <script src="./sign-in.ts"></script>
     </body>
 </html>
