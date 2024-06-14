@@ -20,8 +20,8 @@ export default defineConfig({
         emptyOutDir: true,
         rollupOptions: {
             input: {
-                main: resolve(__dirname, 'src/pages/index.html')
-                // memory: resolve(__dirname, 'src/pages/memory/index.html')
+                main: resolve(__dirname, 'src/pages/index.html'),
+                memory: resolve(__dirname, 'src/pages/memory/index.html')
                 // me: resolve(__dirname, 'src/pages/me/index.html')
             }
         }
