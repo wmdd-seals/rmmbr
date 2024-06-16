@@ -1,16 +1,14 @@
 import { supabase } from '../helpers/supabase'
 
-type signUpOptions = {
-    data: {
-        firstName: string
-        lastName: string
-    }
-}
-
 type signUpUserCredential = {
     email: string
     password: string
-    options: signUpOptions
+    options: {
+        data: {
+            firstName: string
+            lastName: string
+        }
+    }
 }
 
 type signInUserCredential = {
