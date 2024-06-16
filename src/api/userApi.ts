@@ -17,15 +17,15 @@ type signInUserCredential = {
 }
 
 class UserApi {
-    async signUp(userCredential: signUpUserCredential): Promise<void> {
+    public async signUp(userCredential: signUpUserCredential): Promise<void> {
         await supabase.auth.signUp(userCredential)
     }
 
-    async signIn(userCredential: signInUserCredential): Promise<void> {
+    public async signIn(userCredential: signInUserCredential): Promise<void> {
         await supabase.auth.signInWithPassword(userCredential)
     }
 
-    async signOut(): Promise<void> {
+    public async signOut(): Promise<void> {
         await supabase.auth.signOut()
     }
 }
