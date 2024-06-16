@@ -1,28 +1,10 @@
-const passwordInput: HTMLInputElement = document.getElementById('password') as HTMLInputElement
-const openEye: HTMLElement = document.getElementById('openEye') as HTMLElement
-const closedEye: HTMLElement = document.getElementById('closedEye') as HTMLElement
+const passwordInput = document.getElementById('password') as HTMLInputElement
+const eye = document.getElementById('eye')!
 
-function togglePassVisibilityOpenEye(): void {
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text'
-    } else {
-        passwordInput.type = 'password'
-    }
-
-    openEye.parentElement?.classList.add('hidden')
-    closedEye.parentElement?.classList.remove('hidden')
+function togglePasswordVisibility(e: MouseEvent): void {
+    passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password'
+    ;(e.currentTarget as HTMLElement).classList.toggle('fa-eye')
+    ;(e.currentTarget as HTMLElement).classList.toggle('fa-eye-slash')
 }
 
-openEye.addEventListener('click', togglePassVisibilityOpenEye)
-
-function togglePassVisibilityClosedEye(): void {
-    if (passwordInput.type === 'text') {
-        passwordInput.type = 'password'
-    } else {
-        passwordInput.type = 'text'
-    }
-    closedEye.parentElement?.classList.add('hidden')
-    openEye.parentElement?.classList.remove('hidden')
-}
-
-closedEye.addEventListener('click', togglePassVisibilityClosedEye)
+eye.addEventListener('click', e => togglePasswordVisibility(e))

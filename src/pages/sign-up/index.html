@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>rmmbr | Sign up</title>
+    <link rel="stylesheet" href="../app.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+
+<body class="flex min-h-screen">
+    <div class="hidden md:block w-[55%]"></div>
+    <div class="text-center max-w-sm mx-auto flex flex-col justify-center  md:w-[45%]">
+        <div class="mx-8">
+            <h1 class="my-10 text-3xl font-bold">Create Account</h1>
+            <form action="#" method="post">
+                <div class="flex flex-col gap-2 mx-0">
+                    <input type="text" placeholder="First Name" name="firstName" required
+                        class="border-solid border-2 border-slate-300 rounded-md w-full p-1 focus:border-green-600 focus:outline-none" />
+                    <input type="text" placeholder="Last name" name="lastName" required
+                        class="border-solid border-2 border-slate-300 rounded-md w-full p-1 focus:border-green-600 focus:outline-none" />
+                    <div
+                        class="flex items-center border-solid border-2 border-slate-300 rounded-md focus-within:border-green-600">
+                        <input type="password" placeholder="Password" name="password" id="first-pass" required
+                            class="w-full rounded-md p-1 focus:outline-none" />
+                        <i class="fa-regular fa-eye-slash p-1" id="eye1"></i>
+                    </div>
+                    <div
+                        class="flex items-center border-solid border-2 border-slate-300 rounded-md focus-within:border-green-600">
+                        <input type="password" placeholder="Confirm password" name="password" id="second-pass" required
+                            class="w-full rounded-md p-1 focus:outline-none" />
+                        <i class="fa-regular fa-eye-slash p-1" id="eye2"></i>
+                    </div>
+                </div>
+                <!-- changed to use button element instead -->
+                <button id="submit-button" class="bg-sky-950 text-white rounded-md w-full p-1 my-5">Continue</button>
+            </form>
+            <p class="mt-2">Already have an account?</p>
+            <a href="/sign-in/index" class="font-bold">Sign in</a>
+        </div>
+    </div>
+
+    <script type="module" src="./sign-up.ts"></script>
+</body>
+
+</html>
