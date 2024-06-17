@@ -7,7 +7,5 @@ export abstract class Memory {
     public abstract description: Maybe<string>
     public abstract date: string
     public abstract location: Maybe<Location>
-    public abstract viewerIds: Array<User['id']>
-    public abstract editorIds: Array<User['id']>
     public abstract ownerId: User['id']
 }
