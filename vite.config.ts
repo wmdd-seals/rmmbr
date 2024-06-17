@@ -23,7 +23,8 @@ export default defineConfig({
             input: {
                 main: resolve(__dirname, 'src/pages/index.html'),
                 memory: resolve(__dirname, 'src/pages/memory/index.html'),
-                signIn: resolve(__dirname, 'src/pages/sign-in/index.html')
+                signIn: resolve(__dirname, 'src/pages/sign-in/index.html'),
+                signUp: resolve(__dirname, 'src/pages/sign-up/index.html')
                 // me: resolve(__dirname, 'src/pages/me/index.html')
             }
         }

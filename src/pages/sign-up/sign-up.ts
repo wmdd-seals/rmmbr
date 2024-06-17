@@ -1,3 +1,5 @@
+import { userApi } from '#api'
+
 const passwordInput1 = document.getElementById('first-pass') as HTMLInputElement
 const passwordInput2 = document.getElementById('second-pass') as HTMLInputElement
 const passwordInputs = [passwordInput1, passwordInput2]
@@ -31,3 +33,35 @@ function checkIfPasswordsMatch(e: Event): void {
 
 const submitBtn = document.getElementById('submit-button') as HTMLInputElement
 submitBtn.addEventListener('click', checkIfPasswordsMatch)
+
+// signup
+const signUpBtn = document.getElementById('submit-button') as HTMLButtonElement
+const signUpForm = document.getElementById('signup-form') as HTMLFormElement
+
+async function signInHandler(ev: MouseEvent): Promise<void> {
+    ev.preventDefault()
+    const form = signUpForm
+    const data = new FormData(form)
+    const email: Exclude<FormDataEntryValue, File> = data.get('email') as string
+    const password: Exclude<FormDataEntryValue, File> = data.get('password') as string
+    const firstName: Exclude<FormDataEntryValue, File> = data.get('firstName') as string
+    const lastName: Exclude<FormDataEntryValue, File> = data.get('lastName') as string
+    console.log(email, password, firstName, lastName)
+    if (email && password && firstName && lastName) {
+        try {
+            await userApi.signUp({
+                email: email,
+                password: password,
+                firstName: firstName,
+                lastName: lastName
+            })
+            // if signup succeeded redirect to "check the email" page.
+            // TO FIX: the destination path below is just for sample
+            window.location.href = '/'
+        } catch (err) {
+            // error handling
+        }
+    }
+}
+
+signUpBtn?.addEventListener('click', e => signInHandler(e))

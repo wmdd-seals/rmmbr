@@ -15,7 +15,7 @@ eye.addEventListener('click', e => togglePasswordVisibility(e))
 const loginForm = document.getElementById('signin-form') as HTMLFormElement
 const loginBtn = document.getElementById('signin-btn') as HTMLButtonElement
 
-async function login(ev: MouseEvent): Promise<void> {
+async function loginHandler(ev: MouseEvent): Promise<void> {
     ev.preventDefault()
     const form = loginForm
     const data = new FormData(form)
@@ -28,7 +28,7 @@ async function login(ev: MouseEvent): Promise<void> {
                 password: password
             })
             // if sign-in succeeded redirect to homepage
-            // TO FIX: the path below is just for sample
+            // TO FIX: the destination path below is just for sample
             window.location.href = '/'
         } catch (err) {
             // error handling
