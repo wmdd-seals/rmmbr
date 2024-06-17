@@ -1,32 +1,44 @@
+import {
+    AuthError,
+    AuthResponse,
+    AuthTokenResponsePassword,
+    SignUpWithPasswordCredentials
+} from '@supabase/supabase-js'
 import { supabase } from '../helpers/supabase'
 
-type signUpUserCredential = {
+type SignUpUserCredential = {
     email: string
     password: string
-    options: {
-        data: {
-            firstName: string
-            lastName: string
-        }
-    }
+    firstName: string
+    lastName: string
 }
 
-type signInUserCredential = {
+type SignInUserCredential = {
     email: string
     password: string
 }
 
 class UserApi {
-    public async signUp(userCredential: signUpUserCredential): Promise<void> {
-        await supabase.auth.signUp(userCredential)
+    public signUp(userCredential: SignUpUserCredential): Promise<AuthResponse> {
+        const loginCred: SignUpWithPasswordCredentials = {
+            email: userCredential.email,
+            password: userCredential.password,
+            options: {
+                data: {
+                    firstName: userCredential.firstName,
+                    lastName: userCredential.lastName
+                }
+            }
+        }
+        return supabase.auth.signUp(loginCred)
     }
 
-    public async signIn(userCredential: signInUserCredential): Promise<void> {
-        await supabase.auth.signInWithPassword(userCredential)
+    public signIn(userCredential: SignInUserCredential): Promise<AuthTokenResponsePassword> {
+        return supabase.auth.signInWithPassword(userCredential)
     }
 
-    public async signOut(): Promise<void> {
-        await supabase.auth.signOut()
+    public signOut(): Promise<{ error: AuthError | null }> {
+        return supabase.auth.signOut()
     }
 }
 

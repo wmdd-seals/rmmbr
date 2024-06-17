@@ -75,7 +75,7 @@ These are the main libraries/dependencies you should be comfortable with to prop
 -   **Vite**
 -   **Vitest**
 -   **Tailwind**
--   **supabase**
+-   **Supabase**
 
 ## Github Workflows
 
