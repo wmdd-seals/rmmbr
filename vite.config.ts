@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import BasicSSL from '@vitejs/plugin-basic-ssl'
+import TSConfigPaths from 'vite-tsconfig-paths'
 import { resolve } from 'path'
 
 export default defineConfig({
@@ -14,7 +15,7 @@ export default defineConfig({
     root: resolve(__dirname, 'src/pages'),
     envDir: __dirname,
     publicDir: resolve(__dirname, 'public'),
-    plugins: [BasicSSL()],
+    plugins: [BasicSSL(), TSConfigPaths()],
     build: {
         outDir: resolve(__dirname, 'dist'),
         emptyOutDir: true,

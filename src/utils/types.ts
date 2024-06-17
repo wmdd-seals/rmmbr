@@ -4,3 +4,7 @@
 export type ID<Base, Unique extends string> = Base & {
     __unique__: Unique
 }
+
+export type Location = [longitude: number, latitude: number]
+
+export type Maybe<T> = T | undefined | null
