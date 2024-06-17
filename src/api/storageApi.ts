@@ -1,15 +1,25 @@
 import { supabase } from '../helpers/supabase'
 
+type StorageFilePromise =
+    | {
+          data: { path: string }
+          error: null
+      }
+    | {
+          data: null
+          error: Error
+      }
+
 /**
  * Storage API for fetching/uploading/overwriting media files
  */
 class StorageApi {
-    public async uploadFile(filePath: string, file: Blob): Promise<void> {
-        await supabase.storage.from('rmmbr').upload(filePath, file)
+    public uploadFile(filePath: string, file: Blob): Promise<StorageFilePromise> {
+        return supabase.storage.from('rmmbr').upload(filePath, file)
     }
 
-    public async overwriteFile(filePath: string, file: Blob): Promise<void> {
-        await supabase.storage.from('rmmbr').upload(filePath, file, {
+    public overwriteFile(filePath: string, file: Blob): Promise<StorageFilePromise> {
+        return supabase.storage.from('rmmbr').upload(filePath, file, {
             upsert: true
         })
     }
