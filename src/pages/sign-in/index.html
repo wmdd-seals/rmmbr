@@ -14,12 +14,12 @@
         <div class="text-center max-w-sm mx-auto flex flex-col justify-center md:w-[45%]">
             <div class="mx-auto">
                 <h1 class="my-10 text-3xl font-bold">Sign in to rmmbr</h1>
-                <form action="#" method="post">
+                <form action="#" method="post" id="signin-form">
                     <div class="flex flex-col gap-3 mx-0">
                         <input
-                            type="text"
-                            placeholder="Username"
-                            name="userName"
+                            type="email"
+                            placeholder="Email Address"
+                            name="email"
                             required
                             class="border-solid border-2 border-slate-300 rounded-md w-full p-1 focus:border-green-600 focus:outline-none"
                         />
@@ -37,7 +37,14 @@
 
                             <i class="fa-regular fa-eye-slash p-1" id="eye"></i>
                         </div>
-                        <input type="submit" value="Sign In" class="bg-sky-950 text-white rounded-md w-full p-1" />
+                        <button
+                            id="signin-btn"
+                            type="button"
+                            value="Sign In"
+                            class="bg-sky-950 text-white rounded-md w-full p-1"
+                        >
+                            Sign In
+                        </button>
                     </div>
                 </form>
                 <p class="border-t-2 my-8 px-8">
@@ -46,6 +53,6 @@
             </div>
         </div>
 
-        <script src="./sign-in.ts"></script>
+        <script type="module" src="./sign-in.ts"></script>
     </body>
 </html>

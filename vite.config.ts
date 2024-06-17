@@ -22,7 +22,8 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'src/pages/index.html'),
-                memory: resolve(__dirname, 'src/pages/memory/index.html')
+                memory: resolve(__dirname, 'src/pages/memory/index.html'),
+                signIn: resolve(__dirname, 'src/pages/sign-in/index.html')
                 // me: resolve(__dirname, 'src/pages/me/index.html')
             }
         }
