@@ -1,4 +1,5 @@
 import { userApi } from '#api'
+import { AuthResponse } from '@supabase/supabase-js'
 
 const passwordInput1 = document.getElementById('first-pass') as HTMLInputElement
 const passwordInput2 = document.getElementById('second-pass') as HTMLInputElement
@@ -38,7 +39,7 @@ submitBtn.addEventListener('click', checkIfPasswordsMatch)
 const signUpBtn = document.getElementById('submit-button') as HTMLButtonElement
 const signUpForm = document.getElementById('signup-form') as HTMLFormElement
 
-async function signInHandler(ev: MouseEvent): Promise<void> {
+function signInHandler(ev: MouseEvent): Promise<AuthResponse> | void {
     ev.preventDefault()
     const form = signUpForm
     const data = new FormData(form)
@@ -48,20 +49,25 @@ async function signInHandler(ev: MouseEvent): Promise<void> {
     const lastName: Exclude<FormDataEntryValue, File> = data.get('lastName') as string
     console.log(email, password, firstName, lastName)
     if (email && password && firstName && lastName) {
+        return userApi.signUp({
+            email: email,
+            password: password,
+            firstName: firstName,
+            lastName: lastName
+        })
+    }
+}
+
+signUpBtn?.addEventListener('click', e => {
+    void (async (): Promise<void> => {
         try {
-            await userApi.signUp({
-                email: email,
-                password: password,
-                firstName: firstName,
-                lastName: lastName
-            })
+            await signInHandler(e)
             // if signup succeeded redirect to "check the email" page.
             // TO FIX: the destination path below is just for sample
             window.location.href = '/'
         } catch (err) {
-            // error handling
+            // TO DO: error handling
+            console.error(err)
         }
-    }
-}
-
-signUpBtn?.addEventListener('click', e => signInHandler(e))
+    })()
+})

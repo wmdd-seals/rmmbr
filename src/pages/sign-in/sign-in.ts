@@ -1,4 +1,5 @@
 import { userApi } from '#api'
+import { AuthTokenResponsePassword } from '@supabase/supabase-js'
 
 const passwordInput = document.getElementById('password') as HTMLInputElement
 const eye = document.getElementById('eye')!
@@ -15,25 +16,30 @@ eye.addEventListener('click', e => togglePasswordVisibility(e))
 const loginForm = document.getElementById('signin-form') as HTMLFormElement
 const loginBtn = document.getElementById('signin-btn') as HTMLButtonElement
 
-async function loginHandler(ev: MouseEvent): Promise<void> {
+function loginHandler(ev: MouseEvent): Promise<AuthTokenResponsePassword> | void {
     ev.preventDefault()
     const form = loginForm
     const data = new FormData(form)
     const email: Exclude<FormDataEntryValue, File> = data.get('email') as string
     const password: Exclude<FormDataEntryValue, File> = data.get('password') as string
     if (email && password) {
+        return userApi.signIn({
+            email: email,
+            password: password
+        })
+    }
+}
+
+loginBtn?.addEventListener('click', e => {
+    void (async (): Promise<void> => {
         try {
-            await userApi.signIn({
-                email: email,
-                password: password
-            })
+            await loginHandler(e)
             // if sign-in succeeded redirect to homepage
             // TO FIX: the destination path below is just for sample
             window.location.href = '/'
         } catch (err) {
-            // error handling
+            // TO DO: error handling
+            console.error(err)
         }
-    }
-}
-
-loginBtn?.addEventListener('click', e => login(e))
+    })()
+})
