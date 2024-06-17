@@ -7,7 +7,7 @@ type StorageFilePromise =
       }
     | {
           data: null
-          error: Error
+          error: Error // Here is because the interface of this error expresses same structure as Error instance in the supabase module.
       }
 
 /**
