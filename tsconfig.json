@@ -20,6 +20,18 @@
         "types": [
             "vite/client"
         ],
+        "baseUrl": ".",
+        "paths": {
+            "#utils": [
+                "./src/utils/index.ts"
+            ],
+            "#domain": [
+                "./src/domain/index.ts"
+            ],
+            "#api": [
+                "./src/api/index.ts"
+            ]
+        },
         /* Linting */
         "strict": true,
         "noUnusedLocals": true,
