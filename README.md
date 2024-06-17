@@ -75,7 +75,11 @@ These are the main libraries/dependencies you should be comfortable with to prop
 -   **Vite**
 -   **Vitest**
 -   **Tailwind**
+<<<<<<< HEAD
 -   **Supabase**
+=======
+-   **supabase**
+>>>>>>> 2a54b87 (setup: removed firebase)
 
 ## Github Workflows
 
