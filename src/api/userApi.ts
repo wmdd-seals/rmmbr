@@ -4,7 +4,7 @@ import {
     AuthTokenResponsePassword,
     SignUpWithPasswordCredentials
 } from '@supabase/supabase-js'
-import { supabase } from '../helpers/supabase'
+import { supabase } from './supabase'
 
 type SignUpUserCredential = {
     email: string

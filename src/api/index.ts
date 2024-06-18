@@ -1,0 +1,1 @@
+export { memoryApi } from './memory'
