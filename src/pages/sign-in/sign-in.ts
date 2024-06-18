@@ -2,7 +2,6 @@ import { SignInUserCredential } from './../../api/userApi'
 import { userApi } from '#api'
 import { isTruthyString } from '#utils'
 import { AuthTokenResponsePassword } from '@supabase/supabase-js'
-import { supabase } from 'src/helpers/supabase'
 
 const passwordInput = document.getElementById('password') as HTMLInputElement
 const eye = document.getElementById('eye')!
