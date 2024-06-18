@@ -6,14 +6,14 @@ import {
 } from '@supabase/supabase-js'
 import { supabase } from '../helpers/supabase'
 
-type SignUpUserCredential = {
+export type SignUpUserCredential = {
     email: string
     password: string
     firstName: string
     lastName: string
 }
 
-type SignInUserCredential = {
+export type SignInUserCredential = {
     email: string
     password: string
 }

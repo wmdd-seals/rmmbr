@@ -1,5 +1,8 @@
+import { SignInUserCredential } from './../../api/userApi'
 import { userApi } from '#api'
+import { isTruthyString } from '#utils'
 import { AuthTokenResponsePassword } from '@supabase/supabase-js'
+import { supabase } from 'src/helpers/supabase'
 
 const passwordInput = document.getElementById('password') as HTMLInputElement
 const eye = document.getElementById('eye')!
@@ -12,34 +15,29 @@ function togglePasswordVisibility(e: MouseEvent): void {
 
 eye.addEventListener('click', e => togglePasswordVisibility(e))
 
-// login
-const loginForm = document.getElementById('signin-form') as HTMLFormElement
-const loginBtn = document.getElementById('signin-btn') as HTMLButtonElement
+/**
+ * The below is for sign-in
+ */
+const signInForm = document.getElementById('signin-form') as HTMLFormElement
+const signInBtn = document.getElementById('signin-btn') as HTMLButtonElement
 
-function loginHandler(ev: MouseEvent): Promise<AuthTokenResponsePassword> | void {
+async function loginHandler(ev: MouseEvent): Promise<AuthTokenResponsePassword | void> {
     ev.preventDefault()
-    const form = loginForm
-    const data = new FormData(form)
-    const email: Exclude<FormDataEntryValue, File> = data.get('email') as string
-    const password: Exclude<FormDataEntryValue, File> = data.get('password') as string
-    if (email && password) {
-        return userApi.signIn({
-            email: email,
-            password: password
-        })
+    const userCred = {
+        email: (signInForm.querySelector('input[name=email]') as HTMLInputElement).value,
+        password: (signInForm.querySelector('input[name=password]') as HTMLInputElement).value
+    }
+
+    try {
+        if (Object.keys(userCred).every(k => isTruthyString(userCred[k as keyof SignInUserCredential])))
+            await userApi.signIn(userCred)
+        // if sign-in succeeded redirect to homepage
+        // TO FIX: the destination path below is just for sample
+        window.location.href = '/'
+    } catch (err) {
+        // TO DO: error handling
+        console.error(err)
     }
 }
 
-loginBtn?.addEventListener('click', e => {
-    void (async (): Promise<void> => {
-        try {
-            await loginHandler(e)
-            // if sign-in succeeded redirect to homepage
-            // TO FIX: the destination path below is just for sample
-            window.location.href = '/'
-        } catch (err) {
-            // TO DO: error handling
-            console.error(err)
-        }
-    })()
-})
+signInBtn?.addEventListener('click', e => void loginHandler(e))

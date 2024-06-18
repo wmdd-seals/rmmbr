@@ -1,5 +1,7 @@
 import { userApi } from '#api'
+import { isTruthyString } from '#utils'
 import { AuthResponse } from '@supabase/supabase-js'
+import { SignUpUserCredential } from 'src/api/userApi'
 
 const passwordInput1 = document.getElementById('first-pass') as HTMLInputElement
 const passwordInput2 = document.getElementById('second-pass') as HTMLInputElement
@@ -35,39 +37,32 @@ function checkIfPasswordsMatch(e: Event): void {
 const submitBtn = document.getElementById('submit-button') as HTMLInputElement
 submitBtn.addEventListener('click', checkIfPasswordsMatch)
 
-// signup
+/**
+ * The below is for sign up
+ */
 const signUpBtn = document.getElementById('submit-button') as HTMLButtonElement
 const signUpForm = document.getElementById('signup-form') as HTMLFormElement
 
-function signInHandler(ev: MouseEvent): Promise<AuthResponse> | void {
+async function signUpHandler(ev: MouseEvent): Promise<AuthResponse | void> {
     ev.preventDefault()
-    const form = signUpForm
-    const data = new FormData(form)
-    const email: Exclude<FormDataEntryValue, File> = data.get('email') as string
-    const password: Exclude<FormDataEntryValue, File> = data.get('password') as string
-    const firstName: Exclude<FormDataEntryValue, File> = data.get('firstName') as string
-    const lastName: Exclude<FormDataEntryValue, File> = data.get('lastName') as string
-    console.log(email, password, firstName, lastName)
-    if (email && password && firstName && lastName) {
-        return userApi.signUp({
-            email: email,
-            password: password,
-            firstName: firstName,
-            lastName: lastName
-        })
+
+    const userCred = {
+        email: (signUpForm.querySelector('input[name=email]') as HTMLInputElement).value,
+        password: (signUpForm.querySelector('input[name=password]') as HTMLInputElement).value,
+        firstName: (signUpForm.querySelector('input[name=firstName]') as HTMLInputElement).value,
+        lastName: (signUpForm.querySelector('input[name=lastName]') as HTMLInputElement).value
+    }
+
+    try {
+        if (Object.keys(userCred).every(k => isTruthyString(userCred[k as keyof SignUpUserCredential])))
+            await userApi.signUp(userCred)
+        // if signup succeeded redirect to "check the email" page.
+        // TO FIX: the destination path below is just for sample
+        window.location.href = '/'
+    } catch (err) {
+        // TO DO: error handling
+        console.error(err)
     }
 }
 
-signUpBtn?.addEventListener('click', e => {
-    void (async (): Promise<void> => {
-        try {
-            await signInHandler(e)
-            // if signup succeeded redirect to "check the email" page.
-            // TO FIX: the destination path below is just for sample
-            window.location.href = '/'
-        } catch (err) {
-            // TO DO: error handling
-            console.error(err)
-        }
-    })()
-})
+signUpBtn?.addEventListener('click', e => void signUpHandler(e))
