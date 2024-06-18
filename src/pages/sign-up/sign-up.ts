@@ -1,7 +1,6 @@
-import { userApi } from '#api'
+import { userApi, SignUpUserCredential } from '#api'
 import { isTruthyString } from '#utils'
 import { AuthResponse } from '@supabase/supabase-js'
-import { SignUpUserCredential } from 'src/api/userApi'
 
 const passwordInput1 = document.getElementById('first-pass') as HTMLInputElement
 const passwordInput2 = document.getElementById('second-pass') as HTMLInputElement

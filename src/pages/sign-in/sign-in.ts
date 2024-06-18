@@ -1,5 +1,4 @@
-import { SignInUserCredential } from './../../api/userApi'
-import { userApi } from '#api'
+import { SignInUserCredential, userApi } from '#api'
 import { isTruthyString } from '#utils'
 import { AuthTokenResponsePassword } from '@supabase/supabase-js'
 
