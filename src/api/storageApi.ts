@@ -1,4 +1,4 @@
-import { supabase } from '../helpers/supabase'
+import { supabase } from './supabase'
 
 type StorageFilePromise =
     | {

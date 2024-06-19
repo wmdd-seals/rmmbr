@@ -10,7 +10,7 @@
         "preview": "vite preview",
         "prod": "npm run build & vite preview",
         "test:unit": "vitest run",
-        "lint:check": "eslint ./src",
+        "lint:check": "eslint .",
         "types:check": "tsc --noEmit"
     },
     "author": "Rasul Omarov, Tomoki Kaneko, Natsuko Ogata",
