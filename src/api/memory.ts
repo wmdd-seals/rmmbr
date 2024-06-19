@@ -12,7 +12,7 @@ type CreateMemoryPayload = Pick<Memory, 'ownerId' | 'title' | 'location' | 'date
 
 class MemoryApi {
     private readonly memories = supabase.from(ApiTable.Memories)
-    private readonly editors = supabase.from(ApiTable.Editors)
+    private readonly collaborators = supabase.from(ApiTable.Collaborators)
 
     public async get(memoryId: Memory['id'], userId: User['id']): PromiseMaybe<Memory> {
         const res = await this.memories
@@ -36,9 +36,9 @@ class MemoryApi {
             .select<string, Memory>(
                 `
                     *,
-                    editors (
+                    ${ApiTable.Collaborators} (
                         *,
-                        users (
+                        ${ApiTable.Users} (
                             id,
                             firstName,
                             lastName
@@ -47,7 +47,7 @@ class MemoryApi {
                 `
             )
             .eq<Memory['id']>('id' satisfies MemoryColumns, memoryId)
-            .eq<User['id']>('editors.userId', userId)
+            .eq<User['id']>(`${ApiTable.Collaborators}.userId`, userId)
             .neq('ownerId' satisfies MemoryColumns, userId)
 
         return res.data?.[0]
@@ -58,9 +58,9 @@ class MemoryApi {
             .select<string, Memory>(
                 `
                     *,
-                    editors (
+                    ${ApiTable.Collaborators} (
                         *,
-                        users (
+                        ${ApiTable.Users} (
                             id,
                             firstName,
                             lastName
@@ -69,8 +69,8 @@ class MemoryApi {
                 `,
                 { count: 'exact' }
             )
-            .eq<Memory['ownerId']>('editors.userId', userId)
-            .neq('ownerId', userId)
+            .eq<Memory['ownerId']>(`${ApiTable.Collaborators}.userId`, userId)
+            .neq('ownerId' satisfies MemoryColumns, userId)
 
         return res.data || []
     }
@@ -87,7 +87,7 @@ class MemoryApi {
     // }
 
     public async shareWith(memoryId: Memory['id'], userIds: Array<User['id']>): Promise<boolean> {
-        const res = await Promise.all(userIds.map(id => this.editors.insert([{ memoryId, userId: id }])))
+        const res = await Promise.all(userIds.map(id => this.collaborators.insert([{ memoryId, userId: id }])))
 
         for (const response of res) {
             if (response.error) {
@@ -99,7 +99,7 @@ class MemoryApi {
     }
 
     public async stopSharingWith(memoryId: Memory['id'], userId: User['id']): Promise<boolean> {
-        const res = await this.editors.delete().eq('memoryId', memoryId).eq('userId', userId)
+        const res = await this.collaborators.delete().eq('memoryId', memoryId).eq('userId', userId)
 
         return !!res.error
     }
