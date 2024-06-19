@@ -14,7 +14,7 @@ const loader = new Loader({
 export class GMap {
     private maps: google.maps.Map | null | undefined = null
 
-    constructor(element: HTMLElement, latLng: LatLng) {
+    private constructor(element: HTMLElement, latLng: LatLng) {
         void this.initMap(element, latLng)
     }
 
