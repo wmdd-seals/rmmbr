@@ -1,5 +1,4 @@
-import { userApi, SignUpUserCredential } from '#api'
-import { isTruthyString } from '#utils'
+import { userApi } from '#api'
 import { AuthResponse } from '@supabase/supabase-js'
 
 const passwordInput1 = document.getElementById('first-pass') as HTMLInputElement
@@ -45,16 +44,32 @@ const signUpForm = document.getElementById('signup-form') as HTMLFormElement
 async function signUpHandler(ev: MouseEvent): Promise<AuthResponse | void> {
     ev.preventDefault()
 
-    const userCred = {
-        email: (signUpForm.querySelector('input[name=email]') as HTMLInputElement).value,
-        password: (signUpForm.querySelector('input[name=password]') as HTMLInputElement).value,
-        firstName: (signUpForm.querySelector('input[name=firstName]') as HTMLInputElement).value,
-        lastName: (signUpForm.querySelector('input[name=lastName]') as HTMLInputElement).value
+    const email = (signUpForm.querySelector('input[name=email]') as HTMLInputElement).value
+    const password = (signUpForm.querySelector('input[name=password]') as HTMLInputElement).value
+    const firstName = (signUpForm.querySelector('input[name=firstName]') as HTMLInputElement).value
+    const lastName = (signUpForm.querySelector('input[name=lastName]') as HTMLInputElement).value
+
+    // if one of the variables is not string or falsy value then escape.
+    if (
+        typeof email !== 'string' ||
+        email.length < 1 ||
+        typeof password !== 'string' ||
+        password.length < 1 ||
+        typeof firstName !== 'string' ||
+        firstName.length < 1 ||
+        typeof lastName !== 'string' ||
+        lastName.length < 1
+    ) {
+        return
     }
 
     try {
-        if (Object.keys(userCred).every(k => isTruthyString(userCred[k as keyof SignUpUserCredential])))
-            await userApi.signUp(userCred)
+        await userApi.signUp({
+            email: email,
+            password: password,
+            firstName: firstName,
+            lastName: lastName
+        })
         // if signup succeeded redirect to "check the email" page.
         // TO FIX: the destination path below is just for sample
         window.location.href = '/'

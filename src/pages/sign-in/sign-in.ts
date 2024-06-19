@@ -1,5 +1,4 @@
-import { SignInUserCredential, userApi } from '#api'
-import { isTruthyString } from '#utils'
+import { userApi } from '#api'
 import { AuthTokenResponsePassword } from '@supabase/supabase-js'
 
 const passwordInput = document.getElementById('password') as HTMLInputElement
@@ -21,14 +20,19 @@ const signInBtn = document.getElementById('signin-btn') as HTMLButtonElement
 
 async function loginHandler(ev: MouseEvent): Promise<AuthTokenResponsePassword | void> {
     ev.preventDefault()
-    const userCred = {
-        email: (signInForm.querySelector('input[name=email]') as HTMLInputElement).value,
-        password: (signInForm.querySelector('input[name=password]') as HTMLInputElement).value
+    const email = (signInForm.querySelector('input[name=email]') as HTMLInputElement).value
+    const password = (signInForm.querySelector('input[name=password]') as HTMLInputElement).value
+
+    // if one of the variables is not string or falsy value then escape.
+    if (typeof email !== 'string' || email.length < 1 || typeof password !== 'string' || password.length < 1) {
+        return
     }
 
     try {
-        if (Object.keys(userCred).every(k => isTruthyString(userCred[k as keyof SignInUserCredential])))
-            await userApi.signIn(userCred)
+        await userApi.signIn({
+            email: email,
+            password: password
+        })
         // if sign-in succeeded redirect to homepage
         // TO FIX: the destination path below is just for sample
         window.location.href = '/'
