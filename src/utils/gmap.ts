@@ -34,8 +34,6 @@ export class GMap {
     }
 
     public async putMarker(latLngs: LatLng[]): Promise<void> {
-        console.log(this.maps)
-
         try {
             const { AdvancedMarkerElement } = await loader.importLibrary('marker')
 
