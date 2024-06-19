@@ -49,7 +49,6 @@ async function signUpHandler(ev: MouseEvent): Promise<AuthResponse | void> {
     const firstName = (signUpForm.querySelector('input[name=firstName]') as HTMLInputElement).value
     const lastName = (signUpForm.querySelector('input[name=lastName]') as HTMLInputElement).value
 
-    // if one of the variables is not string or falsy value then escape.
     if (
         typeof email !== 'string' ||
         email.length < 1 ||

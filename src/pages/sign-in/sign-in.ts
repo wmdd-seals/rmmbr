@@ -23,7 +23,6 @@ async function loginHandler(ev: MouseEvent): Promise<AuthTokenResponsePassword |
     const email = (signInForm.querySelector('input[name=email]') as HTMLInputElement).value
     const password = (signInForm.querySelector('input[name=password]') as HTMLInputElement).value
 
-    // if one of the variables is not string or falsy value then escape.
     if (typeof email !== 'string' || email.length < 1 || typeof password !== 'string' || password.length < 1) {
         return
     }
