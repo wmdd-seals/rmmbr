@@ -1,9 +1,5 @@
 import { Loader } from '@googlemaps/js-api-loader'
-
-type LatLng = {
-    lat: number
-    lng: number
-}
+import { Location } from './types'
 
 const loader = new Loader({
     apiKey: import.meta.env?.VITE_PUBLIC_GOOGLE_MAP_API_KEY,
@@ -14,13 +10,14 @@ const loader = new Loader({
 export class GMap {
     private maps: google.maps.Map | null | undefined = null
 
-    private constructor(element: HTMLElement, latLng: LatLng) {
-        void this.initMap(element, latLng)
-    }
+    public constructor() {}
 
-    private async initMap(element: HTMLElement, latLng: LatLng): Promise<void> {
+    public async initMap(element: HTMLElement, loc: Location): Promise<void> {
         const mapOptions = {
-            center: latLng,
+            center: {
+                lng: loc[0],
+                lat: loc[1]
+            },
             zoom: 15,
             mapId: 'rmmbr_map'
         }
@@ -33,13 +30,16 @@ export class GMap {
         }
     }
 
-    public async putMarker(latLngs: LatLng[]): Promise<void> {
+    public async putMarker(locations: Location[]): Promise<void> {
         try {
             const { AdvancedMarkerElement } = await loader.importLibrary('marker')
 
-            latLngs.forEach(xy => {
+            locations.forEach(location => {
                 new AdvancedMarkerElement({
-                    position: xy,
+                    position: {
+                        lat: location[1],
+                        lng: location[0]
+                    },
                     map: this.maps,
                     title: 'hello'
                 })
