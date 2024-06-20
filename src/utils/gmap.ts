@@ -12,11 +12,11 @@ export class GMap {
 
     public constructor() {}
 
-    public async initMap(element: HTMLElement, loc: Location): Promise<void> {
+    public async initMap(element: HTMLElement, location: Location): Promise<void> {
         const mapOptions = {
             center: {
-                lng: loc[0],
-                lat: loc[1]
+                lng: location[0],
+                lat: location[1]
             },
             zoom: 15,
             mapId: 'rmmbr_map'
