@@ -1,3 +1,47 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    input, button, a {
+        @apply transition-all;
+    }
+
+    /* buttons */
+    .btn-filled {
+        @apply bg-basketball-500 text-white hover:bg-basketball-50 hover:text-basketball-800 active:bg-basketball-800 active:text-white focus:outline-basketball-500 disabled:bg-neutral-50 disabled:text-neutral-500 disabled:ring-2 disabled:ring-neutral-300;
+    }
+
+    .btn-outlined {
+        @apply border border-basketball-200 bg-basketball-50 text-thick-blue-950 hover:border-basketball-500 active:bg-basketball-600 active:text-white focus:outline-basketball-500 disabled:border-transparent disabled:bg-neutral-50 disabled:text-neutral-500 disabled:ring-2 disabled:ring-neutral-300;
+    }
+
+    .btn-text {
+        @apply text-thick-blue-950 hover:bg-basketball-50 active:bg-basketball-600 active:text-white focus:outline-basketball-500 disabled:border-transparent disabled:bg-neutral-50 disabled:text-neutral-500 disabled:ring-2 disabled:ring-neutral-300;
+    }
+
+    .btn-cta {
+        @apply bg-cta shadow-cta text-white border border-thick-blue-500 hover:bg-cta-hover hover:shadow-none active:shadow-cta-active active:bg-cta-active focus:bg-cta-focus focus:shadow-cta-focus disabled:bg-none disabled:border-transparent disabled:bg-neutral-50 disabled:text-neutral-500 disabled:ring-2 disabled:ring-neutral-200 disabled:shadow-none;
+    }
+
+    .btn-md {
+        @apply text-sm py-2 px-4 rounded-[80px] font-medium;
+    }
+
+    .btn-lg {
+        @apply py-3 px-6 rounded-[80px] font-medium;
+    }
+
+    /* inputs */
+    .input {
+        @apply outline-none text-type-50 placeholder-type-400 border-2 border-type-500 rounded-[8px] focus:border-thick-blue-500 focus:text-type-50 focus:shadow-input-focus invalid:border-red-600 disabled:border-neutral-100 disabled:bg-neutral-200 disabled:text-neutral-500;
+    }
+
+    .input-sm {
+        @apply py-2 px-3 font-normal text-sm;
+    }
+
+    .input-md {
+        @apply p-3 font-normal;
+    }
+}
