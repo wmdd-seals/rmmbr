@@ -7,46 +7,30 @@ const loader = new Loader({
     libraries: ['places']
 })
 
-export class GMap {
-    private maps: google.maps.Map | null | undefined = null
+export async function createMapWithMarkers(element: HTMLElement, center: Location, markers: Location[]): Promise<void> {
+    const mapOptions = {
+        center: {
+            lng: center[0],
+            lat: center[1]
+        },
+        zoom: 15,
+        mapId: 'rmmbr_map'
+    }
 
-    public constructor() {}
+    const [{ Map }, { AdvancedMarkerElement }] = await Promise.all([
+        loader.importLibrary('maps'),
+        loader.importLibrary('marker')
+    ])
 
-    public async initMap(element: HTMLElement, location: Location): Promise<void> {
-        const mapOptions = {
-            center: {
-                lng: location[0],
-                lat: location[1]
+    const map = new Map(element, mapOptions)
+
+    markers.forEach(location => {
+        new AdvancedMarkerElement({
+            position: {
+                lat: location[1],
+                lng: location[0]
             },
-            zoom: 15,
-            mapId: 'rmmbr_map'
-        }
-        try {
-            const { Map } = await loader.importLibrary('maps')
-            this.maps = new Map(element, mapOptions)
-        } catch (err) {
-            // todo: error handling
-            console.error(err)
-        }
-    }
-
-    public async putMarker(locations: Location[]): Promise<void> {
-        try {
-            const { AdvancedMarkerElement } = await loader.importLibrary('marker')
-
-            locations.forEach(location => {
-                new AdvancedMarkerElement({
-                    position: {
-                        lat: location[1],
-                        lng: location[0]
-                    },
-                    map: this.maps,
-                    title: 'hello'
-                })
-            })
-        } catch (err) {
-            // todo: error handling
-            console.error(err)
-        }
-    }
+            map
+        })
+    })
 }
