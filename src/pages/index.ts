@@ -8,10 +8,7 @@ let previousSection: HTMLElement | null
 
 function changeTab(event?: HashChangeEvent): void {
     const currentPageId = location.hash ? location.hash : '#home'
-    let previousPageId = '#home'
-    if (event && event.oldURL.includes('#')) {
-        previousPageId = event.oldURL.substring(event.oldURL.indexOf('#'))
-    }
+    const previousPageId = event?.oldURL.includes('#') ? event.oldURL.substring(event.oldURL.indexOf('#')) : '#home'
 
     for (const section of allSections) {
         if (currentPageId === '#' + section.id) {
