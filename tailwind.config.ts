@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 export default {
-    content: ['./index.html', './src/**/*.{ts,html}'],
+    content: ['./src/**/*.{ts,html}'],
     theme: {
         extend: {
             backgroundImage: {
