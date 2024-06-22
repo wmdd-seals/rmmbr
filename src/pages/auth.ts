@@ -1,5 +1,5 @@
 import { supabase } from 'src/api/supabase'
-import { PagePath } from '../utils/pagePath'
+import { PagePath } from '#utils'
 
 // exporting for unit testing
 export function authStateGuard(): void {

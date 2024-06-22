@@ -1,3 +1,3 @@
 export * from './types'
 export * from './gmap'
-export * from './pagePath.ts'
+export * from './page-path.ts'
