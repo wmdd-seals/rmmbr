@@ -20,7 +20,26 @@ export default [
             }
         },
         rules: {
+            '@typescript-eslint/no-misused-promises': [
+                'error',
+                {
+                    checksVoidReturn: {
+                        arguments: false,
+                        attributes: false
+                    }
+                }
+            ],
             '@typescript-eslint/explicit-function-return-type': 'error',
+            '@typescript-eslint/no-unnecessary-condition': 'error',
+            '@typescript-eslint/strict-boolean-expressions': [
+                'error',
+                {
+                    allowNullableString: true,
+                    allowNullableBoolean: true,
+                    allowNullableObject: true
+                }
+            ],
+
             '@typescript-eslint/return-await': ['error', 'in-try-catch'],
             '@typescript-eslint/prefer-optional-chain': 'error',
             '@typescript-eslint/await-thenable': 'error',
