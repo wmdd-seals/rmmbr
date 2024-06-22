@@ -1,5 +1,17 @@
-import { userApi } from '#api'
+import { supabase, userApi } from '#api'
 import { AuthResponse } from '@supabase/supabase-js'
+import { PagePath } from '#utils'
+
+async function redirectIfSignedIn(): Promise<void> {
+    const { data } = await supabase.auth.getUser()
+    if (!data.user) {
+        return
+    }
+    // if the user signed in redirect to top page
+    window.location.href = PagePath.Home
+}
+
+void redirectIfSignedIn()
 
 const passwordInput1 = document.getElementById('first-pass') as HTMLInputElement
 const passwordInput2 = document.getElementById('second-pass') as HTMLInputElement
@@ -63,15 +75,21 @@ async function signUpHandler(ev: MouseEvent): Promise<AuthResponse | void> {
     }
 
     try {
-        await userApi.signUp({
+        const { data } = await userApi.signUp({
             email: email,
             password: password,
             firstName: firstName,
             lastName: lastName
         })
+
+        if (!data.user) {
+            // user could be created
+            return
+        }
+
         // if signup succeeded redirect to "check the email" page.
         // TO FIX: the destination path below is just for sample
-        window.location.href = '/'
+        window.location.href = PagePath.SignIn
     } catch (err) {
         // TO DO: error handling
         console.error(err)
