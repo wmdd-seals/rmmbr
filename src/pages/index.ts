@@ -1,27 +1,26 @@
-const section1 = document.getElementById('home')!
-const section2 = document.getElementById('timeline')!
-const section3 = document.getElementById('memory')!
-const allSections = [section1, section2, section3]
+const tabs = {
+    ['#home']: document.getElementById('home')!,
+    ['#timeline']: document.getElementById('timeline')!,
+    ['#memory']: document.getElementById('memory')!
+}
 
-let currentSection: HTMLElement | null
-let previousSection: HTMLElement | null
+const isTab = (hash: string): hash is keyof typeof tabs =>
+    hash === '#home' || hash === '#timeline' || hash === '#memory'
 
-function changeTab(event?: HashChangeEvent): void {
-    const currentPageId = location.hash ? location.hash : '#home'
-    const previousPageId = event?.oldURL.includes('#') ? event.oldURL.substring(event.oldURL.indexOf('#')) : '#home'
+let currentTabId: keyof typeof tabs = '#home'
 
-    for (const section of allSections) {
-        if (currentPageId === '#' + section.id) {
-            currentSection = section
-        }
-        if (previousPageId === '#' + section.id) {
-            previousSection = section
-        }
-    }
+function changeTab(): void {
+    const hash = location.hash
+    if (hash === currentTabId) return
 
-    currentSection!.classList.toggle('hidden')
-    previousSection!.classList.toggle('hidden')
+    // toggle previous tab
+    tabs[currentTabId].classList.toggle('hidden')
+
+    currentTabId = isTab(hash) ? hash : '#home'
+
+    tabs[currentTabId].classList.toggle('hidden')
 }
 
 changeTab()
-window.addEventListener('hashchange', e => changeTab(e))
+
+window.addEventListener('hashchange', changeTab)
