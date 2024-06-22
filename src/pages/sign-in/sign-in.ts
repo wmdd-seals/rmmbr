@@ -8,7 +8,7 @@ async function redirectIfSignedIn(): Promise<void> {
     if (!data.user) {
         return
     }
-    // if the user signed in redirect to top page
+
     window.location.href = PagePath.Home
 }
 
@@ -25,9 +25,6 @@ function togglePasswordVisibility(e: MouseEvent): void {
 
 eye.addEventListener('click', e => togglePasswordVisibility(e))
 
-/**
- * The below is for sign-in
- */
 const signInForm = document.getElementById('signin-form') as HTMLFormElement
 const signInBtn = document.getElementById('signin-btn') as HTMLButtonElement
 
@@ -47,15 +44,11 @@ async function loginHandler(ev: MouseEvent): Promise<AuthTokenResponsePassword |
         })
 
         if (!data.user) {
-            // sign-in failed
             return
         }
 
-        // if sign-in succeeded redirect to homepage
-        // TO FIX: the destination path below is just for sample
         window.location.href = PagePath.Memory
     } catch (err) {
-        // TO DO: error handling
         console.error(err)
     }
 }

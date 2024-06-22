@@ -1,4 +1,4 @@
-import { supabase } from 'src/api/supabase'
+import { supabase } from '#api'
 import { PagePath } from '#utils'
 
 // exporting for unit testing
