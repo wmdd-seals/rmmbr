@@ -1,11 +1,13 @@
 import { supabase } from 'src/api/supabase'
-import { Path } from './path'
+import { PagePath } from '../utils/pagePath'
 
-export function authStateGuard(): void {
+function authStateGuard(): void {
     supabase.auth.onAuthStateChange((_, session) => {
         if (!session?.user) {
-            window.location.href = Path.signIn
+            window.location.href = PagePath.SignIn
             return
         }
     })
 }
+
+authStateGuard()

@@ -1,8 +1,17 @@
-import { userApi } from '#api'
+import { supabase, userApi } from '#api'
 import { AuthResponse } from '@supabase/supabase-js'
-import { Path, redirectIfSignedIn } from '#utils'
+import { PagePath } from '#utils'
 
-window.addEventListener('DOMContentLoaded', () => void redirectIfSignedIn())
+async function redirectIfSignedIn(): Promise<void> {
+    const { data } = await supabase.auth.getUser()
+    if (!data.user) {
+        return
+    }
+    // if the user signed in redirect to top page
+    window.location.href = PagePath.Home
+}
+
+void redirectIfSignedIn()
 
 const passwordInput1 = document.getElementById('first-pass') as HTMLInputElement
 const passwordInput2 = document.getElementById('second-pass') as HTMLInputElement
@@ -80,7 +89,7 @@ async function signUpHandler(ev: MouseEvent): Promise<AuthResponse | void> {
 
         // if signup succeeded redirect to "check the email" page.
         // TO FIX: the destination path below is just for sample
-        window.location.href = Path.signIn
+        window.location.href = PagePath.SignIn
     } catch (err) {
         // TO DO: error handling
         console.error(err)

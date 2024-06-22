@@ -1,8 +1,18 @@
 import { userApi } from '#api'
 import { AuthTokenResponsePassword } from '@supabase/supabase-js'
-import { Path, redirectIfSignedIn } from '#utils'
+import { PagePath } from '#utils'
+import { supabase } from '#api'
 
-window.addEventListener('DOMContentLoaded', () => void redirectIfSignedIn())
+async function redirectIfSignedIn(): Promise<void> {
+    const { data } = await supabase.auth.getUser()
+    if (!data.user) {
+        return
+    }
+    // if the user signed in redirect to top page
+    window.location.href = PagePath.Home
+}
+
+void redirectIfSignedIn()
 
 const passwordInput = document.getElementById('password') as HTMLInputElement
 const eye = document.getElementById('eye')!
@@ -43,7 +53,7 @@ async function loginHandler(ev: MouseEvent): Promise<AuthTokenResponsePassword |
 
         // if sign-in succeeded redirect to homepage
         // TO FIX: the destination path below is just for sample
-        window.location.href = Path.memory
+        window.location.href = PagePath.Memory
     } catch (err) {
         // TO DO: error handling
         console.error(err)
