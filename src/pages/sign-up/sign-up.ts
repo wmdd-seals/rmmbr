@@ -96,4 +96,4 @@ async function signUpHandler(ev: MouseEvent): Promise<AuthResponse | void> {
     }
 }
 
-signUpBtn?.addEventListener('click', e => void signUpHandler(e))
+signUpBtn.addEventListener('click', e => void signUpHandler(e))

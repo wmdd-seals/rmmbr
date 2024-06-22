@@ -60,4 +60,4 @@ async function loginHandler(ev: MouseEvent): Promise<AuthTokenResponsePassword |
     }
 }
 
-signInBtn?.addEventListener('click', e => void loginHandler(e))
+signInBtn.addEventListener('click', e => void loginHandler(e))
