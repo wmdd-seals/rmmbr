@@ -26,7 +26,8 @@ class StorageApi {
 
     public getFileUrl(filePath: string): string | null {
         const { data } = supabase.storage.from('rmmbr').getPublicUrl(filePath)
-        return data?.publicUrl
+
+        return data.publicUrl
     }
 }
 
