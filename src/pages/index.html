@@ -9,10 +9,10 @@
         <script type="module" src="./auth.ts"></script>
     </head>
 
-    <body>
-        <header>
-            <div class="mx-6 flex justify-between mt-9 py-4">
-                <img src="" alt="logo" />
+    <body class="bg-ui-50">
+        <header class="sticky z-10 top-0 backdrop-blur">
+            <div class="mx-6 flex justify-between py-6">
+                <img src="/white-logo.svg" alt="logo" />
                 <div class="flex gap-4">
                     <i class="fa-regular fa-bell self-center" aria-hidden="true"></i>
                     <span class="sr-only">notification bell</span>
@@ -21,13 +21,13 @@
             </div>
         </header>
 
-        <main class="mb-5 mx-6">
+        <main class="max-w-[1304px] mx-auto">
             <div class="lg:grid lg:gap-5 lg:grid-cols-3 lg:grid-rows-6 lg:auto-rows-min">
                 <div class="md:flex md:justify-between lg:row-start-1 lg:col-span-2">
                     <span class="font-bold md:text-xl lg:text-2xl">
                         Hello,<br />
                         <span class="text-2xl md:text-4xl lg:text-5xl">Janiffer</span><br />
-                        You have 48 memories saved!
+                        You have <span data-memory="count"></span> saved!
                     </span>
                     <button
                         id="create-memory-btn"
@@ -97,8 +97,13 @@
                     <h2 class="font-bold text-xl mt-8 mb-4">Remember this?</h2>
 
                     <div class="mb-16">
-                        <div class="flex gap-3 overflow-x-auto w-full">
-                            <div
+                        <ul class="flex gap-3 overflow-x-auto w-full">
+                            <template id="memory-flashback-thumbnail">
+                                <li>
+                                    <a href="" class="block"></a>
+                                </li>
+                            </template>
+                            <li
                                 class="flex-shrink-0 w-[270px] h-[400px] md:w-[250px] md:h-[260px] rounded-lg bg-gray-200 relative"
                             >
                                 <div class="absolute right-0 m-2">7 years ago</div>
@@ -108,39 +113,8 @@
                                         >My first salsa dance class</span
                                     >
                                 </div>
-                            </div>
-                            <div
-                                class="flex-shrink-0 w-[270px] h-[400px] md:w-[250px] md:h-[260px] rounded-lg bg-gray-200 relative"
-                            >
-                                <div class="absolute right-0 m-2">7 years ago</div>
-                                <img src="" alt="" class="object-cover" />
-                                <div class="absolute bottom-0 m-4">
-                                    May 30, 2017 <br /><span class="font-bold text-xl md:text-lg"
-                                        >Planting a new guava tree in the backyard</span
-                                    >
-                                </div>
-                            </div>
-                            <div
-                                class="flex-shrink-0 w-[270px] h-[400px] md:w-[250px] md:h-[260px] rounded-lg bg-gray-200 relative"
-                            >
-                                <div class="absolute right-0 m-2">7 years ago</div>
-                                <img src="" alt="" class="object-cover" />
-                                <div class="absolute bottom-0 m-4">
-                                    May 30, 2017 <br /><span class="font-bold text-xl md:text-lg">Trip to Mexico</span>
-                                </div>
-                            </div>
-                            <div
-                                class="flex-shrink-0 w-[270px] h-[400px] md:w-[250px] md:h-[260px] rounded-lg bg-gray-200 relative"
-                            >
-                                <div class="absolute right-0 m-2">7 years ago</div>
-                                <img src="" alt="" class="object-cover" />
-                                <div class="absolute bottom-0 m-4">
-                                    April 13, 2017 <br /><span class="font-bold text-xl md:text-lg"
-                                        >Northern lights</span
-                                    >
-                                </div>
-                            </div>
-                        </div>
+                            </li>
+                        </ul>
                     </div>
                 </section>
 
@@ -214,7 +188,7 @@
             <section id="memory" class="hidden md:block">
                 <div class="md:flex md:justify-between">
                     <h2 class="font-bold text-xl mt-8 mb-2 flex gap-5 justify-between items-center md:justify-start">
-                        Your memories<span class="font-normal">250 memories</span>
+                        Your memories<span class="font-normal"><span data-memory="count"></span></span>
                     </h2>
                     <div
                         class="h-[40px] bg-gray-200 rounded-lg flex justify-center items-center py-2 mb-4 md:mb-0 md:self-end md:px-14"
@@ -230,113 +204,27 @@
                     <li class="bg-gray-500 text-white rounded-md px-1 py-1 mb-1 text-xs">× Mexico</li>
                 </ul>
 
-                <ul class="grid gap-6 md:grid-cols-3 lg:grid-cols-4">
-                    <li class="inline-block h-[260px]">
-                        <div class="h-[190px] bg-gray-200 relative rounded-t-lg">
-                            <img src="" alt="" />
-                            <div class="absolute right-0 bottom-0 m-2">May 30,2017</div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg mx-4 mt-2">Lorem, ipsum dolor.</h3>
-                            <p class="text-sm mx-4">120 items・in Barcelona, Spain</p>
-                        </div>
-                    </li>
-                    <li class="inline-block h-[260px]">
-                        <div class="h-[190px] bg-gray-200 relative rounded-t-lg">
-                            <img src="" alt="" />
-                            <div class="absolute right-0 bottom-0 m-2">May 30,2017</div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg mx-4 mt-2">Lorem, ipsum dolor.</h3>
-                            <p class="text-sm mx-4">120 items・in Barcelona, Spain</p>
-                        </div>
-                    </li>
-                    <li class="inline-block h-[260px]">
-                        <div class="h-[190px] bg-gray-200 relative rounded-t-lg">
-                            <img src="" alt="" />
-                            <div class="absolute right-0 bottom-0 m-2">May 30,2017</div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg mx-4 mt-2">Lorem, ipsum dolor.</h3>
-                            <p class="text-sm mx-4">120 items・in Barcelona, Spain</p>
-                        </div>
-                    </li>
-                    <li class="inline-block h-[260px]">
-                        <div class="h-[190px] bg-gray-200 relative rounded-t-lg">
-                            <img src="" alt="" />
-                            <div class="absolute right-0 bottom-0 m-2">May 30,2017</div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg mx-4 mt-2">Lorem, ipsum dolor.</h3>
-                            <p class="text-sm mx-4">120 items・in Barcelona, Spain</p>
-                        </div>
-                    </li>
-                    <li class="inline-block h-[260px]">
-                        <div class="h-[190px] bg-gray-200 relative rounded-t-lg">
-                            <img src="" alt="" />
-                            <div class="absolute right-0 bottom-0 m-2">May 30,2017</div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg mx-4 mt-2">Lorem, ipsum dolor.</h3>
-                            <p class="text-sm mx-4">120 items・in Barcelona, Spain</p>
-                        </div>
-                    </li>
-                    <li class="inline-block h-[260px]">
-                        <div class="h-[190px] bg-gray-200 relative rounded-t-lg">
-                            <img src="" alt="" />
-                            <div class="absolute right-0 bottom-0 m-2">May 30,2017</div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg mx-4 mt-2">Lorem, ipsum dolor.</h3>
-                            <p class="text-sm mx-4">120 items・in Barcelona, Spain</p>
-                        </div>
-                    </li>
-                    <li class="inline-block h-[260px]">
-                        <div class="h-[190px] bg-gray-200 relative rounded-t-lg">
-                            <img src="" alt="" />
-                            <div class="absolute right-0 bottom-0 m-2">May 30,2017</div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg mx-4 mt-2">Lorem, ipsum dolor.</h3>
-                            <p class="text-sm mx-4">120 items・in Barcelona, Spain</p>
-                        </div>
-                    </li>
-                    <li class="inline-block h-[260px]">
-                        <div class="h-[190px] bg-gray-200 relative rounded-t-lg">
-                            <img src="" alt="" />
-                            <div class="absolute right-0 bottom-0 m-2">May 30,2017</div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg mx-4 mt-2">Lorem, ipsum dolor.</h3>
-                            <p class="text-sm mx-4">120 items・in Barcelona, Spain</p>
-                        </div>
-                    </li>
-                    <li class="inline-block h-[260px]">
-                        <div class="h-[190px] bg-gray-200 relative rounded-t-lg">
-                            <img src="" alt="" />
-                            <div class="absolute right-0 bottom-0 m-2">May 30,2017</div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg mx-4 mt-2">Lorem, ipsum dolor.</h3>
-                            <p class="text-sm mx-4">120 items・in Barcelona, Spain</p>
-                        </div>
-                    </li>
-                    <li class="inline-block h-[260px]">
-                        <div class="h-[190px] bg-gray-200 relative rounded-t-lg">
-                            <img src="" alt="" />
-                            <div class="absolute right-0 bottom-0 m-2">May 30,2017</div>
-                        </div>
-                        <div>
-                            <h3 class="text-lg mx-4 mt-2">Lorem, ipsum dolor.</h3>
-                            <p class="text-sm mx-4">120 items・in Barcelona, Spain</p>
-                        </div>
-                    </li>
+                <ul class="grid gap-6 md:grid-cols-3 lg:grid-cols-4" id="memory-list">
+                    <template id="memory-thumbnail">
+                        <li class="bg-white rounded-lg overflow-hidden">
+                            <a data-memory="link" href="" class="block">
+                                <div class="aspect-[5/3] bg-gray-200 relative">
+                                    <img src="" alt="Memory cover" />
+                                    <div class="text-xs absolute right-2 bottom-3">May 30,2017</div>
+                                </div>
+                                <div class="py-2 px-3">
+                                    <h3 data-memory="title">Lorem, ipsum dolor.</h3>
+                                    <p class="text-xs">120 items・in Barcelona, Spain</p>
+                                </div>
+                            </a>
+                        </li>
+                    </template>
                 </ul>
             </section>
 
             <!-- Filter Screen -->
             <!-- Filter Panel is an overlay side panel and is supposed to appear when a user clickes on "Filter"button. I skipped implementing this just for now and will do it later with Type Script. -->
-            <div>
+            <div hidden>
                 <div class="bg-gray-100 my-8 mx-6 px-6 py-7 rounded-lg">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-bold">Filters</h2>

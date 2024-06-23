@@ -1,4 +1,6 @@
 import './memory-creation-modal'
+import { memoryApi, supabase } from '#api'
+import { User } from '#domain'
 
 const tabs = {
     ['#home']: document.getElementById('home')!,
@@ -38,3 +40,31 @@ customElements
     })
 
 window.addEventListener('hashchange', changeTab)
+
+supabase.auth
+    .getUser()
+    .then(async user => {
+        if (!user.data.user) {
+            return
+        }
+
+        const memories = await memoryApi.getAll(user.data.user.id as User['id'])
+        const count = memories.length
+
+        document.querySelectorAll('[data-memory="count"]').forEach(el => {
+            el.innerHTML = `${count} ${count === 1 ? 'memory' : 'memories'}`
+        })
+
+        const thumbnail = document.getElementById('memory-thumbnail') as HTMLTemplateElement
+        const memoryList = document.getElementById('memory-list') as HTMLUListElement
+
+        memories.forEach(mem => {
+            const node = thumbnail.content.cloneNode(true) as HTMLLIElement
+
+            node.querySelector('[data-memory="title"]')!.innerHTML = mem.title
+            ;(node.querySelector('[data-memory="link"]') as HTMLAnchorElement).href = `/memory/?id=${mem.id}`
+
+            memoryList.appendChild(node)
+        })
+    })
+    .catch(console.error)
