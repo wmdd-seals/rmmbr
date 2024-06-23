@@ -6,50 +6,44 @@
         <title>rmmbr | Sign In</title>
 
         <link rel="stylesheet" href="../app.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     </head>
 
-    <body class="flex min-h-screen">
-        <div class="hidden md:block w-[55%]"></div>
-        <div class="text-center max-w-sm mx-auto flex flex-col justify-center md:w-[45%]">
-            <div class="mx-auto">
-                <h1 class="my-10 text-3xl font-bold">Sign in to rmmbr</h1>
-                <form action="#" method="post" id="signin-form">
-                    <div class="flex flex-col gap-3 mx-0">
-                        <input
-                            type="email"
-                            placeholder="Email Address"
-                            name="email"
-                            required
-                            class="border-solid border-2 border-slate-300 rounded-md w-full p-1 focus:border-green-600 focus:outline-none"
-                        />
-                        <div
-                            class="flex items-center border-solid border-2 border-slate-300 rounded-md focus-within:border-green-600"
-                        >
-                            <input
-                                type="password"
-                                placeholder="Password"
-                                name="password"
-                                id="password"
-                                required
-                                class="w-full rounded-md p-1 focus:outline-none"
-                            />
+    <body
+        class="flex h-screen bg-no-repeat bg-cover bg-center p-6 justify-end"
+        style="background-image: url(/sign-bg.jpg)"
+    >
+        <div
+            class="bg-white bg-opacity-90 px-24 flex flex-col gap-14 justify-center items-center border-[3px] border-neutral-300 rounded-2xl shadow-lg"
+        >
+            <div class="flex flex-col items-center">
+                <h1 class="text-5xl font-normal text-basketball-500 mb-4">welcome to</h1>
 
-                            <i class="fa-regular fa-eye-slash p-1" id="eye"></i>
-                        </div>
-                        <button
-                            id="signin-btn"
-                            type="button"
-                            value="Sign In"
-                            class="bg-sky-950 text-white rounded-md w-full p-1"
-                        >
-                            Sign In
-                        </button>
-                    </div>
-                </form>
-                <p class="border-t-2 my-8 px-8">
-                    Don't have an account?<a href="/sign-up/" class="font-bold" class="font-bold ml-1"> Sign up</a>
-                </p>
+                <img src="/logo.svg" alt="Logo" />
+            </div>
+
+            <form action="#" method="post" id="signin-form" class="flex flex-col gap-3 lg:w-96">
+                <div class="flex flex-col">
+                    <label for="email">Email</label>
+                    <input type="email" placeholder="Email" name="email" class="input input-md" />
+                </div>
+
+                <div class="flex flex-col">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        name="password"
+                        id="password"
+                        class="input input-md"
+                    />
+                </div>
+
+                <button id="signin-btn" type="button" value="Sign In" class="btn-filled btn-lg">Login</button>
+            </form>
+
+            <div class="self-stretch px-3 flex flex-col gap-4">
+                <hr />
+                <p class="mx-auto">Don't have an account?<a href="/sign-up/" class="font-semibold"> Sign up</a></p>
             </div>
         </div>
 
