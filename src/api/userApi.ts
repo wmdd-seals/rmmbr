@@ -5,8 +5,8 @@ import {
     SignUpWithPasswordCredentials
 } from '@supabase/supabase-js'
 import { supabase } from './supabase'
-import { PromiseMaybe } from '#utils'
 import { User } from '#domain'
+import { PromiseMaybe } from '#utils'
 import { ApiTable } from './utils'
 import { storageApi } from './storageApi'
 
