@@ -8,6 +8,7 @@ import { supabase } from './supabase'
 import { PromiseMaybe } from '#utils'
 import { User } from '#domain'
 import { ApiTable } from './utils'
+import { storageApi } from './storageApi'
 
 export type SignUpUserCredential = {
     email: string
@@ -47,18 +48,53 @@ class UserApi {
     public async getCurrent(): PromiseMaybe<User> {
         return supabase.auth.getUser().then(
             async res => {
-                const user = res.data.user
-                if (!user) return null
+                const sessionUser = res.data.user
+                if (!sessionUser) return null
 
                 const userResponse = await supabase
                     .from(ApiTable.Users)
                     .select<'*', User>('*')
-                    .eq('id' satisfies keyof User, user.id)
+                    .eq('id' satisfies keyof User, sessionUser.id)
 
-                return userResponse.data?.[0]
+                const user = userResponse.data?.[0]
+
+                if (!user) return null
+
+                return {
+                    ...user,
+                    avatarSrc: storageApi.getFileUrl(this.constructAvatarPath(user.id))
+                }
             },
             () => null
         )
+    }
+
+    public async uploadAvatar(userId: User['id'], file: File): Promise<boolean> {
+        const res = await storageApi.overwriteFile(this.constructAvatarPath(userId), file)
+
+        return !res.error
+    }
+
+    public deleteAvatar(userId: User['id']): Promise<boolean> {
+        return storageApi.deleteFile(this.constructAvatarPath(userId))
+    }
+
+    public async update(
+        userId: User['id'],
+
+        payload: Partial<Pick<User, 'firstName' | 'lastName'>>
+    ): PromiseMaybe<User> {
+        const res = await supabase
+            .from(ApiTable.Users)
+            .update<typeof payload>(payload)
+            .eq('id' satisfies keyof User, userId)
+            .select<'*', User>('*')
+
+        return res.data?.[0]
+    }
+
+    private constructAvatarPath(userId: User['id']): string {
+        return `user/${userId}/avatar`
     }
 }
 
