@@ -34,3 +34,23 @@ export async function createMapWithMarkers(element: HTMLElement, center: Locatio
         })
     })
 }
+
+export const [{ Autocomplete }, { Geocoder }] = await Promise.all([
+    loader.importLibrary('places'),
+    loader.importLibrary('geocoding')
+])
+
+export async function codeAddress(address: string): Promise<google.maps.LatLng | void> {
+    if (!address) {
+        console.error('The address value was null or undefined')
+        return
+    }
+    try {
+        const { results } = await new Geocoder().geocode({ address: address })
+        const location = results[0].geometry.location
+        return location
+    } catch (err) {
+        console.error(err)
+        return
+    }
+}

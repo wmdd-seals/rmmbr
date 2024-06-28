@@ -1,3 +1,5 @@
+import './memory/memory-creation-modal'
+
 const tabs = {
     ['#home']: document.getElementById('home')!,
     ['#timeline']: document.getElementById('timeline')!,
@@ -22,5 +24,17 @@ function changeTab(): void {
 }
 
 changeTab()
+
+customElements
+    .whenDefined('memory-creation-modal')
+    .then(() => {
+        document.querySelector('#create-memory-btn')?.addEventListener('click', ev => {
+            ev.preventDefault()
+            document.querySelector('memory-creation-modal')?.setAttribute('open', 'true')
+        })
+    })
+    .catch(err => {
+        console.error(err)
+    })
 
 window.addEventListener('hashchange', changeTab)

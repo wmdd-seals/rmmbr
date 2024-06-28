@@ -20,6 +20,7 @@ export default {
                 ui: {
                     50: '#F6F7FA',
                     100: '#EDEEF5',
+                    150: '#E6E8F0',
                     200: '#D5D9E5',
                     300: '#B4BCCC',
                     400: '#929EB2',
