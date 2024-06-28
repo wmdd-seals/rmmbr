@@ -63,7 +63,7 @@ async function updateAndDisplayAvatar(): Promise<void> {
 
         userApi.getAvatarUrl(userId, avatarImgSm, deleteImageBtn2)
         userApi.getAvatarUrl(userId, avatarImgLg, deleteImageBtn1)
-        file = undefined
+        avatarInput.value = ''
     } catch (error) {
         console.error(error)
     }
