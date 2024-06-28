@@ -4,7 +4,7 @@ export class ModalBaseLayer extends HTMLElement {
     }
 
     protected renderBaseLayer(): void {
-        this.innerHTML = /*html*/ `
+        this.innerHTML = `
             <style>
                 body:has(div[data-modal-base]:not(.hidden)) {
                     overflow: hidden
@@ -14,7 +14,7 @@ export class ModalBaseLayer extends HTMLElement {
                 <div data-modal-content class="
                     flex z-20 flex-col justify-between items-center
                     w-11/12 h-[95%] px-8 py-10 bg-white rounded-2xl
-                    sm:w-3/5 sm:h-[90%] sm:max-w-[900px]
+                    sm:w-3/5 sm:h-[90%] sm:max-w-[56rem]
                 "></div>
             </div>
         `

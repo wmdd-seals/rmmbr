@@ -1,8 +1,9 @@
-import { supabase } from 'src/api/supabase'
+import { supabase } from './../api/supabase'
 import { Memory } from '#domain'
-import { Autocomplete, codeAddress, Location, PromiseMaybe } from '#utils'
+import { codeAddress, initAutoComplete, Location, PromiseMaybe } from '#utils'
 import { memoryApi } from 'src/api/memory'
-import { ModalBaseLayer } from '../../components/modal-base-layer'
+import { ModalBaseLayer } from '../components/modal-base-layer'
+import { userApi } from '#api'
 
 const explanations = {
     title: {
@@ -25,13 +26,13 @@ class MemoryCreationModal extends ModalBaseLayer {
         super()
     }
 
-    protected connectedCallback(): void {
+    protected async connectedCallback(): Promise<void> {
         this.renderBaseLayer()
-        this.renderFirstContent()
+        await this.renderFirstContent()
     }
 
-    private renderFirstContent(): void {
-        ;(this.querySelector('[data-modal-content]') as HTMLElement).innerHTML = /* html */ `
+    private async renderFirstContent(): Promise<void> {
+        ;(this.querySelector('[data-modal-content]') as HTMLElement).innerHTML = `
             <header class="flex justify-between font-bold w-full text-black">
                 <h2 class="text-2xl">Create</h2>
                 <button id="modal-close-btn" class="text-lg text-basketball-500 w-7">
@@ -39,7 +40,7 @@ class MemoryCreationModal extends ModalBaseLayer {
                 </button>
             </header>
             <section
-                class="flex align-center justify-center items-center flex-col w-full h-full md:w-3/4 sm:max-w-[450px] sm:gap-5"
+                class="flex align-center justify-center items-center flex-col w-full h-full md:w-3/4 sm:max-w-[28rem] sm:gap-5"
             >
                 <div data-index="0" class="flex w-full flex-col items-center justify-center flex-grow">
                     <label class="text-base w-full justify-center flex flex-col gap-2 text-black my-auto"
@@ -103,13 +104,13 @@ class MemoryCreationModal extends ModalBaseLayer {
                 </div>
             </section>
             <footer class="flex gap-3 justify-around w-full sm:justify-end">
-                <button id="previous" class="flex justify-center rounded-[80px] w-1/2 py-2 text-black text-base sm:w-fit sm:px-8">Cancel</button>
-                <button id="next" class="flex justify-center rounded-[80px] w-1/2 py-2 bg-basketball-500 text-white text-base sm:w-fit sm:px-8">Continue</button>
+                <button id="previous" class="flex justify-center rounded-[5rem] w-1/2 py-2 text-black text-base sm:w-fit sm:px-8">Cancel</button>
+                <button id="next" class="flex justify-center rounded-[5rem] w-1/2 py-2 bg-basketball-500 text-white text-base sm:w-fit sm:px-8">Continue</button>
 
             </footer>
         `
 
-        new Autocomplete(document.querySelector('input[name="place"]') as HTMLInputElement)
+        await initAutoComplete(document.querySelector('input[name="place"]') as HTMLInputElement)
 
         const changeBtnLabel = (): void => {
             if (this.inputIndex === 0) {
@@ -139,10 +140,10 @@ class MemoryCreationModal extends ModalBaseLayer {
                 })
         }
 
-        const goPreviousHandler = (ev: MouseEvent): void => {
+        const goPreviousHandler = async (ev: MouseEvent): Promise<void> => {
             ev.preventDefault()
             if (this.inputIndex < 1) {
-                this.close()
+                await this.close()
             } else {
                 this.querySelector(`[data-index="${this.inputIndex}"]`)?.classList.toggle('hidden')
                 this.inputIndex -= 1
@@ -150,8 +151,6 @@ class MemoryCreationModal extends ModalBaseLayer {
             }
 
             changeBtnLabel()
-
-            return
         }
 
         const goNextHandler = (ev: MouseEvent): void => {
@@ -165,8 +164,6 @@ class MemoryCreationModal extends ModalBaseLayer {
             }
 
             changeBtnLabel()
-
-            return
         }
 
         ;(this.querySelector('#previous') as HTMLButtonElement).addEventListener('click', goPreviousHandler)
@@ -175,7 +172,7 @@ class MemoryCreationModal extends ModalBaseLayer {
     }
 
     private renderSecondContent(): void {
-        ;(this.querySelector('[data-modal-content]') as HTMLElement).innerHTML = /* html */ `
+        ;(this.querySelector('[data-modal-content]') as HTMLElement).innerHTML = `
             <header class="flex justify-between font-bold w-full text-black">
                 <h2 class="text-2xl">Create</h2>
                 <button id="modal-close-btn" class="text-lg text-basketball-500 w-7">
@@ -183,7 +180,7 @@ class MemoryCreationModal extends ModalBaseLayer {
                 </button>
             </header>
             <section
-                class="flex align-center justify-center items-center flex-col w-full sm:max-w-[700px] sm:gap-5"
+                class="flex align-center justify-center items-center flex-col w-full sm:max-w-[43.75rem] sm:gap-5"
             >
                 <div class="
                     flex w-full flex-col px-4 py-9 gap-3 bg-ui-200 bg-opacity-20 text-white items-center rounded-xl
@@ -206,28 +203,32 @@ class MemoryCreationModal extends ModalBaseLayer {
         ;(this.querySelector('#modal-close-btn') as HTMLButtonElement).addEventListener('click', () => this.close())
     }
 
-    private close(): void {
+    private async close(): Promise<void> {
         this.open = null
-        this.reset()
+        await this.reset()
     }
 
-    private reset(): void {
-        this.renderFirstContent()
+    private async reset(): Promise<void> {
+        await this.renderFirstContent()
         this.inputIndex = 0
     }
 
     private async createMemory(): PromiseMaybe<Memory | void> {
         const location = await codeAddress((document.querySelector('input[name="place"]') as HTMLInputElement).value)
 
-        const { data, error } = await supabase.auth.getSession()
+        const currentUser = await userApi.getCurrent()
+        if (!currentUser) {
+            return
+        }
+
         const newMemory = {
             title: (this.querySelector('input[name="title"]') as HTMLInputElement).value,
-            location: location ? ([location.lng(), location.lat()] as Location) : null,
-            ownerId: data.session?.user.id as Memory['ownerId'],
+            location: location ? ([location[0], location[1]] as Location) : null,
+            ownerId: currentUser.id,
             date: (this.querySelector('input[name="date"]') as HTMLInputElement).value
         }
 
-        if (error || newMemory.title.length < 1 || newMemory.ownerId.length < 1 || newMemory.date.length < 1) {
+        if (newMemory.title.length < 1 || newMemory.ownerId.length < 1 || newMemory.date.length < 1) {
             return
         }
 

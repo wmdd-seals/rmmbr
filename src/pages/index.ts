@@ -1,4 +1,4 @@
-import './memory/memory-creation-modal'
+import './memory-creation-modal'
 
 const tabs = {
     ['#home']: document.getElementById('home')!,
