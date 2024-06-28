@@ -1,4 +1,3 @@
-import { supabase } from './../api/supabase'
 import { Memory } from '#domain'
 import { codeAddress, initAutoComplete, Location, PromiseMaybe } from '#utils'
 import { memoryApi } from 'src/api/memory'
