@@ -8,6 +8,7 @@ import { supabase } from './supabase'
 import { PromiseMaybe } from '#utils'
 import { User } from '#domain'
 import { ApiTable } from './utils'
+import { storageApi } from './storageApi'
 
 export type SignUpUserCredential = {
     email: string
@@ -20,7 +21,6 @@ export type SignInUserCredential = {
     email: string
     password: string
 }
-
 class UserApi {
     public signUp(userCredential: SignUpUserCredential): Promise<AuthResponse> {
         const loginCred: SignUpWithPasswordCredentials = {
@@ -55,10 +55,42 @@ class UserApi {
                     .select<'*', User>('*')
                     .eq('id' satisfies keyof User, user.id)
 
+                console.log(user)
+                console.log(userResponse)
+                console.log(userResponse.data?.[0])
+
                 return userResponse.data?.[0]
             },
             () => null
         )
+    }
+
+    public async uploadAvatar(userId: User['id'], file: File): Promise<boolean> {
+        const res = await storageApi.overwriteFile(`${userId}/avatar`, file)
+        console.log(res)
+        return !res.error
+    }
+
+    public deleteAvatar(userId: User['id']): Promise<boolean> {
+        return storageApi.deleteFile(`${userId}/avatar`)
+    }
+
+    public async updateName(
+        userId: User['id'],
+
+        nameData: { firstName?: User['firstName']; lastName?: User['lastName'] }
+    ): Promise<boolean> {
+        const res = await supabase.from('users').update(nameData).eq('id', userId)
+        return !res.error
+    }
+
+    public getAvatarUrl(userId: User['id'], avatarImg: HTMLImageElement, deleteImageBtn: HTMLElement): void {
+        const avatarUrl = storageApi.getFileUrl(`${userId}/avatar`) + '?t=' + new Date().getTime()
+        if (!avatarUrl) {
+            return
+        }
+        avatarImg.src = avatarUrl
+        deleteImageBtn.textContent = 'Delete Icon'
     }
 }
 

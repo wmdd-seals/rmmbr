@@ -1,6 +1,6 @@
 import { supabase } from './supabase'
 
-type StorageFilePromise =
+export type StorageFilePromise =
     | {
           data: { path: string }
           error: null
@@ -15,19 +15,21 @@ type StorageFilePromise =
  */
 class StorageApi {
     public uploadFile(filePath: string, file: Blob): Promise<StorageFilePromise> {
-        return supabase.storage.from('rmmbr').upload(filePath, file)
+        return supabase.storage.from('user-avatar').upload(filePath, file)
     }
 
     public overwriteFile(filePath: string, file: Blob): Promise<StorageFilePromise> {
-        return supabase.storage.from('rmmbr').upload(filePath, file, {
-            upsert: true
-        })
+        return supabase.storage.from('user-avatar').upload(filePath, file, { upsert: true })
     }
 
     public getFileUrl(filePath: string): string | null {
-        const { data } = supabase.storage.from('rmmbr').getPublicUrl(filePath)
-
+        const { data } = supabase.storage.from('user-avatar').getPublicUrl(filePath)
         return data.publicUrl
+    }
+
+    public async deleteFile(filePath: string): Promise<boolean> {
+        const res = await supabase.storage.from('user-avatar').remove([filePath])
+        return !res.error
     }
 }
 
