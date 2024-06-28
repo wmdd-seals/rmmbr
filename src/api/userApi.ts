@@ -5,6 +5,9 @@ import {
     SignUpWithPasswordCredentials
 } from '@supabase/supabase-js'
 import { supabase } from './supabase'
+import { PromiseMaybe } from '#utils'
+import { User } from '#domain'
+import { ApiTable } from './utils'
 
 export type SignUpUserCredential = {
     email: string
@@ -39,6 +42,23 @@ class UserApi {
 
     public signOut(): Promise<{ error: AuthError | null }> {
         return supabase.auth.signOut()
+    }
+
+    public async getCurrent(): PromiseMaybe<User> {
+        return supabase.auth.getUser().then(
+            async res => {
+                const user = res.data.user
+                if (!user) return null
+
+                const userResponse = await supabase
+                    .from(ApiTable.Users)
+                    .select<'*', User>('*')
+                    .eq('id' satisfies keyof User, user.id)
+
+                return userResponse.data?.[0]
+            },
+            () => null
+        )
     }
 }
 
