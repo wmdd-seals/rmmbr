@@ -12,7 +12,7 @@ class ShareMemoryWindow extends HTMLElement {
         this.innerHTML = `
            <div class="w-full h-full flex flex-col items-center">
                 <label class="flex w-full relative box-border h-8">
-                    <input type="email" placeholder="i.e: abcdefe@mail.com"
+                    <input data-search-collaborator type="email" placeholder="i.e: abcdefe@mail.com"
                         class="input-sm  w-full box-border text-black bg-ui-50 rounded-lg border-2 border-slate-400"
                     >
                     <i class="fa-solid fa-user-plus ml-auto absolute -translate-y-1/2 top-1/2 right-3 text-basketball-500"></i>
@@ -74,6 +74,7 @@ class ShareMemoryWindow extends HTMLElement {
             }
             this.collaborators.push(user)
             this.appendCollaborator(user)
+            ;(this.querySelector('[data-search-collaborator]') as HTMLInputElement).value = ''
         })
     }
 
