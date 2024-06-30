@@ -18,7 +18,7 @@ class ShareMemoryWindow extends HTMLElement {
                     <i class="fa-solid fa-user-plus ml-auto absolute -translate-y-1/2 top-1/2 right-3 text-basketball-500"></i>
                 </label>
                 <ul data-shared-users-list class="relative flex flex-col flex-grow gap-3 w-full overflow-y-scroll py-6">
-                    <li data-placeholder-not-shared class="absolute top-6 w-full flex flex-row justify-between items-center">
+                    <li data-placeholder-not-shared class="absolute z-0 top-6 w-full flex flex-row justify-between items-center">
                             <p class="w-full flex justify-center text-slate-400 text-base leading-normal">Not shared with anyone</p>
                     </li>
                 </ul>
@@ -89,17 +89,16 @@ class ShareMemoryWindow extends HTMLElement {
     }
 
     private appendCollaborator(user: User): void {
-        this.querySelector('[data-placeholder-not-shared]')?.remove()
+        // this.querySelector('[data-placeholder-not-shared]')?.remove()
         const newLi = document.createElement('li')
+        newLi.classList.add('z-10', 'bg-white', 'w-full', 'flex', 'flex-row', 'justify-between', 'items-center')
         newLi.innerHTML = `
-                    <li class="w-full flex flex-row justify-between items-center">
-                        <div>
-                            <p class="text-slate-800 text-base leading-normal">${user.firstName} ${user.lastName}</p>
-                            <span class="text-slate-600 text-xs">${user.email}</span>
-                        </div>
-                        <button data-stop-sharing="${user.id}" class="text-slate-900 py-2 px-4 box-border text-sm font-medium">Delete</button>
-                    </li>
-                `
+            <div>
+                <p class="text-slate-800 text-base leading-normal">${user.firstName} ${user.lastName}</p>
+                <span class="text-slate-600 text-xs">${user.email}</span>
+            </div>
+            <button data-stop-sharing="${user.id}" class="text-slate-900 py-2 px-4 box-border text-sm font-medium">Delete</button>
+        `
         this.querySelector('[data-shared-users-list]')?.appendChild(newLi)
         ;(this.querySelector(`[data-stop-sharing="${user.id}"]`) as HTMLButtonElement).addEventListener(
             'click',
