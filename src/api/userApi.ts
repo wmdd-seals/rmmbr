@@ -81,7 +81,6 @@ class UserApi {
 
     public async update(
         userId: User['id'],
-
         payload: Partial<Pick<User, 'firstName' | 'lastName'>>
     ): PromiseMaybe<User> {
         const res = await supabase
@@ -95,6 +94,11 @@ class UserApi {
 
     private constructAvatarPath(userId: User['id']): string {
         return `user/${userId}/avatar`
+    }
+
+    public async getTargetUser(key: keyof User, value: User['email'] | User['id']): PromiseMaybe<User> {
+        const res = await supabase.from(ApiTable.Users).select<string, User>('*').eq(key, value)
+        return res.data?.[0]
     }
 }
 

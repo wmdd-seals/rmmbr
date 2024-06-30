@@ -1,8 +1,9 @@
 import { Memory } from '#domain'
 import { Location, PromiseMaybe, initAutoComplete, codeAddress } from '#utils'
 import { memoryApi } from 'src/api/memory'
-import { ModalBaseLayer } from '../components/modal-base-layer'
 import { userApi } from '#api'
+import { ModalBaseLayer } from '../components/modal-base-layer'
+import '../components/share-memory-window'
 
 const explanations = {
     title: {
@@ -19,8 +20,24 @@ const explanations = {
     }
 }
 
+const paginationBtnLabel = [
+    {
+        previous: 'Cancel',
+        next: 'Continue'
+    },
+    {
+        previous: 'Previous',
+        next: 'Continue'
+    },
+    {
+        previous: 'Previous',
+        next: 'Create event'
+    }
+]
+
 class MemoryCreationModal extends ModalBaseLayer {
     private inputIndex: number = 0
+    private memory: Memory | null = null
     public constructor() {
         super()
     }
@@ -34,8 +51,8 @@ class MemoryCreationModal extends ModalBaseLayer {
         ;(this.querySelector('[data-modal-content]') as HTMLElement).innerHTML = `
             <header class="flex justify-between font-bold w-full text-black">
                 <h2 class="text-2xl">Create</h2>
-                <button id="modal-close-btn" class="text-lg text-basketball-500 w-7">
-                    <i class="fa-solid fa-x"></i>
+                <button id="modal-close-btn" class="text-basketball-500 text-3xl">
+                    &#10005;
                 </button>
             </header>
             <section
@@ -112,26 +129,18 @@ class MemoryCreationModal extends ModalBaseLayer {
         await initAutoComplete(document.querySelector('input[name="place"]') as HTMLInputElement)
 
         const changeBtnLabel = (): void => {
-            if (this.inputIndex === 0) {
-                ;(this.querySelector('#previous') as HTMLButtonElement).textContent = 'Cancel'
-            }
-
-            if (this.inputIndex === 1) {
-                ;(this.querySelector('#previous') as HTMLButtonElement).textContent = 'Previous'
-                ;(this.querySelector('#next') as HTMLButtonElement).textContent = 'Continue'
-            }
-
-            if (this.inputIndex === 2) {
-                ;(this.querySelector('#next') as HTMLButtonElement).textContent = 'Create event'
-            }
+            ;(this.querySelector('#previous') as HTMLButtonElement).textContent =
+                paginationBtnLabel[this.inputIndex].previous
+            ;(this.querySelector('#next') as HTMLButtonElement).textContent = paginationBtnLabel[this.inputIndex].next
         }
 
         const handleCreateMemory = (): void => {
             this.createMemory()
-                .then(res => {
-                    if (!res) {
+                .then(memory => {
+                    if (!memory) {
                         return
                     }
+                    this.memory = memory
                     this.renderSecondContent()
                 })
                 .catch(err => {
@@ -172,33 +181,30 @@ class MemoryCreationModal extends ModalBaseLayer {
 
     private renderSecondContent(): void {
         ;(this.querySelector('[data-modal-content]') as HTMLElement).innerHTML = `
-            <header class="flex justify-between font-bold w-full text-black">
-                <h2 class="text-2xl">Create</h2>
-                <button id="modal-close-btn" class="text-lg text-basketball-500 w-7">
-                    <i class="fa-solid fa-x"></i>
+            <header class="flex justify-between font-bold w-full text-black h-fit">
+                <h2 class="text-2xl text-slate-800">Create</h2>
+                <button id="modal-close-btn" class="text-basketball-500 text-3xl">
+                    &#10005;
                 </button>
             </header>
             <section
-                class="flex align-center justify-center items-center flex-col w-full sm:max-w-[43.75rem] sm:gap-5"
+                class="flex flex-col flex-grow align-center overflow-hidden justify-start items-center w-full sm:max-w-[43.75rem] sm:gap-5"
             >
                 <div class="
-                    flex w-full flex-col px-4 py-9 gap-3 bg-ui-200 bg-opacity-20 text-white items-center rounded-xl
+                    flex w-full flex-col px-4 py-9 gap-3 bg-opacity-20 text-white justify-center items-center rounded-xl h-[30%]
                     sm:text-black
                 ">
                     <i class="fa-solid fa-check text-3xl text-basketball-500"></i>
-                    <p class="text-sm text-center text-basketball-500">Awesome!<br>Your event is created.<br><span class="text-type-300">Share the fun with friends!</span></p>
+                    <p class="text-lg text-center text-basketball-600">Awesome!<br>Your event is created.<br><span class="text-slate-600">Share the fun with friends!</span></p>
                 </div>
-                <div>
-                    <h3>Share with:</h3>
-                    <ul data-shared-users>
-                        ${/* the shared users here */ ''}
-                    </ul>
+                <div class="w-full flex flex-col flex-grow items-center justify-start h-[70%]">
+                    <h3 class="h-[1.8rem] w-full text-left text-slate-900 text-sm">Add contributers to your event</h3>
+                    <share-memory-window memory-id new-memory="true" class="w-full h-[calc(100%-1.8rem)]"></share-memory-window>
                 </div>
             </section>
-            <footer class="flex gap-3 justify-around w-full sm:justify-end">
-                here would be the share link
-            </footer>
         `
+
+        this.querySelector('share-memory-window')?.setAttribute('memory-id', this.memory!.id)
         ;(this.querySelector('#modal-close-btn') as HTMLButtonElement).addEventListener('click', () => this.close())
     }
 
@@ -210,6 +216,7 @@ class MemoryCreationModal extends ModalBaseLayer {
     private async reset(): Promise<void> {
         await this.renderFirstContent()
         this.inputIndex = 0
+        this.memory = null
     }
 
     private async createMemory(): PromiseMaybe<Memory> {
