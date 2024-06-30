@@ -3,7 +3,7 @@ import { Memory, User } from '#domain'
 import { PromiseMaybe } from '#utils'
 
 class ShareMemoryWindow extends HTMLElement {
-    protected sharedUsers: User[] = []
+    protected collaborators: User[] = []
     public constructor() {
         super()
     }
@@ -46,20 +46,20 @@ class ShareMemoryWindow extends HTMLElement {
 
     protected async attributeChangedCallback(): Promise<void> {
         if (this.newMemory) return
-        await this.initSharedUsers()
+        await this.getExistingCollaborators()
         this.renderAllCollaborators()
     }
 
-    private async initSharedUsers(): PromiseMaybe<void> {
-        if (!this.memoryId || this.newMemory) {
+    private async getExistingCollaborators(): PromiseMaybe<void> {
+        if (!this.memoryId) {
             return
         }
-        const sharedUsers = await memoryApi.getAllCollaborators(this.memoryId)
-        this.sharedUsers = [...sharedUsers!]
+        const collaborators = await memoryApi.getAllCollaborators(this.memoryId)
+        this.collaborators = [...collaborators!]
     }
 
     private async addNewCollaborator(email: User['email']): Promise<void> {
-        const user = await userApi.getTargetUser('email', email)
+        const user = await userApi.getTargetUser({ key: 'email', value: email })
         if (!user) {
             return
         }
@@ -72,7 +72,7 @@ class ShareMemoryWindow extends HTMLElement {
             if (!res) {
                 return
             }
-            this.sharedUsers.push(user)
+            this.collaborators.push(user)
             this.appendCollaborator(user)
         })
     }
@@ -82,7 +82,7 @@ class ShareMemoryWindow extends HTMLElement {
             this.memoryId!,
             (ev.target as HTMLButtonElement).dataset.stopSharing as User['id']
         )
-        this.sharedUsers = this.sharedUsers.filter(u => {
+        this.collaborators = this.collaborators.filter(u => {
             return u.id !== (ev.target as HTMLButtonElement).dataset.stopSharing
         })
         ;(ev.target as HTMLButtonElement).parentElement!.remove()
@@ -108,8 +108,9 @@ class ShareMemoryWindow extends HTMLElement {
     }
 
     private renderAllCollaborators(): void {
+        if (!this.collaborators.length) return
         ;(this.querySelector('[data-shared-users-list]') as HTMLUListElement).innerHTML = ''
-        this.sharedUsers.forEach(u => {
+        this.collaborators.forEach(u => {
             this.appendCollaborator(u)
         })
     }

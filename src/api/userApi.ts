@@ -96,7 +96,10 @@ class UserApi {
         return `user/${userId}/avatar`
     }
 
-    public async getTargetUser(key: keyof User, value: User['email'] | User['id']): PromiseMaybe<User> {
+    public async getTargetUser({
+        key,
+        value
+    }: { key: 'email'; value: User['email'] } | { key: 'id'; value: User['id'] }): PromiseMaybe<User> {
         const res = await supabase.from(ApiTable.Users).select<string, User>('*').eq(key, value)
         return res.data?.[0]
     }
