@@ -45,6 +45,7 @@ class MemoryCreationModal extends ModalBaseLayer {
     protected async connectedCallback(): Promise<void> {
         this.renderBaseLayer()
         await this.renderFirstContent()
+        this.attachValidationListeners()
     }
 
     private async renderFirstContent(): Promise<void> {
@@ -62,6 +63,7 @@ class MemoryCreationModal extends ModalBaseLayer {
                     <label class="text-base w-full justify-center flex flex-col gap-2 text-black my-auto"
                     >Name of the event
                         <input
+                            required
                             name="title"
                             placeholder="Tell me the memorable moment"
                             type="text"
@@ -79,6 +81,7 @@ class MemoryCreationModal extends ModalBaseLayer {
                     <label class="flex text-base w-full justify-center flex-col gap-2 text-black my-auto"
                     >Date of the event
                         <input
+                            required
                             name="date"
                             placeholder="Put the date"
                             type="date"
@@ -97,6 +100,7 @@ class MemoryCreationModal extends ModalBaseLayer {
                         Description
                         <span class="w-full opacity-80 text-xs text-type-500">Give a brief description of this event</span>
                         <textarea
+                            required
                             name="description"
                             id="description"
                             class="w-full p-3 rounded-md border-2 border-ui-500 bg-ui-50"
@@ -121,7 +125,7 @@ class MemoryCreationModal extends ModalBaseLayer {
             </section>
             <footer class="flex gap-3 justify-around w-full sm:justify-end">
                 <button id="previous" class="flex justify-center rounded-[5rem] w-1/2 py-2 text-black text-base sm:w-fit sm:px-8">Cancel</button>
-                <button id="next" class="flex justify-center rounded-[5rem] w-1/2 py-2 bg-basketball-500 text-white text-base sm:w-fit sm:px-8">Continue</button>
+                <button id="next" class="flex justify-center rounded-[5rem] w-1/2 py-2 bg-basketball-500 text-white text-base sm:w-fit sm:px-8 disabled:opacity-50" disabled>Continue</button>
 
             </footer>
         `
@@ -156,6 +160,8 @@ class MemoryCreationModal extends ModalBaseLayer {
                 this.querySelector(`[data-index="${this.inputIndex}"]`)?.classList.toggle('hidden')
                 this.inputIndex -= 1
                 this.querySelector(`[data-index="${this.inputIndex}"]`)?.classList.toggle('hidden')
+                ;(this.querySelector('#next') as HTMLButtonElement).disabled = !this.areAllRequiredFieldsFilled()
+                this.attachValidationListeners()
             }
 
             changeBtnLabel()
@@ -166,9 +172,12 @@ class MemoryCreationModal extends ModalBaseLayer {
             if (this.inputIndex > 1) {
                 handleCreateMemory()
             } else {
+                if (!this.areAllRequiredFieldsFilled()) return
                 this.querySelector(`[data-index="${this.inputIndex}"]`)?.classList.toggle('hidden')
                 this.inputIndex += 1
                 this.querySelector(`[data-index="${this.inputIndex}"]`)?.classList.toggle('hidden')
+                ;(this.querySelector('#next') as HTMLButtonElement).disabled = !this.areAllRequiredFieldsFilled()
+                this.attachValidationListeners()
             }
 
             changeBtnLabel()
@@ -177,6 +186,27 @@ class MemoryCreationModal extends ModalBaseLayer {
         ;(this.querySelector('#previous') as HTMLButtonElement).addEventListener('click', goPreviousHandler)
         ;(this.querySelector('#next') as HTMLButtonElement).addEventListener('click', goNextHandler)
         ;(this.querySelector('#modal-close-btn') as HTMLButtonElement).addEventListener('click', () => this.close())
+    }
+
+    private areAllRequiredFieldsFilled(): boolean {
+        return Array.from(
+            this.querySelectorAll(
+                `[data-index="${this.inputIndex}"] input[required],
+                [data-index="${this.inputIndex}"] textarea[required]`
+            )
+        ).every(e => (e as HTMLInputElement | HTMLTextAreaElement).value)
+    }
+
+    private attachValidationListeners(): void {
+        this.querySelectorAll(
+            `[data-index="${this.inputIndex}"] input[required],
+            [data-index="${this.inputIndex}"] textarea[required]`
+        ).forEach(e =>
+            e.addEventListener('blur', ev => {
+                ev.preventDefault()
+                ;(this.querySelector('#next') as HTMLButtonElement).disabled = !this.areAllRequiredFieldsFilled()
+            })
+        )
     }
 
     private renderSecondContent(): void {
