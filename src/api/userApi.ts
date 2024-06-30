@@ -96,7 +96,7 @@ class UserApi {
         return `user/${userId}/avatar`
     }
 
-    public async getTargetUser({
+    public async findUser({
         key,
         value
     }: { key: 'email'; value: User['email'] } | { key: 'id'; value: User['id'] }): PromiseMaybe<User> {
