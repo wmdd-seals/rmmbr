@@ -1,6 +1,6 @@
 import { supabase, userApi } from '#api'
 import { AuthResponse } from '@supabase/supabase-js'
-import { PagePath } from '#utils'
+import { PagePath, q } from '#utils'
 
 async function redirectIfSignedIn(): Promise<void> {
     const { data } = await supabase.auth.getUser()
@@ -50,10 +50,10 @@ const signUpForm = document.getElementById('signup-form') as HTMLFormElement
 async function signUpHandler(ev: MouseEvent): Promise<AuthResponse | void> {
     ev.preventDefault()
 
-    const email = (signUpForm.querySelector('input[name=email]') as HTMLInputElement).value
-    const password = (signUpForm.querySelector('input[name=firstPassword]') as HTMLInputElement).value
-    const firstName = (signUpForm.querySelector('input[name=firstName]') as HTMLInputElement).value
-    const lastName = (signUpForm.querySelector('input[name=lastName]') as HTMLInputElement).value
+    const email = q<HTMLInputElement>('input[name=email]', signUpForm).value
+    const password = q<HTMLInputElement>('input[name=firstPassword]', signUpForm).value
+    const firstName = q<HTMLInputElement>('input[name=firstName]', signUpForm).value
+    const lastName = q<HTMLInputElement>('input[name=lastName]', signUpForm).value
 
     if (email.length < 1 || password.length < 1 || firstName.length < 1 || lastName.length < 1) {
         return

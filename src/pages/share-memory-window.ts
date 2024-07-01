@@ -1,7 +1,11 @@
 import { memoryApi, userApi } from '#api'
 import { Memory, User } from '#domain'
-import { PromiseMaybe } from '#utils'
+import { PromiseMaybe, q } from '#utils'
 
+/**
+ * How to use this
+ *
+ */
 class ShareMemoryWindow extends HTMLElement {
     protected collaborators: User[] = []
     public constructor() {
@@ -38,7 +42,7 @@ class ShareMemoryWindow extends HTMLElement {
                 </div>
            </div>
         `
-        ;(this.querySelector('input[type="email"]') as HTMLInputElement).addEventListener(
+        q<HTMLInputElement>('input[type="email"]', this).addEventListener(
             'blur',
             (ev: FocusEvent) => void this.addNewCollaborator((ev.currentTarget as HTMLInputElement).value)
         )
@@ -60,21 +64,25 @@ class ShareMemoryWindow extends HTMLElement {
 
     private async addNewCollaborator(email: User['email']): Promise<void> {
         const user = await userApi.findUser({ key: 'email', value: email })
-        if (!user) {
+        if (!user || user.id === this.memoryOwnerId) {
+            /**
+             * todo: error handling
+             * case1: user does not exist → just show the message "could not find the user"
+             * case2: trying add the memory's owner email → can not add additional the access to the memory owner
+             */
             return
         }
         await memoryApi.shareWith(this.memoryId!, [user.id]).then(res => {
-            /**
-             * todo: error handling
-             * 1. case that the user already exist
-             * 2. case taht the user did not exist or other(no need to show the reason)
-             */
             if (!res) {
+                /**
+                 * todo: error handling
+                 * 1. case that the user already exist
+                 */
                 return
             }
             this.collaborators.push(user)
             this.appendCollaborator(user)
-            ;(this.querySelector('[data-search-collaborator]') as HTMLInputElement).value = ''
+            q<HTMLInputElement>('[data-search-collaborator]', this).value = ''
         })
     }
 
@@ -90,7 +98,6 @@ class ShareMemoryWindow extends HTMLElement {
     }
 
     private appendCollaborator(user: User): void {
-        // this.querySelector('[data-placeholder-not-shared]')?.remove()
         const newLi = document.createElement('li')
         newLi.classList.add('z-10', 'bg-white', 'w-full', 'flex', 'flex-row', 'justify-between', 'items-center')
         newLi.innerHTML = `
@@ -100,8 +107,8 @@ class ShareMemoryWindow extends HTMLElement {
             </div>
             <button data-stop-sharing="${user.id}" class="text-slate-900 py-2 px-4 box-border text-sm font-medium">Delete</button>
         `
-        this.querySelector('[data-shared-users-list]')?.appendChild(newLi)
-        ;(this.querySelector(`[data-stop-sharing="${user.id}"]`) as HTMLButtonElement).addEventListener(
+        q<HTMLUListElement>('[data-shared-users-list]', this).appendChild(newLi)
+        q<HTMLButtonElement>(`[data-stop-sharing="${user.id}"]`, this).addEventListener(
             'click',
             (ev: MouseEvent) => void this.stopSharingWith(ev)
         )
@@ -109,7 +116,7 @@ class ShareMemoryWindow extends HTMLElement {
 
     private renderAllCollaborators(): void {
         if (!this.collaborators.length) return
-        ;(this.querySelector('[data-shared-users-list]') as HTMLUListElement).innerHTML = ''
+        q<HTMLUListElement>('[data-shared-users-list]', this).innerHTML = ''
         this.collaborators.forEach(u => {
             this.appendCollaborator(u)
         })
@@ -121,6 +128,10 @@ class ShareMemoryWindow extends HTMLElement {
 
     public get memoryId(): Memory['id'] | null {
         return this.getAttribute('memory-id') as Memory['id']
+    }
+
+    public get memoryOwnerId(): Memory['ownerId'] | null {
+        return this.getAttribute('memory-owner-id') as Memory['ownerId']
     }
 
     public get newMemory(): boolean {

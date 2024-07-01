@@ -1,5 +1,5 @@
 import { Memory } from '#domain'
-import { Location, PromiseMaybe, initAutoComplete, codeAddress } from '#utils'
+import { Location, PromiseMaybe, initAutoComplete, codeAddress, q } from '#utils'
 import { memoryApi } from 'src/api/memory'
 import { userApi } from '#api'
 import { ModalBaseLayer } from '../components/modal-base-layer'
@@ -49,7 +49,7 @@ class MemoryCreationModal extends ModalBaseLayer {
     }
 
     private async renderFirstContent(): Promise<void> {
-        ;(this.querySelector('[data-modal-content]') as HTMLElement).innerHTML = `
+        q<HTMLDivElement>('[data-modal-content]', this).innerHTML = `
             <header class="flex justify-between font-bold w-full text-black">
                 <h2 class="text-2xl">Create</h2>
                 <button id="modal-close-btn" class="text-basketball-500 text-3xl">
@@ -130,12 +130,11 @@ class MemoryCreationModal extends ModalBaseLayer {
             </footer>
         `
 
-        await initAutoComplete(document.querySelector('input[name="place"]') as HTMLInputElement)
+        await initAutoComplete(q<HTMLInputElement>('input[name="place"]'))
 
         const changeBtnLabel = (): void => {
-            ;(this.querySelector('#previous') as HTMLButtonElement).textContent =
-                paginationBtnLabel[this.inputIndex].previous
-            ;(this.querySelector('#next') as HTMLButtonElement).textContent = paginationBtnLabel[this.inputIndex].next
+            q<HTMLButtonElement>('#previous', this).textContent = paginationBtnLabel[this.inputIndex].previous
+            q<HTMLButtonElement>('#next', this).textContent = paginationBtnLabel[this.inputIndex].next
         }
 
         const handleCreateMemory = (): void => {
@@ -157,10 +156,10 @@ class MemoryCreationModal extends ModalBaseLayer {
             if (this.inputIndex < 1) {
                 await this.close()
             } else {
-                this.querySelector(`[data-index="${this.inputIndex}"]`)?.classList.toggle('hidden')
+                q<HTMLDivElement>(`[data-index="${this.inputIndex}"]`, this).classList.toggle('hidden')
                 this.inputIndex -= 1
-                this.querySelector(`[data-index="${this.inputIndex}"]`)?.classList.toggle('hidden')
-                ;(this.querySelector('#next') as HTMLButtonElement).disabled = !this.areAllRequiredFieldsFilled()
+                q<HTMLDivElement>(`[data-index="${this.inputIndex}"]`, this).classList.toggle('hidden')
+                q<HTMLButtonElement>('#next', this).disabled = !this.areAllRequiredFieldsFilled()
                 this.attachValidationListeners()
             }
 
@@ -173,19 +172,19 @@ class MemoryCreationModal extends ModalBaseLayer {
                 handleCreateMemory()
             } else {
                 if (!this.areAllRequiredFieldsFilled()) return
-                this.querySelector(`[data-index="${this.inputIndex}"]`)?.classList.toggle('hidden')
+                q<HTMLDivElement>(`[data-index="${this.inputIndex}"]`, this).classList.toggle('hidden')
                 this.inputIndex += 1
-                this.querySelector(`[data-index="${this.inputIndex}"]`)?.classList.toggle('hidden')
-                ;(this.querySelector('#next') as HTMLButtonElement).disabled = !this.areAllRequiredFieldsFilled()
+                q<HTMLDivElement>(`[data-index="${this.inputIndex}"]`, this).classList.toggle('hidden')
+                q<HTMLButtonElement>('#next', this).disabled = !this.areAllRequiredFieldsFilled()
                 this.attachValidationListeners()
             }
 
             changeBtnLabel()
         }
 
-        ;(this.querySelector('#previous') as HTMLButtonElement).addEventListener('click', goPreviousHandler)
-        ;(this.querySelector('#next') as HTMLButtonElement).addEventListener('click', goNextHandler)
-        ;(this.querySelector('#modal-close-btn') as HTMLButtonElement).addEventListener('click', () => this.close())
+        q<HTMLButtonElement>('#previous', this).addEventListener('click', goPreviousHandler)
+        q<HTMLButtonElement>('#next', this).addEventListener('click', goNextHandler)
+        q<HTMLButtonElement>('#modal-close-btn', this).addEventListener('click', () => this.close())
     }
 
     private areAllRequiredFieldsFilled(): boolean {
@@ -204,13 +203,13 @@ class MemoryCreationModal extends ModalBaseLayer {
         ).forEach(e =>
             e.addEventListener('input', ev => {
                 ev.preventDefault()
-                ;(this.querySelector('#next') as HTMLButtonElement).disabled = !this.areAllRequiredFieldsFilled()
+                q<HTMLButtonElement>('#next', this).disabled = !this.areAllRequiredFieldsFilled()
             })
         )
     }
 
     private renderSecondContent(): void {
-        ;(this.querySelector('[data-modal-content]') as HTMLElement).innerHTML = `
+        q<HTMLDivElement>('[data-modal-content]', this).innerHTML = `
             <header class="flex justify-between font-bold w-full text-black h-fit">
                 <h2 class="text-2xl text-slate-800">Create</h2>
                 <button id="modal-close-btn" class="text-basketball-500 text-3xl">
@@ -234,8 +233,10 @@ class MemoryCreationModal extends ModalBaseLayer {
             </section>
         `
 
-        this.querySelector('share-memory-window')?.setAttribute('memory-id', this.memory!.id)
-        ;(this.querySelector('#modal-close-btn') as HTMLButtonElement).addEventListener('click', () => this.close())
+        const shareMemoryWindow = q<HTMLElement>('share-memory-window', this)
+        shareMemoryWindow.setAttribute('memory-id', this.memory!.id)
+        shareMemoryWindow.setAttribute('memory-owner-id', this.memory!.ownerId)
+        q<HTMLButtonElement>('#modal-close-btn', this).addEventListener('click', () => this.close())
     }
 
     private async close(): Promise<void> {
@@ -250,7 +251,7 @@ class MemoryCreationModal extends ModalBaseLayer {
     }
 
     private async createMemory(): PromiseMaybe<Memory> {
-        const location = await codeAddress((document.querySelector('input[name="place"]') as HTMLInputElement).value)
+        const location = await codeAddress(q<HTMLInputElement>('input[name="place"]', this).value)
 
         const currentUser = await userApi.getCurrent()
         if (!currentUser) {
@@ -258,10 +259,10 @@ class MemoryCreationModal extends ModalBaseLayer {
         }
 
         const newMemory = {
-            title: (this.querySelector('input[name="title"]') as HTMLInputElement).value,
+            title: q<HTMLInputElement>('input[name="title"]', this).value,
             location: location ? ([location[0], location[1]] as Location) : null,
             ownerId: currentUser.id,
-            date: (this.querySelector('input[name="date"]') as HTMLInputElement).value
+            date: q<HTMLInputElement>('input[name="date"]', this).value
         }
 
         if (newMemory.title.length < 1 || newMemory.ownerId.length < 1 || newMemory.date.length < 1) {
@@ -276,7 +277,7 @@ class MemoryCreationModal extends ModalBaseLayer {
     }
 
     protected attributeChangedCallback(): void {
-        this.querySelector('[data-modal-base]')?.classList.toggle('hidden')
+        q<HTMLDivElement>('[data-modal-base]', this).classList.toggle('hidden')
     }
 
     public get open(): boolean {
