@@ -6,34 +6,43 @@
         <title>rmmbr</title>
         <link rel="stylesheet" href="./app.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
         <script type="module" src="./auth.ts"></script>
+        <script defer type="module" src="./index.ts"></script>
     </head>
 
-    <body class="bg-ui-50">
-        <header class="sticky z-10 top-0 backdrop-blur">
-            <div class="mx-6 flex justify-between py-6">
-                <img src="/white-logo.svg" alt="logo" />
-                <div class="flex gap-4">
-                    <i class="fa-regular fa-bell self-center" aria-hidden="true"></i>
-                    <span class="sr-only">notification bell</span>
-                    <img src="" alt="icon" />
-                </div>
+    <!-- style="background-image: url(/sign-bg.jpg); background-position: top center; background-size: 100% 55rem" -->
+    <body class="bg-ui-50 bg-no-repeat" style="">
+        <header
+            class="p-6 flex justify-between sticky z-10 top-0 backdrop-blur bg-gradient-to-tr from-thick-blue-600/45 to-thick-blue-800/45"
+        >
+            <img src="/white-logo.svg" alt="logo" />
+
+            <div class="flex gap-4">
+                <i class="fa-regular fa-bell self-center" aria-hidden="true"></i>
+                <span class="sr-only">notification bell</span>
+                <img
+                    src=""
+                    alt="User avatar"
+                    data-user="avatar"
+                    class="object-cover rounded-full aspect-square w-12 sm:hidden md:hidden lg:block"
+                />
             </div>
         </header>
 
         <main class="max-w-[1304px] mx-auto">
             <div class="lg:grid lg:gap-5 lg:grid-cols-3 lg:grid-rows-6 lg:auto-rows-min">
-                <div class="md:flex md:justify-between lg:row-start-1 lg:col-span-2">
-                    <span class="font-bold md:text-xl lg:text-2xl">
-                        Hello,<br />
-                        <span class="text-2xl md:text-4xl lg:text-5xl">Janiffer</span><br />
-                        You have <span data-memory="count"></span> saved!
+                <div
+                    class="flex flex-col items-center gap-8 md:flex-row md:justify-between md:items-end lg:row-start-1 lg:col-span-2"
+                >
+                    <span class="flex flex-col items-center md:items-start md:text-xl lg:text-2xl">
+                        <span class="text-xl font-bold">Hello,</span>
+                        <span class="text-5xl leading-tight font-bold font-source" data-user="name"></span>
+                        <span class="text-lg font-medium">You have <span data-memory="count"></span> saved!</span>
                     </span>
-                    <button
-                        id="create-memory-btn"
-                        class="w-[33%] bg-black text-white rounded-lg mt-4 px-4 py-3 flex gap-2 justify-center items-center md:w-[15%] md:h-[40%] md:self-end lg:self-center lg:h-[30%]"
-                    >
-                        Create
+
+                    <button class="btn-cta btn-md" id="create-memory-btn">
+                        Create New
                         <span>+</span>
                     </button>
                 </div>
@@ -97,23 +106,21 @@
                     <h2 class="font-bold text-xl mt-8 mb-4">Remember this?</h2>
 
                     <div class="mb-16">
-                        <ul class="flex gap-3 overflow-x-auto w-full">
+                        <ul class="flex gap-3 overflow-x-auto w-full" id="flashback-list">
                             <template id="memory-flashback-thumbnail">
                                 <li>
-                                    <a href="" class="block"></a>
+                                    <a href="#" class="aspect-[4/5] h-64 flex flex-col bg-ui-100 rounded-2xl">
+                                        <span class="flex justify-end p-2 text-sm" data-memory="time-ago"
+                                            >7 years ago</span
+                                        >
+
+                                        <div class="mt-auto flex flex-col items-end p-4">
+                                            <span class="text-xs" data-memory="time">May 27, 2023</span>
+                                            <span class="font-bold" data-memory="title"></span>
+                                        </div>
+                                    </a>
                                 </li>
                             </template>
-                            <li
-                                class="flex-shrink-0 w-[270px] h-[400px] md:w-[250px] md:h-[260px] rounded-lg bg-gray-200 relative"
-                            >
-                                <div class="absolute right-0 m-2">7 years ago</div>
-                                <img src="" alt="" class="object-cover" />
-                                <div class="absolute bottom-0 m-4">
-                                    May 30, 2017 <br /><span class="font-bold text-xl md:text-lg"
-                                        >My first salsa dance class</span
-                                    >
-                                </div>
-                            </li>
                         </ul>
                     </div>
                 </section>
@@ -121,7 +128,7 @@
                 <!-- Timeline Section -->
                 <section
                     id="timeline"
-                    class="hidden md:flex md:justify-stretch md:gap-3 md:rounded-lg md:shadow-2xl md:p-8 lg:col-start-3 lg:row-span-full lg:flex-col"
+                    class="hidden md:bg-white md:flex md:justify-stretch md:gap-3 md:rounded-lg md:shadow-2xl md:p-8 lg:col-start-3 lg:row-span-full lg:flex-col"
                 >
                     <div class="md:grow-0">
                         <h2 class="font-bold text-xl mt-8 mb-4">Your timeline</h2>
@@ -190,11 +197,7 @@
                     <h2 class="font-bold text-xl mt-8 mb-2 flex gap-5 justify-between items-center md:justify-start">
                         Your memories<span class="font-normal"><span data-memory="count"></span></span>
                     </h2>
-                    <div
-                        class="h-[40px] bg-gray-200 rounded-lg flex justify-center items-center py-2 mb-4 md:mb-0 md:self-end md:px-14"
-                    >
-                        Filter
-                    </div>
+                    <button class="md:self-end btn-outlined btn-md" id="filter-btn">Filter</button>
                 </div>
 
                 <ul class="flex flex-wrap gap-x-2 mb-2">
@@ -208,8 +211,8 @@
                     <template id="memory-thumbnail">
                         <li class="bg-white rounded-lg overflow-hidden">
                             <a data-memory="link" href="" class="block">
-                                <div class="aspect-[5/3] bg-gray-200 relative">
-                                    <img src="" alt="Memory cover" />
+                                <div class="aspect-[5/3] bg-gray-200 relative flex">
+                                    <img src="" alt="Memory cover" class="object-cover" data-memory="cover" />
                                     <div class="text-xs absolute right-2 bottom-3">May 30,2017</div>
                                 </div>
                                 <div class="py-2 px-3">
@@ -221,106 +224,107 @@
                     </template>
                 </ul>
             </section>
+        </main>
 
-            <!-- Filter Screen -->
-            <!-- Filter Panel is an overlay side panel and is supposed to appear when a user clickes on "Filter"button. I skipped implementing this just for now and will do it later with Type Script. -->
-            <div hidden>
-                <div class="bg-gray-100 my-8 mx-6 px-6 py-7 rounded-lg">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold">Filters</h2>
-                        <button class="text-gray-700 text-2xl">&times;</button>
+        <div
+            class="fixed rounded-l-2xl z-30 top-0 right-0 bg-white h-screen translate-x-full w-[40%] transition-all duration-300"
+            id="filter-drawer"
+        >
+            <div class="bg-gray-100 my-8 mx-6 px-6 py-7 rounded-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">Filters</h2>
+                    <button class="text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2">Filter by categories</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lorem.</span
+                        >
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lorem.</span
+                        >
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lorem.ail</span
+                        >
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lorem.waii</span
+                        >
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lorem</span
+                        >
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lorem.odie</span
+                        >
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lorem.mmit</span
+                        >
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lorem.orkel</span
+                        >
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lore</span
+                        >
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lorem.ne</span
+                        >
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lorem.Jungle</span
+                        >
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lorem.waii</span
+                        >
+                        <span
+                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
+                            >Lorem.waii</span
+                        >
                     </div>
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold mb-2">Filter by categories</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lorem.</span
-                            >
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lorem.</span
-                            >
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lorem.ail</span
-                            >
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lorem.waii</span
-                            >
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lorem</span
-                            >
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lorem.odie</span
-                            >
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lorem.mmit</span
-                            >
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lorem.orkel</span
-                            >
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lore</span
-                            >
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lorem.ne</span
-                            >
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lorem.Jungle</span
-                            >
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lorem.waii</span
-                            >
-                            <span
-                                class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                                >Lorem.waii</span
-                            >
-                        </div>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2">Filter by date</h3>
+                    <input type="date" class="w-full border border-gray-300 px-3 py-2 rounded-lg" />
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold">Filter by place</h3>
+                    <input type="input" class="w-full border border-gray-300 px-3 py-2 rounded-lg my-2" />
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Mexico</span>
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Spain</span>
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Chile</span>
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Italia</span>
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; USA</span>
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Egipt</span>
                     </div>
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold mb-2">Filter by date</h3>
-                        <input type="date" class="w-full border border-gray-300 px-3 py-2 rounded-lg" />
-                    </div>
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold">Filter by place</h3>
-                        <input type="input" class="w-full border border-gray-300 px-3 py-2 rounded-lg my-2" />
-                        <div class="flex flex-wrap gap-2">
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Mexico</span>
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Spain</span>
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Chile</span>
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Italia</span>
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; USA</span>
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Egipt</span>
-                        </div>
-                    </div>
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold">Filter by collaborator</h3>
-                        <input type="input" class="w-full border border-gray-300 px-3 py-2 rounded-lg my-2" />
-                        <div class="flex flex-wrap gap-2">
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.l Scott</span>
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem. Schrute</span>
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.lpert</span>
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.Martinez</span>
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.esly</span>
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.Malone</span>
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem. Martin</span>
-                            <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.th Palmer</span>
-                        </div>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold">Filter by collaborator</h3>
+                    <input type="input" class="w-full border border-gray-300 px-3 py-2 rounded-lg my-2" />
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.l Scott</span>
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem. Schrute</span>
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.lpert</span>
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.Martinez</span>
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.esly</span>
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.Malone</span>
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem. Martin</span>
+                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.th Palmer</span>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
+
         <memory-creation-modal></memory-creation-modal>
-        <script type="module" src="./index.ts"></script>
     </body>
 </html>

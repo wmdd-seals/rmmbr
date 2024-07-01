@@ -60,10 +60,6 @@
     label {
         @apply text-sm font-medium;
     }
-
-    label+input.input {
-        @apply mt-2;
-    }
 }
 
 @layer utilities {

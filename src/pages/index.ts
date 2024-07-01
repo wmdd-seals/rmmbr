@@ -1,6 +1,6 @@
 import './memory-creation-modal'
-import { memoryApi, supabase } from '#api'
-import { User } from '#domain'
+import { memoryApi, storageApi, userApi } from '#api'
+import { q } from '#utils'
 
 const tabs = {
     ['#home']: document.getElementById('home')!,
@@ -27,29 +27,40 @@ function changeTab(): void {
 
 changeTab()
 
+window.addEventListener('hashchange', changeTab)
+
 customElements
     .whenDefined('memory-creation-modal')
     .then(() => {
-        document.querySelector('#create-memory-btn')?.addEventListener('click', ev => {
+        q('#create-memory-btn').addEventListener('click', ev => {
             ev.preventDefault()
-            document.querySelector('memory-creation-modal')?.setAttribute('open', 'true')
+            q('memory-creation-modal').setAttribute('open', 'true')
         })
     })
-    .catch(err => {
-        console.error(err)
-    })
+    .catch(console.error)
 
-window.addEventListener('hashchange', changeTab)
-
-supabase.auth
-    .getUser()
+userApi
+    .getCurrent()
     .then(async user => {
-        if (!user.data.user) {
+        if (!user) {
             return
         }
 
-        const memories = await memoryApi.getAll(user.data.user.id as User['id'])
+        q('[data-user=name]').innerHTML = user.firstName
+        q<HTMLImageElement>('[data-user=avatar]').src = user.avatarSrc || ''
+
+        const memories = await memoryApi.getAll(user.id)
         const count = memories.length
+        const memoryFlashbackList = q('#flashback-list')
+        const memoryFlashbackhTemplate = q<HTMLTemplateElement>('#memory-flashback-thumbnail')
+
+        memories.forEach(mem => {
+            const node = memoryFlashbackhTemplate.content.cloneNode(true) as HTMLLIElement
+
+            q('[data-memory=title]', node).innerHTML = mem.title
+
+            memoryFlashbackList.appendChild(node)
+        })
 
         document.querySelectorAll('[data-memory="count"]').forEach(el => {
             el.innerHTML = `${count} ${count === 1 ? 'memory' : 'memories'}`
@@ -61,10 +72,39 @@ supabase.auth
         memories.forEach(mem => {
             const node = thumbnail.content.cloneNode(true) as HTMLLIElement
 
-            node.querySelector('[data-memory="title"]')!.innerHTML = mem.title
-            ;(node.querySelector('[data-memory="link"]') as HTMLAnchorElement).href = `/memory/?id=${mem.id}`
+            q('[data-memory="title"]', node).innerHTML = mem.title
+            q<HTMLAnchorElement>('[data-memory="link"]', node).href = `/memory/?id=${mem.id}`
+            q<HTMLImageElement>('[data-memory=cover]', node).src = storageApi.getFileUrl(`memory/${mem.id}/cover`) || ''
 
             memoryList.appendChild(node)
+        })
+
+        let filtersOpen = false
+
+        q('#filter-btn').addEventListener('click', () => {
+            if (filtersOpen) return
+
+            const drawer = q('#filter-drawer')
+
+            const el = document.createElement('div')
+            el.classList.add('fixed', 'z-20', 'inset-0', 'transition-all', 'duration-300')
+            document.body.prepend(el)
+
+            // allow reflow/repaint browser events to happen
+            setTimeout(() => el.classList.add('backdrop-blur', 'bg-black', 'bg-opacity-65'))
+
+            el.addEventListener('click', () => {
+                if (!filtersOpen) return
+
+                el.classList.remove('backdrop-blur', 'bg-black', 'bg-opacity-65')
+                setTimeout(() => document.body.removeChild(el), 300)
+                drawer.style.transform = 'translateX(100%)'
+                filtersOpen = false
+            })
+
+            drawer.style.transform = 'translateX(0)'
+
+            filtersOpen = true
         })
     })
     .catch(console.error)

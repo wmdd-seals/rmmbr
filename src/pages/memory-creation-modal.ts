@@ -1,5 +1,5 @@
 import { Memory } from '#domain'
-import { codeAddress, initAutoComplete, Location, PromiseMaybe } from '#utils'
+import { Location, PromiseMaybe, initAutoComplete, codeAddress } from '#utils'
 import { memoryApi } from 'src/api/memory'
 import { ModalBaseLayer } from '../components/modal-base-layer'
 import { userApi } from '#api'
@@ -212,7 +212,7 @@ class MemoryCreationModal extends ModalBaseLayer {
         this.inputIndex = 0
     }
 
-    private async createMemory(): PromiseMaybe<Memory | void> {
+    private async createMemory(): PromiseMaybe<Memory> {
         const location = await codeAddress((document.querySelector('input[name="place"]') as HTMLInputElement).value)
 
         const currentUser = await userApi.getCurrent()
