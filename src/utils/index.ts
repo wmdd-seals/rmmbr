@@ -1,3 +1,4 @@
 export * from './types'
-export * from './gmap'
-export * from './page-path.ts'
+export { createMapWithMarkers, codeAddress, initAutoComplete } from './gmap'
+export { PagePath } from './page-path'
+export { q } from './query'

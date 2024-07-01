@@ -7,14 +7,14 @@ async function redirectIfSignedIn(): Promise<void> {
     if (!data.user) {
         return
     }
-    // if the user signed in redirect to top page
+
     window.location.href = PagePath.Home
 }
 
 void redirectIfSignedIn()
 
-const passwordInput1 = document.getElementById('first-pass') as HTMLInputElement
-const passwordInput2 = document.getElementById('second-pass') as HTMLInputElement
+const passwordInput1 = document.getElementById('first-password') as HTMLInputElement
+const passwordInput2 = document.getElementById('second-password') as HTMLInputElement
 const passwordInputs = [passwordInput1, passwordInput2]
 
 const eye1 = document.getElementById('eye1')!
@@ -44,33 +44,18 @@ function checkIfPasswordsMatch(e: Event): void {
     passwordInput2.setCustomValidity('')
 }
 
-const submitBtn = document.getElementById('submit-button') as HTMLInputElement
-submitBtn.addEventListener('click', checkIfPasswordsMatch)
-
-/**
- * The below is for sign up
- */
-const signUpBtn = document.getElementById('submit-button') as HTMLButtonElement
+const signUpBtn = document.getElementById('signup-btn') as HTMLButtonElement
 const signUpForm = document.getElementById('signup-form') as HTMLFormElement
 
 async function signUpHandler(ev: MouseEvent): Promise<AuthResponse | void> {
     ev.preventDefault()
 
     const email = (signUpForm.querySelector('input[name=email]') as HTMLInputElement).value
-    const password = (signUpForm.querySelector('input[name=password]') as HTMLInputElement).value
+    const password = (signUpForm.querySelector('input[name=firstPassword]') as HTMLInputElement).value
     const firstName = (signUpForm.querySelector('input[name=firstName]') as HTMLInputElement).value
     const lastName = (signUpForm.querySelector('input[name=lastName]') as HTMLInputElement).value
 
-    if (
-        typeof email !== 'string' ||
-        email.length < 1 ||
-        typeof password !== 'string' ||
-        password.length < 1 ||
-        typeof firstName !== 'string' ||
-        firstName.length < 1 ||
-        typeof lastName !== 'string' ||
-        lastName.length < 1
-    ) {
+    if (email.length < 1 || password.length < 1 || firstName.length < 1 || lastName.length < 1) {
         return
     }
 
@@ -83,17 +68,14 @@ async function signUpHandler(ev: MouseEvent): Promise<AuthResponse | void> {
         })
 
         if (!data.user) {
-            // user could be created
             return
         }
 
-        // if signup succeeded redirect to "check the email" page.
-        // TO FIX: the destination path below is just for sample
         window.location.href = PagePath.SignIn
     } catch (err) {
-        // TO DO: error handling
         console.error(err)
     }
 }
 
-signUpBtn.addEventListener('click', e => void signUpHandler(e))
+signUpBtn.addEventListener('click', signUpHandler)
+signUpBtn.addEventListener('click', checkIfPasswordsMatch)

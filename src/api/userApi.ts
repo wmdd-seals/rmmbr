@@ -5,10 +5,10 @@ import {
     SignUpWithPasswordCredentials
 } from '@supabase/supabase-js'
 import { supabase } from './supabase'
-import { PromiseMaybe } from '#utils'
 import { User } from '#domain'
-import { ApiTable } from './utils'
 import { storageApi } from './storageApi'
+import { PromiseMaybe } from '#utils'
+import { ApiTable } from './utils'
 
 export type SignUpUserCredential = {
     email: string
