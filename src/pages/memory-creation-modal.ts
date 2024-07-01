@@ -3,7 +3,7 @@ import { Location, PromiseMaybe, initAutoComplete, codeAddress } from '#utils'
 import { memoryApi } from 'src/api/memory'
 import { userApi } from '#api'
 import { ModalBaseLayer } from '../components/modal-base-layer'
-import '../components/share-memory-window'
+import './share-memory-window'
 
 const explanations = {
     title: {
