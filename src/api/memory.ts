@@ -2,6 +2,7 @@ import { Memory, User } from '#domain'
 import { supabase } from './supabase'
 import { ApiTable } from './utils'
 import { PromiseMaybe } from '#utils'
+import { storageApi } from './storageApi'
 
 type MemoryColumns = keyof Memory
 
@@ -29,6 +30,16 @@ class MemoryApi {
             .eq<Memory['ownerId']>('ownerId' satisfies MemoryColumns, userId)
 
         return res.data || []
+    }
+
+    public async uploadCover(memoryId: Memory['id'], cover: File): Promise<boolean> {
+        const res = await storageApi.overwriteFile(`memory/${memoryId}/cover`, cover)
+
+        return !res.error
+    }
+
+    public deleteCover(memoryId: Memory['id']): Promise<boolean> {
+        return storageApi.deleteFile(`memory/${memoryId}/cover`)
     }
 
     public async getShared(memoryId: Memory['id'], userId: User['id']): PromiseMaybe<Memory> {
@@ -83,7 +94,7 @@ class MemoryApi {
 
     // todo:
     // public async update(payload: UpdateMemoryPayload): Promise<void> {
-    //     await this.memories.update()
+    //     const res = await this.memories.update().eq()
     // }
 
     public async shareWith(memoryId: Memory['id'], userIds: Array<User['id']>): Promise<boolean> {

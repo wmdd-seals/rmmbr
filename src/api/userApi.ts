@@ -6,9 +6,9 @@ import {
 } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 import { User } from '#domain'
+import { storageApi } from './storageApi'
 import { PromiseMaybe } from '#utils'
 import { ApiTable } from './utils'
-import { storageApi } from './storageApi'
 
 export type SignUpUserCredential = {
     email: string
