@@ -6,29 +6,31 @@
         <title>rmmbr | Sign In</title>
 
         <link rel="stylesheet" href="../app.css" />
+        <script defer type="module" src="./sign-in.ts"></script>
     </head>
 
     <body
-        class="flex h-screen bg-no-repeat bg-cover bg-center p-6 justify-end"
-        style="background-image: url(/sign-bg.jpg)"
+        class="flex h-screen bg-no-repeat bg-center p-6 justify-end"
+        style="background-image: url(/sign-bg.jpg); background-size: 100% 100%"
     >
         <div
-            class="bg-white bg-opacity-90 px-24 flex flex-col gap-14 justify-center items-center border-[3px] border-neutral-300 rounded-2xl shadow-lg"
+            class="flex-grow lg:flex-grow-0 bg-white bg-opacity-60 lg:bg-opacity-85 px-4 lg:px-24 flex flex-col gap-14 justify-center lg:items-center border-[3px] border-neutral-300 rounded-2xl shadow-lg"
         >
             <div class="flex flex-col items-center">
-                <h1 class="text-5xl font-normal text-basketball-500 mb-4">welcome to</h1>
-
-                <img src="/logo.svg" alt="Logo" />
+                <h1 class="text-4xl flex flex-col gap-4 font-bold font-source text-center">
+                    <span>Welcome to</span>
+                    <img src="/logo.svg" alt="Logo: rmmbr." />
+                </h1>
             </div>
 
             <form action="#" method="post" id="signin-form" class="flex flex-col gap-3 lg:w-96">
                 <div class="flex flex-col">
-                    <label for="email">Email</label>
+                    <label class="mb-2" for="email">Email</label>
                     <input type="email" placeholder="Email" name="email" class="input input-md" />
                 </div>
 
                 <div class="flex flex-col">
-                    <label for="password">Password</label>
+                    <label class="mb-2" for="password">Password</label>
                     <input
                         type="password"
                         placeholder="Password"
@@ -46,7 +48,5 @@
                 <p class="mx-auto">Don't have an account?<a href="/sign-up/" class="font-semibold"> Sign up</a></p>
             </div>
         </div>
-
-        <script type="module" src="./sign-in.ts"></script>
     </body>
 </html>

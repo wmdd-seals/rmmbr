@@ -13,8 +13,8 @@ async function redirectIfSignedIn(): Promise<void> {
 
 void redirectIfSignedIn()
 
-const passwordInput1 = document.getElementById('first-pass') as HTMLInputElement
-const passwordInput2 = document.getElementById('second-pass') as HTMLInputElement
+const passwordInput1 = document.getElementById('first-password') as HTMLInputElement
+const passwordInput2 = document.getElementById('second-password') as HTMLInputElement
 const passwordInputs = [passwordInput1, passwordInput2]
 
 const eye1 = document.getElementById('eye1')!
@@ -44,17 +44,14 @@ function checkIfPasswordsMatch(e: Event): void {
     passwordInput2.setCustomValidity('')
 }
 
-const submitBtn = document.getElementById('submit-button') as HTMLInputElement
-submitBtn.addEventListener('click', checkIfPasswordsMatch)
-
-const signUpBtn = document.getElementById('submit-button') as HTMLButtonElement
+const signUpBtn = document.getElementById('signup-btn') as HTMLButtonElement
 const signUpForm = document.getElementById('signup-form') as HTMLFormElement
 
 async function signUpHandler(ev: MouseEvent): Promise<AuthResponse | void> {
     ev.preventDefault()
 
     const email = (signUpForm.querySelector('input[name=email]') as HTMLInputElement).value
-    const password = (signUpForm.querySelector('input[name=password]') as HTMLInputElement).value
+    const password = (signUpForm.querySelector('input[name=firstPassword]') as HTMLInputElement).value
     const firstName = (signUpForm.querySelector('input[name=firstName]') as HTMLInputElement).value
     const lastName = (signUpForm.querySelector('input[name=lastName]') as HTMLInputElement).value
 
@@ -71,7 +68,6 @@ async function signUpHandler(ev: MouseEvent): Promise<AuthResponse | void> {
         })
 
         if (!data.user) {
-            // user could be created
             return
         }
 
@@ -82,3 +78,4 @@ async function signUpHandler(ev: MouseEvent): Promise<AuthResponse | void> {
 }
 
 signUpBtn.addEventListener('click', signUpHandler)
+signUpBtn.addEventListener('click', checkIfPasswordsMatch)

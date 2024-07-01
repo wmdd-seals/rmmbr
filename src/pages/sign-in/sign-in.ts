@@ -14,17 +14,6 @@ async function redirectIfSignedIn(): Promise<void> {
 
 void redirectIfSignedIn()
 
-const passwordInput = document.getElementById('password') as HTMLInputElement
-const eye = document.getElementById('eye')!
-
-function togglePasswordVisibility(e: MouseEvent): void {
-    passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password'
-    ;(e.currentTarget as HTMLElement).classList.toggle('fa-eye')
-    ;(e.currentTarget as HTMLElement).classList.toggle('fa-eye-slash')
-}
-
-eye.addEventListener('click', e => togglePasswordVisibility(e))
-
 const signInForm = document.getElementById('signin-form') as HTMLFormElement
 const signInBtn = document.getElementById('signin-btn') as HTMLButtonElement
 
@@ -36,8 +25,9 @@ async function loginHandler(ev: MouseEvent): Promise<AuthTokenResponsePassword |
     if (typeof email !== 'string' || email.length < 1 || typeof password !== 'string' || password.length < 1) {
         return
     }
-
     try {
+        signInBtn.disabled = true
+
         const { data } = await userApi.signIn({
             email: email,
             password: password
@@ -46,11 +36,11 @@ async function loginHandler(ev: MouseEvent): Promise<AuthTokenResponsePassword |
         if (!data.user) {
             return
         }
-
-        window.location.href = PagePath.Memory
-    } catch (err) {
-        console.error(err)
+    } finally {
+        signInBtn.disabled = false
     }
+
+    window.location.href = PagePath.Home
 }
 
-signInBtn.addEventListener('click', e => void loginHandler(e))
+signInBtn.addEventListener('click', loginHandler)
