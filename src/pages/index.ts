@@ -1,6 +1,6 @@
 import './memory-creation-modal'
 import { memoryApi, storageApi, userApi } from '#api'
-import { q } from '#utils'
+import { q, updateCurrentUserChip } from '#utils'
 
 const tabs = {
     ['#home']: document.getElementById('home')!,
@@ -46,8 +46,9 @@ userApi
             return
         }
 
+        updateCurrentUserChip(user)
+
         q('[data-user=name]').innerHTML = user.firstName
-        q<HTMLImageElement>('[data-user=avatar]').src = user.avatarSrc || ''
 
         const memories = await memoryApi.getAll(user.id)
         const count = memories.length
