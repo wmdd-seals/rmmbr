@@ -8,4 +8,6 @@ export abstract class Memory {
     public abstract date: string
     public abstract location: Maybe<Location>
     public abstract ownerId: User['id']
+    public abstract cover: Maybe<string>
+    public abstract stickerId: Maybe<string>
 }
