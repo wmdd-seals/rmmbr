@@ -25,7 +25,7 @@ export default defineConfig({
                 memory: resolve(__dirname, 'src/pages/memory/index.html'),
                 signIn: resolve(__dirname, 'src/pages/sign-in/index.html'),
                 signUp: resolve(__dirname, 'src/pages/sign-up/index.html'),
-                account: resolve(__dirname, 'src/pages/me/account.html')
+                account: resolve(__dirname, 'src/pages/account/index.html')
             }
         }
     },
