@@ -18,6 +18,7 @@
     "devDependencies": {
         "@eslint/js": "^9.3.0",
         "@types/google.maps": "^3.55.10",
+        "@types/uuid": "^10.0.0",
         "@vitejs/plugin-basic-ssl": "^1.1.0",
         "autoprefixer": "^10.4.19",
         "eslint": "^9.3.0",
@@ -36,7 +37,8 @@
         "vitest": "^1.6.0"
     },
     "dependencies": {
+        "@googlemaps/js-api-loader": "^1.16.6",
         "@supabase/supabase-js": "^2.43.4",
-        "@googlemaps/js-api-loader": "^1.16.6"
+        "uuid": "^10.0.0"
     }
 }

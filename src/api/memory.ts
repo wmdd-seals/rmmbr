@@ -1,8 +1,10 @@
 import { Collaborator, Memory, User } from '#domain'
 import { supabase } from './supabase'
 import { ApiTable } from './utils'
-import { PromiseMaybe } from '#utils'
+import { findExtensionName, PromiseMaybe } from '#utils'
 import { storageApi } from './storageApi'
+import { Moment } from 'src/domain/moment'
+import { v4 as uuidv4 } from 'uuid'
 
 type MemoryColumns = keyof Memory
 
@@ -13,12 +15,22 @@ type CollaboratorJoinedUser = Collaborator & {
 }
 
 export type CreateCollaboratorPayload = Pick<Collaborator, 'memoryId' | 'userId'>
+
+type CreateMomentPayload = Pick<Moment, 'description' | 'mediaPath' | 'memoryId' | 'type'>
+
+type FileEntry = {
+    file: Blob | File
+    fileName: string
+    type: 'image' | 'video'
+}
+
 // todo:
 type UpdateMemoryPayload = Partial<Pick<Memory, 'title' | 'date' | 'location' | 'cover' | 'stickerId'>>
 
 class MemoryApi {
     private readonly memories = supabase.from(ApiTable.Memories)
     private readonly collaborators = supabase.from(ApiTable.Collaborators)
+    private readonly moments = supabase.from(ApiTable.Moments)
 
     public async get(memoryId: Memory['id'], userId: User['id']): PromiseMaybe<Memory> {
         const res = await this.memories
@@ -146,6 +158,70 @@ class MemoryApi {
             )
             .eq<Memory['id']>(`memoryId` satisfies keyof Collaborator, memoryId)
         return res.data?.map(d => d.users)
+    }
+
+    private async createMoment(createMomentPayload: CreateMomentPayload): PromiseMaybe<Moment[]> {
+        const res = await this.moments.insert(createMomentPayload).select<string, Moment>()
+        return res.data
+    }
+
+    public async createDescriptionMoment(
+        description: Moment['description'],
+        memoryId: Memory['id']
+    ): PromiseMaybe<Moment[]> {
+        const descriptionRes = await this.createMoment({
+            type: 'description',
+            description: description,
+            memoryId: memoryId,
+            mediaPath: null
+        })
+        return descriptionRes
+    }
+
+    public async createVisualMoment(entry: FileEntry, memoryId: Memory['id']): PromiseMaybe<Moment[]> {
+        const extensionName = findExtensionName(entry.fileName)
+        const path = `memory/${memoryId}/${entry.type}/${uuidv4()}.${extensionName}`
+
+        const uploadFileRes = await storageApi.uploadFile(path, entry.file)
+        if (!uploadFileRes.data) return
+
+        const imageVidRes = await this.createMoment({
+            type: entry.type,
+            description: null,
+            memoryId: memoryId,
+            mediaPath: uploadFileRes.data.path
+        })
+        return imageVidRes
+    }
+
+    public async getAllMomentsByMemoryId(memoryId: Memory['id']): PromiseMaybe<Moment[]> {
+        const res = await this.moments.select<string, Moment>('*').eq<Moment['memoryId']>('memoryId', memoryId)
+        if (!res.data) return
+
+        const formatData = res.data.map(item => {
+            if (item.type === 'description') return item
+
+            const publicUrl = storageApi.getFileUrl(item.mediaPath!)
+            return {
+                ...item,
+                mediaPath: publicUrl
+            }
+        })
+        return formatData
+    }
+
+    public async deleteMoments(momentIds: Moment['id'][]): PromiseMaybe<void> {
+        const res = await this.moments
+            .delete({ count: 'planned' })
+            .in('id' satisfies keyof Moment, momentIds)
+            .select<string, Moment>()
+
+        if (!res.data) return
+
+        res.data.forEach(async moment => {
+            if (!moment.mediaPath) return
+            await storageApi.deleteFile(moment.mediaPath)
+        })
     }
 }
 
