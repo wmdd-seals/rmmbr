@@ -31,20 +31,19 @@ userApi
 
         // const cover = storageApi.getFileUrl(`memory/${memoryId}/cover`)
 
-        // 一時的にコメントアウトする
-        // const input = q<HTMLInputElement>('#file-input')
-        // input.addEventListener('change', () => {
-        //     const cover = input.files?.[0]
+        const input = q<HTMLInputElement>('#file-input')
+        input.addEventListener('change', () => {
+            const cover = input.files?.[0]
 
-        //     if (!cover) return
+            if (!cover) return
 
-        //     void memoryApi.uploadCover(memoryId, cover)
-        // })
+            void memoryApi.uploadCover(memoryId, cover)
+        })
 
-        // const deleteButton = q('#delete-file')
-        // deleteButton.addEventListener('click', () => memoryApi.deleteCover(memoryId))
+        const deleteButton = q('#delete-file')
+        deleteButton.addEventListener('click', () => memoryApi.deleteCover(memoryId))
 
-        // Create UI for Sticker List Modal
+        // Create UI for Listing Stickers
         const stickers = [
             'airplane',
             'beach-ball',
