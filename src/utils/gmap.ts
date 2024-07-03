@@ -1,5 +1,5 @@
 import { Loader } from '@googlemaps/js-api-loader'
-import { Location } from './types'
+import { Location, Maybe, PromiseMaybe } from './types'
 
 const loader = new Loader({
     apiKey: import.meta.env.VITE_PUBLIC_GOOGLE_MAP_API_KEY,
@@ -51,4 +51,50 @@ export async function codeAddress(address: string): Promise<Location | void> {
     const { results } = await new Geocoder().geocode({ address: address })
     const location = results[0].geometry.location
     return [location.lng(), location.lat()]
+}
+
+type LocationInfo = {
+    country: string
+    city: Maybe<string>
+}
+
+export async function getLocationInfo(location: Location): PromiseMaybe<LocationInfo> {
+    const [lng, lat] = location
+    const { Geocoder } = await loader.importLibrary('geocoding')
+    const { results } = await new Geocoder().geocode({ location: { lng, lat } })
+
+    let city: Maybe<string> = null
+    let country: Maybe<string> = null
+
+    for (const component of results) {
+        if (!city) {
+            if (component.types.includes('locality')) {
+                for (const addressComponent of component.address_components) {
+                    if (addressComponent.types.includes('locality')) {
+                        city = addressComponent.long_name
+                        break
+                    }
+                }
+            }
+            //  else if (component.types.includes('administrative_area_level_1')) {
+            //     for (const addressComponent of component.address_components) {
+            //         if (addressComponent.types.includes('administrative_area_level_1')) {
+            //             city = addressComponent.long_name
+            //             break
+            //         }
+            //     }
+            // }
+        }
+
+        if (!country) {
+            const isCountry = component.types.includes('country')
+            if (isCountry) country = component.address_components[0].long_name
+        }
+
+        if (country && city) return { country, city }
+    }
+
+    if (!country) return null
+
+    return { country, city }
 }
