@@ -1,4 +1,4 @@
-import { Memory, User } from '#domain'
+import { Collaborator, Memory, User } from '#domain'
 import { supabase } from './supabase'
 import { ApiTable } from './utils'
 import { PromiseMaybe } from '#utils'
@@ -8,6 +8,11 @@ type MemoryColumns = keyof Memory
 
 type CreateMemoryPayload = Pick<Memory, 'ownerId' | 'title' | 'location' | 'date'>
 
+type CollaboratorJoinedUser = Collaborator & {
+    users: User
+}
+
+export type CreateCollaboratorPayload = Pick<Collaborator, 'memoryId' | 'userId'>
 // todo:
 // type UpdateMemoryPayload = {}
 
@@ -122,6 +127,20 @@ class MemoryApi {
             .eq('ownerId' satisfies MemoryColumns, userId)
 
         return !!res.error
+    }
+
+    public async getAllCollaborators(memoryId: Collaborator['memoryId']): PromiseMaybe<User[]> {
+        const res = await this.collaborators
+            .select<string, CollaboratorJoinedUser>(
+                `
+                    *,
+                    ${ApiTable.Users} (
+                        *
+                    )
+                `
+            )
+            .eq<Memory['id']>(`memoryId` satisfies keyof Collaborator, memoryId)
+        return res.data?.map(d => d.users)
     }
 }
 

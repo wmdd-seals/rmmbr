@@ -1,6 +1,6 @@
 import { userApi } from '#api'
 import { AuthTokenResponsePassword } from '@supabase/supabase-js'
-import { PagePath } from '#utils'
+import { PagePath, q } from '#utils'
 import { supabase } from '#api'
 
 async function redirectIfSignedIn(): Promise<void> {
@@ -19,8 +19,8 @@ const signInBtn = document.getElementById('signin-btn') as HTMLButtonElement
 
 async function loginHandler(ev: MouseEvent): Promise<AuthTokenResponsePassword | void> {
     ev.preventDefault()
-    const email = (signInForm.querySelector('input[name=email]') as HTMLInputElement).value
-    const password = (signInForm.querySelector('input[name=password]') as HTMLInputElement).value
+    const email = q<HTMLInputElement>('input[name=email]', signInForm).value
+    const password = q<HTMLInputElement>('input[name=password]', signInForm).value
 
     if (typeof email !== 'string' || email.length < 1 || typeof password !== 'string' || password.length < 1) {
         return
