@@ -7,12 +7,14 @@ const loader = new Loader({
     libraries: ['places']
 })
 
-export async function createMapWithMarkers(element: HTMLElement, center: Location, markers: Location[]): Promise<void> {
+export async function createMapWithMarkers(
+    element: HTMLElement,
+    options: { center?: Location; markers: Location[] }
+): Promise<void> {
+    const { center, markers } = options
+
     const mapOptions = {
-        center: {
-            lng: center[0],
-            lat: center[1]
-        },
+        center: center ? { lng: center[0], lat: center[1] } : null,
         zoom: 15,
         mapId: 'rmmbr_map'
     }
@@ -44,6 +46,7 @@ export async function codeAddress(address: string): Promise<Location | void> {
     if (!address) {
         return
     }
+
     const { Geocoder } = await loader.importLibrary('geocoding')
     const { results } = await new Geocoder().geocode({ address: address })
     const location = results[0].geometry.location
