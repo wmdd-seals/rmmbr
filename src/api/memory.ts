@@ -97,8 +97,8 @@ class MemoryApi {
     //     const res = await this.memories.update().eq()
     // }
 
-    public async update(memoryId: Memory['id'], UpdateMemoryPayload: UpdateMemoryPayload): Promise<boolean> {
-        const res = await this.memories.update(UpdateMemoryPayload).eq('id', memoryId)
+    public async update(memoryId: Memory['id'], payload: UpdateMemoryPayload): Promise<boolean> {
+        const res = await this.memories.update(payload).eq('id' satisfies MemoryColumns, memoryId)
         return !res.error
     }
 

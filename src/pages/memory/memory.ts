@@ -31,31 +31,72 @@ userApi
 
         // const cover = storageApi.getFileUrl(`memory/${memoryId}/cover`)
 
-        const input = q<HTMLInputElement>('#file-input')
-        input.addEventListener('change', () => {
-            const cover = input.files?.[0]
+        // 一時的にコメントアウトする
+        // const input = q<HTMLInputElement>('#file-input')
+        // input.addEventListener('change', () => {
+        //     const cover = input.files?.[0]
 
-            if (!cover) return
+        //     if (!cover) return
 
-            void memoryApi.uploadCover(memoryId, cover)
-        })
+        //     void memoryApi.uploadCover(memoryId, cover)
+        // })
 
-        const deleteButton = q('#delete-file')
-        deleteButton.addEventListener('click', () => memoryApi.deleteCover(memoryId))
+        // const deleteButton = q('#delete-file')
+        // deleteButton.addEventListener('click', () => memoryApi.deleteCover(memoryId))
+
+        // Create UI for Sticker List Modal
+        const stickers = [
+            'airplane',
+            'beach-ball',
+            'camera',
+            'coconut-palm-tree',
+            'glasses',
+            'globe',
+            'heart-heart',
+            'heart',
+            'i-love-you',
+            'juice',
+            'leaf',
+            'love-love-love-love',
+            'love',
+            'parasol',
+            'pencil',
+            'present',
+            'shell',
+            'ship',
+            'sparkle',
+            'starfish',
+            'straw-hat',
+            'suitcase',
+            'sun',
+            'sunglasses',
+            'tropical-juice',
+            'yacht'
+        ]
+        function renderStickers(): void {
+            const container = q('#sticker')
+            stickers.forEach(id => {
+                const img = document.createElement('img')
+                img.id = id
+                img.src = `/sticker/${id}.svg`
+                img.alt = id
+                container.appendChild(img)
+            })
+        }
+        renderStickers()
 
         // Update Sticker
-        let lastClickedStickerId: Maybe<string> | null
-        const stickers = document.querySelectorAll<HTMLImageElement>('#sticker img')
-        stickers.forEach(sticker => {
-            sticker.addEventListener('click', (event: MouseEvent) => {
-                lastClickedStickerId = (event.target as HTMLImageElement).id
-            })
+        let clickedStickerId: Maybe<string>
+        const stickerSection = q('#sticker')
+        stickerSection.addEventListener('click', (event: MouseEvent) => {
+            const elem = event.target as HTMLElement
+            if (elem.id === 'sticker') return
+            clickedStickerId = elem.id
         })
 
         const saveStickerButton = q('#save-sticker-btn')
         saveStickerButton.addEventListener('click', async () => {
-            if (!lastClickedStickerId) return
-            await memoryApi.update(memoryId, { stickerId: lastClickedStickerId })
+            await memoryApi.update(memoryId, { stickerId: clickedStickerId })
         })
 
         // Delete Sticker
