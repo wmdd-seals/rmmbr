@@ -10,9 +10,57 @@
     </head>
 
     <body>
-        <header>
-            <input type="file" id="file-input" />
-            <button id="delete-file" />delete</button>
+        <header
+            class="p-6 flex justify-between sticky z-10 top-0 backdrop-blur bg-gradient-to-tr from-thick-blue-600/45 to-thick-blue-800/80"
+        >
+            <img src="/white-logo.svg" alt="logo" />
+
+            <div class="flex items-center gap-4">
+                <div
+                    id="online-collaborators"
+                    class="items-center gap-4 border-r-2 border-r-thick-blue-400 px-8"
+                    style="display: none"
+                >
+                    <ul class="flex items-center gap-4" id="collaborator-list">
+                        <template id="collaborator-avatar">
+                            <li class="rounded-full aspect-square w-10 overflow-hidden flex relative bg-ui-50">
+                                <span
+                                    data-collaborator="initials"
+                                    class="font-bold font-source text-xl flex items-center justify-center flex-grow"
+                                ></span>
+                                <img
+                                    src=""
+                                    data-collaborator="avatar"
+                                    alt="User avatar"
+                                    class="object-cover hidden absolute h-full w-full"
+                                />
+                            </li>
+                        </template>
+                    </ul>
+
+                    <span class="text-ui-50 text-sm font-medium">Online</span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-green-300 shadow-green-50"></span>
+                </div>
+
+                <div class="flex gap-4">
+                    <div
+                        id="current-user-chip"
+                        class="relative flex rounded-full aspect-square overflow-hidden w-10 bg-ui-50"
+                    >
+                        <span
+                            data-user="initials"
+                            class="font-bold font-source text-xl flex items-center justify-center flex-grow"
+                        ></span>
+
+                        <img
+                            data-user="avatar"
+                            src=""
+                            alt="User avatar"
+                            class="object-cover hidden absolute h-full w-full"
+                        />
+                    </div>
+                </div>
+            </div>
         </header>
         <main class="px-8">
             <div class="flex items-center mb-4">
