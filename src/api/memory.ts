@@ -14,7 +14,7 @@ type CollaboratorJoinedUser = Collaborator & {
 
 export type CreateCollaboratorPayload = Pick<Collaborator, 'memoryId' | 'userId'>
 // todo:
-// type UpdateMemoryPayload = {}
+type UpdateMemoryPayload = Partial<Pick<Memory, 'title' | 'date' | 'location' | 'cover' | 'stickerId'>>
 
 class MemoryApi {
     private readonly memories = supabase.from(ApiTable.Memories)
@@ -101,6 +101,11 @@ class MemoryApi {
     // public async update(payload: UpdateMemoryPayload): Promise<void> {
     //     const res = await this.memories.update().eq()
     // }
+
+    public async update(memoryId: Memory['id'], payload: UpdateMemoryPayload): Promise<boolean> {
+        const res = await this.memories.update(payload).eq('id' satisfies MemoryColumns, memoryId)
+        return !res.error
+    }
 
     public async shareWith(memoryId: Memory['id'], userIds: Array<User['id']>): Promise<boolean> {
         const res = await Promise.all(userIds.map(id => this.collaborators.insert([{ memoryId, userId: id }])))

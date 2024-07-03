@@ -6,6 +6,7 @@
         <title>rmmbr | Memory</title>
 
         <link rel="stylesheet" href="../app.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
         <script type="module" src="../auth.ts"></script>
     </head>
 
@@ -119,6 +120,37 @@
                         <span class="mt-auto font-bold text-5xl">2</span><span>Turns around the Sun...</span>
                     </li>
                 </ul>
+            </div>
+
+            <!-- Edit Sticker Screen (Natsuko temporarily placed the following code in this file because I have not created "Edit memory" yet, to which the following code should belong to. I put class='hidden'. I will move the following div to another files later.  -->
+            <div class="rounded-lg hidden">
+                <header class="flex justify-between font-bold w-full text-black">
+                    <h2 class="text-2xl">Pick a Sticker</h2>
+                    <button id="modal-close-btn" class="text-lg text-basketball-500 w-7">
+                        <i class="fa-solid fa-x"></i>
+                    </button>
+                </header>
+                <section class="grid grid-cols-4 md:grid-cols-11" id="sticker"></section>
+                <footer class="flex gap-3 justify-around w-full sm:justify-end">
+                    <button
+                        id="previous"
+                        class="flex justify-center rounded-[5rem] w-1/2 py-2 text-black text-base sm:w-fit sm:px-8"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        id="save-sticker-btn"
+                        class="flex justify-center rounded-[5rem] w-1/2 py-2 bg-basketball-500 text-white text-base sm:w-fit sm:px-8"
+                    >
+                        Save sticker
+                    </button>
+                    <button
+                        id="delete-sticker-btn"
+                        class="flex justify-center rounded-[5rem] w-1/2 py-2 bg-basketball-500 text-white text-base sm:w-fit sm:px-8"
+                    >
+                        Delete sticker
+                    </button>
+                </footer>
             </div>
         </main>
 
