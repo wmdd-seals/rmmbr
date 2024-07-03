@@ -1,6 +1,9 @@
 import './memory-creation-modal'
 import { memoryApi, storageApi, userApi } from '#api'
-import { q, updateCurrentUserChip } from '#utils'
+import { createMapWithMarkers, formatDate, q, updateCurrentUserChip } from '#utils'
+import { Location } from '#utils'
+import { getLocationInfo } from 'src/utils/gmap'
+import { Memory } from '#domain'
 
 const tabs = {
     ['#home']: document.getElementById('home')!,
@@ -50,62 +53,133 @@ userApi
 
         q('[data-user=name]').innerHTML = user.firstName
 
+        initFilterDrawer()
+
         const memories = await memoryApi.getAll(user.id)
-        const count = memories.length
-        const memoryFlashbackList = q('#flashback-list')
-        const memoryFlashbackhTemplate = q<HTMLTemplateElement>('#memory-flashback-thumbnail')
 
-        memories.forEach(mem => {
-            const node = memoryFlashbackhTemplate.content.cloneNode(true) as HTMLLIElement
+        renderCountdowns(memories.filter(memory => Date.now() < +new Date(memory.date)))
 
-            q('[data-memory=title]', node).innerHTML = mem.title
+        renderFlashbacks(memories)
 
-            memoryFlashbackList.appendChild(node)
-        })
+        renderMemories(memories)
 
-        document.querySelectorAll('[data-memory="count"]').forEach(el => {
-            el.innerHTML = `${count} ${count === 1 ? 'memory' : 'memories'}`
-        })
-
-        const thumbnail = document.getElementById('memory-thumbnail') as HTMLTemplateElement
-        const memoryList = document.getElementById('memory-list') as HTMLUListElement
-
-        memories.forEach(mem => {
-            const node = thumbnail.content.cloneNode(true) as HTMLLIElement
-
-            q('[data-memory="title"]', node).innerHTML = mem.title
-            q<HTMLAnchorElement>('[data-memory="link"]', node).href = `/memory/?id=${mem.id}`
-            q<HTMLImageElement>('[data-memory=cover]', node).src = storageApi.getFileUrl(`memory/${mem.id}/cover`) || ''
-
-            memoryList.appendChild(node)
-        })
-
-        let filtersOpen = false
-
-        q('#filter-btn').addEventListener('click', () => {
-            if (filtersOpen) return
-
-            const drawer = q('#filter-drawer')
-
-            const el = document.createElement('div')
-            el.classList.add('fixed', 'z-20', 'inset-0', 'transition-all', 'duration-300')
-            document.body.prepend(el)
-
-            // allow reflow/repaint browser events to happen
-            setTimeout(() => el.classList.add('backdrop-blur', 'bg-black', 'bg-opacity-65'))
-
-            el.addEventListener('click', () => {
-                if (!filtersOpen) return
-
-                el.classList.remove('backdrop-blur', 'bg-black', 'bg-opacity-65')
-                setTimeout(() => document.body.removeChild(el), 300)
-                drawer.style.transform = 'translateX(100%)'
-                filtersOpen = false
-            })
-
-            drawer.style.transform = 'translateX(0)'
-
-            filtersOpen = true
-        })
+        renderMapMarks(memories)
     })
     .catch(console.error)
+
+function renderMemories(memories: Memory[]): void {
+    const thumbnail = document.getElementById('memory-thumbnail') as HTMLTemplateElement
+    const memoryList = document.getElementById('memory-list') as HTMLUListElement
+
+    memories.forEach(memory => {
+        const node = thumbnail.content.cloneNode(true) as HTMLLIElement
+        const liElem = node.firstElementChild
+
+        q('[data-memory="title"]', node).innerHTML = memory.title
+        q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
+        q<HTMLAnchorElement>('[data-memory="link"]', node).href = `/memory/?id=${memory.id}`
+        q<HTMLImageElement>('[data-memory=cover]', node).src = storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
+
+        if (memory.location) {
+            getLocationInfo(memory.location).then(location => {
+                if (!location) return
+                const { country, city } = location
+                q('[data-memory="location"]', <HTMLLIElement>liElem).innerHTML = city
+                    ? `in ${city}, ${country}`
+                    : `in ${country}`
+            }, console.error)
+        }
+
+        memoryList.appendChild(node)
+    })
+
+    const count = memories.length
+    document.querySelectorAll('[data-memory="count"]').forEach(el => {
+        el.innerHTML = `${count} ${count === 1 ? 'memory' : 'memories'}`
+    })
+}
+
+function renderFlashbacks(memories: Memory[]): void {
+    const memoryFlashbackList = q('#flashback-list')
+    const memoryFlashbackhTemplate = q<HTMLTemplateElement>('#memory-flashback-thumbnail')
+
+    memories.forEach(memory => {
+        const node = memoryFlashbackhTemplate.content.cloneNode(true) as HTMLLIElement
+
+        q('[data-memory=title]', node).innerHTML = memory.title
+        q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
+        q<HTMLAnchorElement>('[data-memory=link]', node).href = `/memory/?id=${memory.id}`
+        q<HTMLImageElement>('[data-memory=cover]', node).src = storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
+
+        memoryFlashbackList.appendChild(node)
+    })
+}
+
+function initFilterDrawer(): void {
+    let filtersOpen = false
+
+    q('#filter-btn').addEventListener('click', () => {
+        if (filtersOpen) return
+
+        const drawer = q('#filter-drawer')
+
+        const el = document.createElement('div')
+        el.classList.add('fixed', 'z-20', 'inset-0', 'transition-all', 'duration-300')
+        document.body.prepend(el)
+
+        // allow reflow/repaint browser events to happen
+        setTimeout(() => el.classList.add('backdrop-blur', 'bg-black', 'bg-opacity-65'))
+
+        el.addEventListener('click', () => {
+            if (!filtersOpen) return
+
+            el.classList.remove('backdrop-blur', 'bg-black', 'bg-opacity-65')
+            setTimeout(() => document.body.removeChild(el), 300)
+            drawer.style.transform = 'translateX(100%)'
+            filtersOpen = false
+        })
+
+        drawer.style.transform = 'translateX(0)'
+
+        filtersOpen = true
+    })
+}
+
+function renderCountdowns(memories: Memory[]): void {
+    const thumbnail = q<HTMLTemplateElement>('#countdown-thumbnail')
+    const countdownList = q<HTMLUListElement>('#countdown-list')
+
+    memories.forEach(memory => {
+        const { title } = memory
+
+        const node = thumbnail.content.cloneNode(true) as HTMLLIElement
+
+        q('[data-memory=title]', node).innerHTML = title
+        q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
+
+        countdownList.appendChild(node)
+    })
+}
+
+function renderMapMarks(memories: Memory[]): void {
+    const locations = memories.filter(memory => !!memory.location).map(memory => memory.location!)
+
+    const map = q('#locations-map')
+
+    q('[data-user=locations-count]').innerHTML = `${locations.length} place${locations.length === 1 ? '' : 's'}`
+
+    if (locations.length > 0) {
+        q('#map-overlay').style.display = 'none'
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            const center: Location = [position.coords.longitude, position.coords.latitude]
+
+            void createMapWithMarkers(map, { center, markers: locations })
+        },
+        () => {
+            void createMapWithMarkers(map, { markers: locations })
+        }
+    )
+}
