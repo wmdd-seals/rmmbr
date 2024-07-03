@@ -1,6 +1,7 @@
-import { memoryApi, storageApi, supabase, userApi } from '#api'
+import { memoryApi, supabase, userApi, storageApi } from '#api'
 import { Memory, User } from '#domain'
-import { Maybe, q, updateCurrentUserChip } from '#utils'
+import { Maybe, q, updateCurrentUserChip, findExtensionName } from '#utils'
+import { Moment } from 'src/domain/moment'
 
 const urlParams = new URLSearchParams(location.search)
 const memoryId = <Maybe<Memory['id']>>urlParams.get('id')
@@ -13,6 +14,45 @@ type OnlineCollaborator = {
     id: User['id']
     avatar: User['avatarSrc']
     name: User['firstName']
+}
+
+function renderMoments(moments: Maybe<Moment[]>): void {
+    if (!moments) return
+    const momentList = q<HTMLUListElement>('[data-moment-list]')
+    const [imgMoment, videoMoment, descriptionMoment] = [
+        q<HTMLTemplateElement>('[data-moment-img-item]'),
+        q<HTMLTemplateElement>('[data-moment-video-item]'),
+        q<HTMLTemplateElement>('[data-moment-description-item]')
+    ]
+
+    moments.forEach((m): void => {
+        switch (m.type) {
+            case 'image': {
+                const imgFragment = document.importNode(imgMoment.content, true)
+                const node = q<HTMLLIElement>('li', imgFragment)
+                node.setAttribute('data-moment-id', m.id)
+                q<HTMLImageElement>('img', node).src = m.mediaPath!
+                momentList.appendChild(node)
+                break
+            }
+            case 'video': {
+                const videoFragment = document.importNode(videoMoment.content, true)
+                const node = q<HTMLLIElement>('li', videoFragment)
+                node.setAttribute('data-moment-id', m.id)
+                q<HTMLVideoElement>('video', node).src = m.mediaPath!
+                momentList.appendChild(node)
+                break
+            }
+            case 'description': {
+                const descriptionFragment = document.importNode(descriptionMoment.content, true)
+                const node = q<HTMLLIElement>('li', descriptionFragment)
+                q<HTMLParagraphElement>('p', descriptionFragment).innerHTML = m.description!
+                node.setAttribute('data-moment-id', m.id)
+                momentList.appendChild(node)
+                break
+            }
+        }
+    })
 }
 
 userApi
@@ -118,6 +158,53 @@ userApi
         deleteStickerButton.addEventListener('click', async () => {
             await memoryApi.update(memory.id, { stickerId: null })
         })
+        const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
+        renderMoments(moments)
+
+        // The below is for demo, will erase all
+        const [mediaInput, descriptionInput, mediaSbBtn, descriptionSbBtn, deleteAllBtn] = [
+            q<HTMLInputElement>('#media-input'),
+            q<HTMLTextAreaElement>('textarea#description'),
+            q<HTMLButtonElement>('#submit-media'),
+            q<HTMLButtonElement>('#submit-description'),
+            q<HTMLButtonElement>('#delete-all')
+        ]
+
+        mediaSbBtn.addEventListener('click', async () => {
+            if (!mediaInput.files) return
+            const res = await memoryApi.createVisualMoment(
+                {
+                    // todo: the below is just for testing. the logic is dumb
+                    type: ['png', 'jpg', 'jpeg', 'svg', 'webp', 'tiff'].includes(findExtensionName(mediaInput.value))
+                        ? 'image'
+                        : 'video',
+                    file: mediaInput.files[0],
+                    fileName: mediaInput.value
+                },
+                memoryId
+            )
+
+            if (!res) return
+            renderMoments(
+                res.map(r => ({
+                    ...r,
+                    mediaPath: storageApi.getFileUrl(r.mediaPath!)
+                }))
+            )
+        })
+
+        descriptionSbBtn.addEventListener('click', async () => {
+            if (!descriptionInput.value) return
+            const res = await memoryApi.createDescriptionMoment(descriptionInput.value, memoryId)
+            if (!res) return
+            renderMoments(res)
+        })
+        deleteAllBtn.addEventListener('click', async () => {
+            if (!moments) return
+            await memoryApi.deleteMoments(moments.map(m => m.id))
+            q<HTMLUListElement>('[data-moment-list]').innerHTML = ''
+        })
+        // ----/demo-----
     })
     .catch(console.error)
 
