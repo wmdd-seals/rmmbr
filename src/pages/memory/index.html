@@ -6,6 +6,7 @@
         <title>rmmbr | Memory</title>
 
         <link rel="stylesheet" href="../app.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
         <script type="module" src="../auth.ts"></script>
     </head>
 
@@ -117,6 +118,50 @@
                     </li>
                 </ul>
             </div>
+
+            <!-- Edit Sticker Screen (Natsuko temporarily placed the following code in this file because I have not created "Edit memory" yet, to which the following code should belong to. I put class='hidden'. I will move the following div to another files later.  -->
+             <div class="rounded-lg hidden">
+                <header class="flex justify-between font-bold w-full text-black">
+                    <h2 class="text-2xl">Pick a Sticker</h2>
+                    <button id="modal-close-btn" class="text-lg text-basketball-500 w-7">
+                        <i class="fa-solid fa-x"></i>
+                    </button>
+                </header>
+                <section class="grid grid-cols-4 md:grid-cols-11" id="sticker">
+                    <img src="/sticker/airplane.svg" id="airplane">
+                    <img src="/sticker/beach-ball.svg" id="beach-ball">
+                    <img src="/sticker/camera.svg" id="camera">
+                    <img src="/sticker/coconut-palm-tree.svg" id="coconut-palm-tree">
+                    <img src="/sticker/glasses.svg" id="glasses">
+                    <img src="/sticker/globe.svg" id="globe">
+                    <img src="/sticker/heart-heart.svg" id="heart-heart">
+                    <img src="/sticker/heart.svg" id="heart">
+                    <img src="/sticker/i-love-you.svg" id="i-love-you">
+                    <img src="/sticker/juice.svg" id="juice">
+                    <img src="/sticker/leaf.svg" id="leaf">
+                    <img src="/sticker/love-love-love-love.svg" id="love-love-love-love">
+                    <img src="/sticker/love.svg" id="love">
+                    <img src="/sticker/parasol.svg" id="parasol">
+                    <img src="/sticker/pencil.svg" id="pencil">
+                    <img src="/sticker/present.svg" id="present">
+                    <img src="/sticker/shell.svg" id="shell">
+                    <img src="/sticker/ship.svg" id="ship">
+                    <img src="/sticker/sparkle.svg" id="sparkle">
+                    <img src="/sticker/starfish.svg" id="starfish">
+                    <img src="/sticker/straw-hat.svg" id="straw-hat">
+                    <img src="/sticker/suitcase.svg" id="suitcase">
+                    <img src="/sticker/sun.svg" id="sun">
+                    <img src="/sticker/sunglasses.svg" id="sunglasses">
+                    <img src="/sticker/tropical-juice.svg" id="tropical-juice">
+                    <img src="/sticker/yacht.svg" id="yacht">
+                </section>
+                <footer class="flex gap-3 justify-around w-full sm:justify-end">
+                    <button id="previous" class="flex justify-center rounded-[5rem] w-1/2 py-2 text-black text-base sm:w-fit sm:px-8">Cancel</button>
+                    <button id="save-sticker-btn" class="flex justify-center rounded-[5rem] w-1/2 py-2 bg-basketball-500 text-white text-base sm:w-fit sm:px-8">Save sticker</button>
+                    <button id="delete-sticker-btn" class="flex justify-center rounded-[5rem] w-1/2 py-2 bg-basketball-500 text-white text-base sm:w-fit sm:px-8">Delete sticker</button>
+                </footer>
+             </div>
+
         </main>
 
         <script type="module" src="./memory.ts"></script>
