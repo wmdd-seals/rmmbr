@@ -28,6 +28,41 @@ userApi
         new Collaboration(user, memoryId)
 
         q('[data-memory="title"]').innerHTML = memory.title
+
+        // const cover = storageApi.getFileUrl(`memory/${memoryId}/cover`)
+
+        const input = q<HTMLInputElement>('#file-input')
+        input.addEventListener('change', () => {
+            const cover = input.files?.[0]
+
+            if (!cover) return
+
+            void memoryApi.uploadCover(memoryId, cover)
+        })
+
+        const deleteButton = q('#delete-file')
+        deleteButton.addEventListener('click', () => memoryApi.deleteCover(memoryId))
+
+        // Update Sticker
+        let lastClickedStickerId: Maybe<string> | null
+        const stickers = document.querySelectorAll<HTMLImageElement>('#sticker img')
+        stickers.forEach(sticker => {
+            sticker.addEventListener('click', (event: MouseEvent) => {
+                lastClickedStickerId = (event.target as HTMLImageElement).id
+            })
+        })
+
+        const saveStickerButton = q('#save-sticker-btn')
+        saveStickerButton.addEventListener('click', async () => {
+            if (!lastClickedStickerId) return
+            await memoryApi.update(memoryId, { stickerId: lastClickedStickerId })
+        })
+
+        // Delete Sticker
+        const deleteStickerButton = q('#delete-sticker-btn')
+        deleteStickerButton.addEventListener('click', async () => {
+            await memoryApi.update(memory.id, { stickerId: null })
+        })
     })
     .catch(console.error)
 
