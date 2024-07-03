@@ -76,14 +76,6 @@ export async function getLocationInfo(location: Location): PromiseMaybe<Location
                     }
                 }
             }
-            //  else if (component.types.includes('administrative_area_level_1')) {
-            //     for (const addressComponent of component.address_components) {
-            //         if (addressComponent.types.includes('administrative_area_level_1')) {
-            //             city = addressComponent.long_name
-            //             break
-            //         }
-            //     }
-            // }
         }
 
         if (!country) {
