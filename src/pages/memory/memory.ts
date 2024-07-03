@@ -1,4 +1,4 @@
-import { memoryApi, supabase, userApi } from '#api'
+import { memoryApi, storageApi, supabase, userApi } from '#api'
 import { Memory, User } from '#domain'
 import { Maybe, q, updateCurrentUserChip } from '#utils'
 
@@ -29,19 +29,34 @@ userApi
 
         q('[data-memory="title"]').innerHTML = memory.title
 
-        // const cover = storageApi.getFileUrl(`memory/${memoryId}/cover`)
+        const coverSrc = storageApi.getFileUrl(`memory/${memoryId}/cover`)
+
+        const img = q<HTMLImageElement>('#memory-cover')
+
+        img.src = coverSrc!
+        img.onload = (): void => {
+            img.classList.toggle('hidden')
+        }
 
         const input = q<HTMLInputElement>('#file-input')
-        input.addEventListener('change', () => {
+        input.addEventListener('change', async () => {
             const cover = input.files?.[0]
 
             if (!cover) return
 
-            void memoryApi.uploadCover(memoryId, cover)
+            await memoryApi.uploadCover(memoryId, cover)
+
+            img.src = coverSrc!
+            img.onload = (): void => {
+                img.classList.toggle('hidden')
+            }
         })
 
         const deleteButton = q('#delete-file')
-        deleteButton.addEventListener('click', () => memoryApi.deleteCover(memoryId))
+        deleteButton.addEventListener('click', () => {
+            void memoryApi.deleteCover(memoryId)
+            img.classList.toggle('hidden')
+        })
 
         // Create UI for Listing Stickers
         const stickers = [
@@ -159,7 +174,7 @@ class Collaboration {
         const collaboratorElem = this.template.content.cloneNode(true) as HTMLElement
 
         const avatar = q<HTMLImageElement>('[data-collaborator=avatar]', collaboratorElem)
-        q('[data-collaborator=initials]', collaboratorElem).innerHTML = collaborator.name.slice(0, 1)
+        q('[data-collaborator=initials]', collaboratorElem).innerHTML = collaborator.name.slice(0, 1).toUpperCase()
         avatar.src = collaborator.avatar || ''
         avatar.onload = (): void => {
             avatar.classList.toggle('hidden')
