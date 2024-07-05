@@ -31,7 +31,8 @@ function renderMoments(moments: Maybe<Moment[]>): void {
                 const imgFragment = document.importNode(imgMoment.content, true)
                 const node = q<HTMLLIElement>('li', imgFragment)
                 node.setAttribute('data-moment-id', m.id)
-                q<HTMLImageElement>('img', node).src = m.mediaPath!
+                const mediaPath = memoryApi.generateMomentMediaPath(m)
+                q<HTMLImageElement>('img', node).src = storageApi.getFileUrl(mediaPath)!
                 momentList.appendChild(node)
                 break
             }
@@ -39,7 +40,8 @@ function renderMoments(moments: Maybe<Moment[]>): void {
                 const videoFragment = document.importNode(videoMoment.content, true)
                 const node = q<HTMLLIElement>('li', videoFragment)
                 node.setAttribute('data-moment-id', m.id)
-                q<HTMLVideoElement>('video', node).src = m.mediaPath!
+                const mediaPath = memoryApi.generateMomentMediaPath(m)
+                q<HTMLVideoElement>('video', node).src = storageApi.getFileUrl(mediaPath)!
                 momentList.appendChild(node)
                 break
             }

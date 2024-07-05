@@ -6,6 +6,6 @@ export abstract class Moment {
     public abstract type: 'description' | 'image' | 'video'
     public abstract description: Maybe<string>
     public abstract memoryId: Memory['id']
-    public abstract mediaPath: Maybe<string>
+    public abstract extensionName: Maybe<string>
     public abstract createdAt: Maybe<Date>
 }
