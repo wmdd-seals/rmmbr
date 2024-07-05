@@ -1,7 +1,7 @@
 import { Collaborator, Memory, User } from '#domain'
 import { supabase } from './supabase'
 import { ApiTable } from './utils'
-import { findExtensionName, PromiseMaybe } from '#utils'
+import { getExtensionName, PromiseMaybe } from '#utils'
 import { storageApi } from './storageApi'
 import { Moment } from 'src/domain/moment'
 
@@ -194,7 +194,7 @@ class MemoryApi {
         })
         if (!imageVidRes) return
 
-        const extensionName = findExtensionName(entry.fileName)
+        const extensionName = getExtensionName(entry.fileName)
         const path = `memory/${memoryId}/${entry.type}/${imageVidRes[0].id}.${extensionName}`
         const uploadFileRes = await storageApi.uploadFile(path, entry.file)
         if (!uploadFileRes.data) return
