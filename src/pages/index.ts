@@ -237,3 +237,24 @@ function renderMapMarks(memories: Memory[]): void {
         }
     )
 }
+const inputPlace = q<HTMLInputElement>('#input-place')
+inputPlace.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && inputPlace.value !== '') {
+        renderPlaceOnFilter(inputPlace.value)
+        inputPlace.value = ''
+    }
+    return
+})
+
+function renderPlaceOnFilter(value: string): void {
+    const button = document.createElement('button')
+    button.classList.add('btn-text', 'btn-md', 'border-2', 'btn-sm', 'border-basketball-500', 'border-solid')
+    button.innerHTML = `<a>&times;</a> ${value}`
+    const renderPlace = q('#render-place')
+    renderPlace.appendChild(button)
+
+    const removeSign = button.querySelector('a')
+    removeSign!.addEventListener('click', () => {
+        button.remove()
+    })
+}

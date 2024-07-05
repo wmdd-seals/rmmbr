@@ -211,109 +211,48 @@
                 </ul>
             </section>
         </main>
-
-
+        
         <div
-            class="fixed rounded-l-2xl z-30 top-0 right-0 bg-white h-screen translate-x-full w-[40%] transition-all duration-300"
+            class="fixed rounded-l-2xl z-30 top-0 right-0 bg-white h-screen translate-x-full w-[40%] transition-all duration-300 p-6 flex flex-col gap-6"
             id="filter-drawer"
         >
-            <div class="bg-gray-100 my-8 mx-6 px-6 py-7 rounded-lg">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex justify-between items-center">
                     <h2 class="text-xl font-bold">Filters</h2>
                     <button class="text-gray-700 text-2xl">&times;</button>
                 </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-2">Filter by categories</h3>
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-xl font-semibold">Filter by categories</h3>
                     <div class="flex flex-wrap gap-2">
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.ail</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.waii</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.odie</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.mmit</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.orkel</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lore</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.ne</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.Jungle</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.waii</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.waii</span
-                        >
+                        <button class="btn-text border-2 btn-md border-basketball-500 border-solid">Travel</button>
+                        <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Party</button>
+                        <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Family events</button>
+                        <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Food</button>
+                        <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Excercise</button>
+                        <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Recital</button>
+                        <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Office</button>
+                        <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Wedding</button>
+                        <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Ceremony</button>
+                        <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Hobby</button>
+                        <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">School</button>
+                        <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Park</button>
                     </div>
                 </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-2">Filter by period</h3>
+                <h3 class="text-xl font-semibold">Other filters</h3>
+                <div class="flex flex-col gap-2">
+                    <h4 class="text-lg ">Filter by period</h4>
                     <label for="filter-period-start">from</label>
-                    <input type="date" class="w-full border border-gray-300 px-3 py-2 rounded-lg" id="filter-period-start"/>
+                    <input type="date" class="input input-sm w-full" id="filter-period-start"/>
                     <label for="filter-period-end">to</label>
-                    <input type="date" class="w-full border border-gray-300 px-3 py-2 rounded-lg" id="filter-period-end"/>
+                    <input type="date" class="input input-sm w-full" id="filter-period-end"/>
                 </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold">Filter by place</h3>
-                    <input type="input" class="w-full border border-gray-300 px-3 py-2 rounded-lg my-2"/>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Mexico</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Spain</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Chile</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Italia</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; USA</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Egipt</span>
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold">Filter by collaborator</h3>
-                    <input type="input" class="w-full border border-gray-300 px-3 py-2 rounded-lg my-2" />
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.l Scott</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem. Schrute</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.lpert</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.Martinez</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.esly</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.Malone</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem. Martin</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.th Palmer</span>
+                <div class="flex flex-col gap-2">
+                    <h4 class="text-lg ">Filter by place</h4>
+                    <input type="input" placeholder="Add a place to filter" class="input input-sm w-full" id="input-place"/>
+                    <div class="flex flex-wrap gap-2" id="render-place">
                     </div>
                 </div>
                 <button class="btn-filled btn-md" id="filter-start-btn">Filter</button>
-            </div>
+            
         </div>
 
         <memory-creation-modal></memory-creation-modal>
