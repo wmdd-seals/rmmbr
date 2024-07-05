@@ -69,6 +69,10 @@ userApi
         renderMemories(memories)
 
         renderMapMarks(memories)
+
+        const filterBtn = q('#filter-start-btn')
+
+        filterBtn.addEventListener('click', () => filterMemories(memories))
     })
     .catch(console.error)
 
@@ -105,6 +109,40 @@ function renderMemories(memories: Memory[]): void {
     document.querySelectorAll('[data-memory="count"]').forEach(el => {
         el.innerHTML = `${count} ${count === 1 ? 'memory' : 'memories'}`
     })
+}
+
+function filterMemories(memories: Memory[]): void {
+    const filteredMemories = memories.filter(memory => {
+        return filter(memory)
+    })
+
+    const memoryList = document.getElementById('memory-list') as HTMLUListElement
+    const memoriesArray = Array.from(memoryList.querySelectorAll('li'))
+    memoriesArray.forEach(memory => {
+        memoryList.removeChild(memory)
+    })
+
+    renderMemories(filteredMemories)
+}
+
+function filter(memory: Memory): boolean {
+    const startDate = q<HTMLInputElement>('#filter-period-start').value
+    const endDate = q<HTMLInputElement>('#filter-period-end').value
+
+    if (!startDate) {
+        if (!endDate) return true
+
+        return new Date(memory.date) <= new Date(endDate)
+    }
+
+    if (!endDate) {
+        if (!startDate) return true
+
+        return new Date(startDate) <= new Date(memory.date)
+    }
+
+    const memoryDate = new Date(memory.date)
+    return new Date(startDate) <= memoryDate && memoryDate <= new Date(endDate)
 }
 
 function renderFlashbacks(memories: Memory[]): void {
