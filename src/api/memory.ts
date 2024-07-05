@@ -4,7 +4,6 @@ import { ApiTable } from './utils'
 import { findExtensionName, PromiseMaybe } from '#utils'
 import { storageApi } from './storageApi'
 import { Moment } from 'src/domain/moment'
-import { v4 as uuidv4 } from 'uuid'
 
 type MemoryColumns = keyof Memory
 
@@ -16,7 +15,7 @@ type CollaboratorJoinedUser = Collaborator & {
 
 export type CreateCollaboratorPayload = Pick<Collaborator, 'memoryId' | 'userId'>
 
-type CreateMomentPayload = Pick<Moment, 'description' | 'mediaPath' | 'memoryId' | 'type'>
+type MomentPayload = Pick<Moment, 'description' | 'mediaPath' | 'memoryId' | 'type'>
 
 type FileEntry = {
     file: Blob | File
@@ -160,8 +159,16 @@ class MemoryApi {
         return res.data?.map(d => d.users)
     }
 
-    private async createMoment(createMomentPayload: CreateMomentPayload): PromiseMaybe<Moment[]> {
-        const res = await this.moments.insert(createMomentPayload).select<string, Moment>()
+    private async updateMoment(momentId: Moment['id'], payload: Partial<MomentPayload>): PromiseMaybe<Moment[]> {
+        const res = await this.moments
+            .update(payload)
+            .eq('id' satisfies keyof Moment, momentId)
+            .select()
+        return res.data
+    }
+
+    private async createMoment(MomentPayload: MomentPayload): PromiseMaybe<Moment[]> {
+        const res = await this.moments.insert(MomentPayload).select<string, Moment>()
         return res.data
     }
 
@@ -178,20 +185,22 @@ class MemoryApi {
         return descriptionRes
     }
 
-    public async createVisualMoment(entry: FileEntry, memoryId: Memory['id']): PromiseMaybe<Moment[]> {
-        const extensionName = findExtensionName(entry.fileName)
-        const path = `memory/${memoryId}/${entry.type}/${uuidv4()}.${extensionName}`
-
-        const uploadFileRes = await storageApi.uploadFile(path, entry.file)
-        if (!uploadFileRes.data) return
-
+    public async createVisualMoment(entry: FileEntry, memoryId: Memory['id']): PromiseMaybe<Moment> {
         const imageVidRes = await this.createMoment({
             type: entry.type,
             description: null,
             memoryId: memoryId,
-            mediaPath: uploadFileRes.data.path
+            mediaPath: null
         })
-        return imageVidRes
+        if (!imageVidRes) return
+
+        const extensionName = findExtensionName(entry.fileName)
+        const path = `memory/${memoryId}/${entry.type}/${imageVidRes[0].id}.${extensionName}`
+        const uploadFileRes = await storageApi.uploadFile(path, entry.file)
+        if (!uploadFileRes.data) return
+
+        const updateRes = await this.updateMoment(imageVidRes[0].id, { mediaPath: path })
+        return updateRes?.[0]
     }
 
     public async getAllMomentsByMemoryId(memoryId: Memory['id']): PromiseMaybe<Moment[]> {
