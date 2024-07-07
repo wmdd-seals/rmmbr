@@ -170,6 +170,7 @@ userApi
                 const editMemoryModal = q<HTMLDivElement>('edit-memory-modal')
                 editMemoryModal.setAttribute('memory-id', memoryId)
                 editMemoryModal.setAttribute('memory-owner-id', memory.ownerId)
+                editMemoryModal.setAttribute('user-id', user.id)
                 q<HTMLButtonElement>('#edit-memory').addEventListener('click', () => {
                     editMemoryModal.setAttribute('open', 'true')
                 })

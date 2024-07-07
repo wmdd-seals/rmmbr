@@ -53,6 +53,20 @@ export async function codeAddress(address: string): Promise<Location | void> {
     return [location.lng(), location.lat()]
 }
 
+export async function reverseGeocode(location: Location): Promise<string> {
+    const { Geocoder } = await loader.importLibrary('geocoding')
+    const { results } = await new Geocoder().geocode({
+        location: {
+            lat: location[1],
+            lng: location[0]
+        }
+    })
+
+    if (!results.length) return ''
+
+    return results[0].formatted_address
+}
+
 type LocationInfo = {
     country: string
     city: Maybe<string>

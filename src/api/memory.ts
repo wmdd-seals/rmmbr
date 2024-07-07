@@ -23,7 +23,7 @@ type FileEntry = {
 }
 
 // todo:
-type UpdateMemoryPayload = Partial<Pick<Memory, 'title' | 'date' | 'location' | 'cover' | 'stickerId'>>
+type UpdateMemoryPayload = Partial<Pick<Memory, 'title' | 'date' | 'location' | 'cover' | 'description' | 'stickerId'>>
 
 class MemoryApi {
     private readonly memories = supabase.from(ApiTable.Memories)

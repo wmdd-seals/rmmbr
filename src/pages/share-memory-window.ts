@@ -31,8 +31,8 @@ class ShareMemoryWindow extends HTMLElement {
                     flex flex-col w-full h-fit p-2 bg-slate-50 rounded-lg border border-gray-100 justify-center items-center gap-2
                     sm:flex-row sm:justify-between
                 ">
-                    <p class="text-xs text-gray-600 w-full text-left leading-normal">Private link: <a src="#" class="text-gray-700">rmmbr/lfdjalskfjlakjflkjaf;lafj</a></p>
-                    <button type="button" class="
+                    <p class="text-xs text-gray-600 w-full text-left leading-normal">Private link: <span id="show-link" class="text-gray-700 line-clamp-1">rmmbr/lfdjalskfjlakjflkjaf;lafj</span></p>
+                    <button id="copy-link" type="button" class="
                         flex text-nowrap w-full h-8 px-4 py-2 bg-rose-100 rounded-3xl border border-red-300 justify-center items-center gap-1.5
                         sm:w-fit
                     ">
@@ -48,10 +48,21 @@ class ShareMemoryWindow extends HTMLElement {
         )
     }
 
-    protected async attributeChangedCallback(): Promise<void> {
+    private shareLink(): void {
+        q<HTMLButtonElement>('#copy-link').addEventListener('click', async () => {
+            const origin = new URL(import.meta.url).origin
+            await navigator.clipboard.writeText(`${origin}/memory/?id=${this.memoryId}`)
+        })
+        q<HTMLSpanElement>('#show-link').innerHTML = `/memory/?id=${this.memoryId}`
+    }
+
+    protected async attributeChangedCallback(oldVal: string, newVal: string): Promise<void> {
         if (this.newMemory) return
         await this.getExistingCollaborators()
         this.renderAllCollaborators()
+        if (oldVal !== newVal && this.memoryId && this.memoryOwnerId) {
+            this.shareLink()
+        }
     }
 
     private async getExistingCollaborators(): PromiseMaybe<void> {
