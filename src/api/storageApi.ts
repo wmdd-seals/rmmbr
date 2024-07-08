@@ -2,12 +2,12 @@ import { supabase } from './supabase'
 
 type StorageFilePromise =
     | {
-          data: { path: string }
+          data: { id: string; path: string; fullPath: string }
           error: null
       }
     | {
           data: null
-          error: Error // Here is because the interface of this error expresses same structure as Error instance in the supabase module.
+          error: Error
       }
 
 /**

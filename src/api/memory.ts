@@ -1,7 +1,7 @@
 import { Collaborator, Memory, User } from '#domain'
 import { supabase } from './supabase'
 import { ApiTable } from './utils'
-import { getExtensionName, PromiseMaybe } from '#utils'
+import { PromiseMaybe } from '#utils'
 import { storageApi } from './storageApi'
 import { Moment } from 'src/domain/moment'
 
@@ -15,11 +15,10 @@ type CollaboratorJoinedUser = Collaborator & {
 
 export type CreateCollaboratorPayload = Pick<Collaborator, 'memoryId' | 'userId'>
 
-type MomentPayload = Pick<Moment, 'description' | 'memoryId' | 'type' | 'extensionName'>
+type MomentPayload = Pick<Moment, 'description' | 'memoryId' | 'type' | 'mediaId'>
 
 type FileEntry = {
     file: Blob | File
-    fileName: string
     type: 'image' | 'video'
 }
 
@@ -172,25 +171,30 @@ class MemoryApi {
             type: 'description',
             description: description,
             memoryId: memoryId,
-            extensionName: null
+            mediaId: null
         })
         return descriptionRes
     }
 
-    public async createVisualMoment(entry: FileEntry, memoryId: Memory['id']): PromiseMaybe<Moment> {
-        const extensionName = getExtensionName(entry.fileName)
-
+    public async createMediaMoment(entry: FileEntry, memoryId: Memory['id']): PromiseMaybe<Moment> {
         const momentRes = await this.createMoment({
             type: entry.type,
             description: null,
             memoryId: memoryId,
-            extensionName: extensionName
+            mediaId: null
         })
         if (!momentRes) return
 
         const path = this.generateMomentMediaPath(momentRes[0])
-        const uploadFileRes = await storageApi.uploadFile(path, entry.file)
-        if (!uploadFileRes.data) return
+        const uploadFileRes = await storageApi.uploadFile(path, entry.file).then(async res => {
+            try {
+                await this.updateMoment(momentRes[0].id, { mediaId: res.data?.id })
+                return res
+            } catch (err) {
+                console.error(err)
+            }
+        })
+        if (!uploadFileRes?.data) return
 
         return momentRes[0]
     }
@@ -200,6 +204,11 @@ class MemoryApi {
         if (!res.data) return
 
         return res.data
+    }
+
+    public async updateMoment(momentId: Moment['id'], payload: Partial<MomentPayload>): Promise<boolean> {
+        const res = await this.moments.update(payload).eq('id' satisfies keyof Moment, momentId)
+        return !res.error
     }
 
     public async deleteMoments(momentIds: Moment['id'][]): PromiseMaybe<void> {
@@ -217,7 +226,7 @@ class MemoryApi {
     }
 
     public generateMomentMediaPath(moment: Moment): string {
-        return `memory/${moment.memoryId}/${moment.type}/${moment.id}.${moment.extensionName}`
+        return `memory/${moment.memoryId}/${moment.id}`
     }
 }
 
