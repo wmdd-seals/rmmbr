@@ -187,14 +187,10 @@ class MemoryApi {
 
         const path = this.generateMomentMediaPath(momentRes[0])
         const uploadFileRes = await storageApi.uploadFile(path, entry.file).then(async res => {
-            try {
-                await this.updateMoment(momentRes[0].id, { mediaId: res.data?.id })
-                return res
-            } catch (err) {
-                console.error(err)
-            }
+            await this.updateMoment(momentRes[0].id, { mediaId: res.data?.id })
+            return res
         })
-        if (!uploadFileRes?.data) return
+        if (!uploadFileRes.data) return
 
         return momentRes[0]
     }
