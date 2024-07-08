@@ -92,16 +92,20 @@ class UserApi {
         return res.data?.[0]
     }
 
-    private constructAvatarPath(userId: User['id']): string {
-        return `user/${userId}/avatar`
-    }
-
     public async getUser({
         key,
         value
     }: { key: 'email'; value: User['email'] } | { key: 'id'; value: User['id'] }): PromiseMaybe<User> {
         const res = await supabase.from(ApiTable.Users).select<string, User>('*').eq(key, value)
         return res.data?.[0]
+    }
+
+    public getAvatarUrl(userId: User['id']): string {
+        return storageApi.getFileUrl(this.constructAvatarPath(userId))
+    }
+
+    private constructAvatarPath(userId: User['id']): string {
+        return `user/${userId}/avatar`
     }
 }
 
