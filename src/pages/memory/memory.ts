@@ -1,5 +1,5 @@
 import { memoryApi, supabase, userApi, storageApi } from '#api'
-import { Memory, User } from '#domain'
+import { Memory, MemoryMessage, User } from '#domain'
 import { Maybe, q, updateCurrentUserChip } from '#utils'
 import { Moment } from '#domain'
 import './edit-memory-modal'
@@ -77,9 +77,13 @@ userApi
         const memory = await memoryApi.get(memoryId, user.id)
         if (!memory) return
 
-        new Collaboration(user, memoryId)
+        OnlineCollaboratorBadges.init(user, memoryId)
 
-        q('[data-memory="title"]').innerHTML = memory.title
+        document.querySelectorAll('[data-memory="title"]').forEach(el => {
+            el.innerHTML = memory.title
+        })
+
+        void MemoryChat.init(memoryId, user)
 
         const coverSrc = storageApi.getFileUrl(`memory/${memoryId}/cover`) + `?t=${Date.now()}`
 
@@ -199,14 +203,14 @@ userApi
     })
     .catch(console.error)
 
-class Collaboration {
-    private readonly collaborators = new Map<User['id'], OnlineCollaborator>()
-    private readonly list: HTMLUListElement
-    private readonly listWrapper: HTMLDivElement
-    private readonly template: HTMLTemplateElement
-    private readonly currentUserId: User['id']
+class OnlineCollaboratorBadges {
+    private static readonly collaborators = new Map<User['id'], OnlineCollaborator>()
+    private static list: HTMLUListElement
+    private static listWrapper: HTMLDivElement
+    private static template: HTMLTemplateElement
+    private static currentUserId: User['id']
 
-    public constructor(currentUser: User, memoryId: Memory['id']) {
+    public static init(currentUser: User, memoryId: Memory['id']): void {
         this.currentUserId = currentUser.id
         this.listWrapper = q('#online-collaborators')
         this.list = q<HTMLUListElement>('#collaborator-list', this.listWrapper)
@@ -246,7 +250,7 @@ class Collaboration {
             })
     }
 
-    public add(collaborator: OnlineCollaborator): void {
+    private static add(collaborator: OnlineCollaborator): void {
         if (collaborator.id === this.currentUserId || this.collaborators.has(collaborator.id)) return
 
         const collaboratorElem = this.template.content.cloneNode(true) as HTMLElement
@@ -267,7 +271,7 @@ class Collaboration {
         this.sync()
     }
 
-    public remove(id: OnlineCollaborator['id']): void {
+    private static remove(id: OnlineCollaborator['id']): void {
         if (id === this.currentUserId) return
 
         this.collaborators.delete(id)
@@ -275,7 +279,11 @@ class Collaboration {
         this.sync()
     }
 
-    private sync(): void {
+    public static isOnline(userId: User['id']): boolean {
+        return this.collaborators.has(userId)
+    }
+
+    private static sync(): void {
         if (this.collaborators.size !== 0) {
             this.listWrapper.style.display = 'flex'
             return
