@@ -1,4 +1,4 @@
-import { Collaborator, Memory, User } from '#domain'
+import { Collaborator, Memory, MemoryMessage, User } from '#domain'
 import { supabase } from './supabase'
 import { ApiTable } from './utils'
 import { PromiseMaybe } from '#utils'
@@ -22,13 +22,13 @@ type FileEntry = {
     type: 'image' | 'video'
 }
 
-// todo:
 type UpdateMemoryPayload = Partial<Pick<Memory, 'title' | 'date' | 'location' | 'cover' | 'description' | 'stickerId'>>
 
 class MemoryApi {
     private readonly memories = supabase.from(ApiTable.Memories)
     private readonly collaborators = supabase.from(ApiTable.Collaborators)
     private readonly moments = supabase.from(ApiTable.Moments)
+    private readonly messages = supabase.from(ApiTable.Messages)
 
     public async get(memoryId: Memory['id'], userId: User['id']): PromiseMaybe<Memory> {
         const res = await this.memories
@@ -92,8 +92,7 @@ class MemoryApi {
                             lastName
                         )
                     )
-                `,
-                { count: 'exact' }
+                `
             )
             .eq<Memory['ownerId']>(`${ApiTable.Collaborators}.userId`, userId)
             .neq('ownerId' satisfies MemoryColumns, userId)
@@ -106,11 +105,6 @@ class MemoryApi {
 
         return res.data?.[0]
     }
-
-    // todo:
-    // public async update(payload: UpdateMemoryPayload): Promise<void> {
-    //     const res = await this.memories.update().eq()
-    // }
 
     public async update(memoryId: Memory['id'], payload: UpdateMemoryPayload): Promise<boolean> {
         const res = await this.memories.update(payload).eq('id' satisfies MemoryColumns, memoryId)
@@ -144,7 +138,7 @@ class MemoryApi {
         return !!res.error
     }
 
-    public async getAllCollaborators(memoryId: Collaborator['memoryId']): PromiseMaybe<User[]> {
+    public async getAllCollaborators(memoryId: Collaborator['memoryId']): Promise<User[]> {
         const res = await this.collaborators
             .select<string, CollaboratorJoinedUser>(
                 `
@@ -155,7 +149,50 @@ class MemoryApi {
                 `
             )
             .eq<Memory['id']>(`memoryId` satisfies keyof Collaborator, memoryId)
-        return res.data?.map(d => d.users)
+
+        return res.data?.map(d => d.users) || []
+    }
+
+    public async getMessages(memoryId: Memory['id']): Promise<MemoryMessage[]> {
+        const res = await this.messages
+            .select<
+                string,
+                Pick<MemoryMessage, 'id' | 'userId' | 'message' | 'memoryId' | 'createdAt'> & {
+                    [ApiTable.Users]: { firstName: string }
+                }
+            >(
+                `
+                    *, ${ApiTable.Users}(firstName)
+                `
+            )
+            .eq<Memory['id']>('memoryId' satisfies keyof MemoryMessage, memoryId)
+
+        return res.data?.map(m => ({ ...m, userFirstName: m.users.firstName })) || []
+    }
+
+    public async sendMessage(memoryId: Memory['id'], userId: User['id'], message: string): Promise<boolean> {
+        const res = await this.messages.insert([{ message, memoryId, userId }])
+
+        return !res.error
+    }
+
+    public subscribeOnMessages(
+        memoryId: Memory['id'],
+        onMessage: (message: Pick<MemoryMessage, 'userId' | 'createdAt' | 'message' | 'memoryId' | 'id'>) => void
+    ): void {
+        supabase
+            .channel(memoryId)
+            .on<Pick<MemoryMessage, 'userId' | 'createdAt' | 'message' | 'memoryId' | 'id'>>(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: ApiTable.Messages,
+                    filter: `memoryId=eq.${memoryId}`
+                },
+                payload => onMessage(payload.new)
+            )
+            .subscribe()
     }
 
     // FIXME: here should not return the non-sense array value

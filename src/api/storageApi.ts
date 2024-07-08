@@ -24,7 +24,7 @@ class StorageApi {
         return this.storage.upload(filePath, file, { upsert: true })
     }
 
-    public getFileUrl(filePath: string): string | null {
+    public getFileUrl(filePath: string): string {
         const { data } = this.storage.getPublicUrl(filePath)
         return data.publicUrl
     }
