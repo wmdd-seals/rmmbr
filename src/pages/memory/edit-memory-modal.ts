@@ -188,16 +188,16 @@ class EditMemoryModal extends ModalBaseLayer {
 
         const toggle = (ev: MouseEvent): void => {
             const currentTarget = ev.currentTarget as HTMLButtonElement
-            const activePanel = this.querySelector('[aria-hidden="false"][role="tabpanel"]')
-            const activeButton = this.querySelector('[aria-selected="true"]')
+            const activePanel = q<HTMLDivElement>('[aria-hidden="false"][role="tabpanel"]', this)
+            const activeButton = q<HTMLButtonElement>('[aria-selected="true"]', this)
             const targetId = currentTarget.getAttribute('aria-controls')
 
-            activeButton?.setAttribute('aria-selected', 'false')
-            activeButton?.setAttribute('tabindex', '-1')
+            activeButton.setAttribute('aria-selected', 'false')
+            activeButton.setAttribute('tabindex', '-1')
             currentTarget.setAttribute('aria-selected', 'true')
             currentTarget.setAttribute('tabindex', '0')
 
-            activePanel?.setAttribute('aria-hidden', 'true')
+            activePanel.setAttribute('aria-hidden', 'true')
             q<HTMLDivElement>(`#${targetId}`).setAttribute('aria-hidden', 'false')
         }
 
