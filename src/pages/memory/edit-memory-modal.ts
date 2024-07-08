@@ -13,10 +13,10 @@ class EditMemoryModal extends ModalBaseLayer {
 
     protected connectedCallback(): void {
         this.renderBaseLayer()
-        this.renderFirstContent()
+        this.renderContent()
     }
 
-    private renderFirstContent(): void {
+    private renderContent(): void {
         q<HTMLDivElement>('[data-modal-content]', this).innerHTML = /* html */ `
 			<div class="w-full h-full flex flex-col justify-between relative ">
 				<header class="pb-6 gap-6">
