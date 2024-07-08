@@ -165,7 +165,7 @@ userApi
         renderMoments(moments)
 
         await customElements
-            .whenDefined('edit-memory-m odal')
+            .whenDefined('edit-memory-modal')
             .then(() => {
                 const editMemoryModal = q<HTMLDivElement>('edit-memory-modal')
                 editMemoryModal.setAttribute('memory-id', memoryId)
