@@ -72,7 +72,7 @@ userApi
 
         q('[data-memory="title"]').innerHTML = memory.title
 
-        const coverSrc = storageApi.getFileUrl(`memory/${memoryId}/cover`)
+        const coverSrc = storageApi.getFileUrl(`memory/${memoryId}/cover`) + `?t=${Date.now()}`
 
         const img = q<HTMLImageElement>('#memory-cover')
 

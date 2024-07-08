@@ -33,7 +33,7 @@ class EditMemoryModal extends ModalBaseLayer {
 				</header>
 				<div id="edit-memory-1" role="tabpanel" aria-hidden="false" tabindex="0" class="flex flex-col flex-grow w-full overflow-x-hidden overflow-y-scroll sm:overflow-y-hidden aria-hidden:hidden">
 					<div class="w-full aspect-[3/2] sm:aspect-[6/1] object-cover h-[30%] relative rounded-lg overflow-hidden bg-gradient-to-b from-orange-300 to-indigo-500">
-						<img id="cover-img" src="" class="object-cover">
+						<img data-cover-image aria-hidden id="cover-img" src="" class="object-cover aria-hidden:hidden">
 						<div class="flex justify-between p-4 h-full w-full absolute top-0 right-0 bg-gradient-to-b from-black/25 to-transparent">
 							<p class="text-white">Cover Image</p>
 							<div class="flex gap-3">
@@ -86,8 +86,23 @@ class EditMemoryModal extends ModalBaseLayer {
     }
 
     private setCoverImg(): void {
-        q<HTMLImageElement>('#cover-img').src =
-            storageApi.getFileUrl(`memory/${this.memoryId}/cover`) + `?t=${Date.now()}`
+        const coverImg = q<HTMLImageElement>('[data-cover-image]', this)
+        coverImg.src = storageApi.getFileUrl(`memory/${this.memoryId}/cover`) + `?t=${Date.now()}`
+        coverImg.setAttribute('aria-hidden', 'false')
+    }
+
+    private setAllCoverImg(): void {
+        document.querySelectorAll('[data-cover-image]').forEach(e => {
+            ;(e as HTMLImageElement).setAttribute('aria-hidden', 'false')
+            ;(e as HTMLImageElement).src = storageApi.getFileUrl(`memory/${this.memoryId}/cover`) + `?t=${Date.now()}`
+        })
+    }
+
+    private deleteAllCoverImg(): void {
+        document.querySelectorAll('[data-cover-image]').forEach(e => {
+            ;(e as HTMLImageElement).setAttribute('aria-hidden', 'true')
+            ;(e as HTMLImageElement).src = ''
+        })
     }
 
     private async attachEvents(): Promise<void> {
@@ -110,13 +125,14 @@ class EditMemoryModal extends ModalBaseLayer {
             const file = (ev.currentTarget as HTMLInputElement).files?.[0]
             if (!file) return
             await memoryApi.uploadCover(this.memoryId as Memory['id'], file)
-            this.setCoverImg()
+            this.setAllCoverImg()
         })
         q<HTMLButtonElement>('#upload-cover').addEventListener('click', () =>
             q<HTMLInputElement>('#input-cover-img').click()
         )
         q<HTMLButtonElement>('#delete-cover').addEventListener('click', async () => {
             await memoryApi.deleteCover(this.memoryId as Memory['id'])
+            this.deleteAllCoverImg()
         })
         q<HTMLButtonElement>('#save-changes-btn').addEventListener('click', async () => {
             await memoryApi.update(this.memoryId as Memory['id'], {
@@ -163,6 +179,7 @@ class EditMemoryModal extends ModalBaseLayer {
         }
         if (!this.memoryId || !this.memoryOwnerId || !this.userId || this.exsting) return
         await this.attachEvents()
+        this.setCoverImg()
         this.exsting = true
     }
 
@@ -171,7 +188,7 @@ class EditMemoryModal extends ModalBaseLayer {
 
         const toggle = (ev: MouseEvent): void => {
             const currentTarget = ev.currentTarget as HTMLButtonElement
-            const activePanel = this.querySelector('[aria-hidden="false"]')
+            const activePanel = this.querySelector('[aria-hidden="false"][role="tabpanel"]')
             const activeButton = this.querySelector('[aria-selected="true"]')
             const targetId = currentTarget.getAttribute('aria-controls')
 
