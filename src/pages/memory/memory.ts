@@ -255,6 +255,8 @@ class OnlineCollaboratorBadges {
 
         const collaboratorElem = this.template.content.cloneNode(true) as HTMLElement
 
+        collaboratorElem.addEventListener('click', () => MemoryChat.toggleChat())
+
         const avatar = q<HTMLImageElement>('[data-collaborator=avatar]', collaboratorElem)
         q('[data-collaborator=initials]', collaboratorElem).innerHTML = collaborator.name.slice(0, 1).toUpperCase()
         avatar.src = collaborator.avatar || ''
