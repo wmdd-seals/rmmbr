@@ -6,6 +6,7 @@ import { ModalBaseLayer } from 'src/components/modal-base-layer'
 class AddMomentModal extends ModalBaseLayer {
     private readonly imageExtensions: string[] = ['png', 'jpg', 'webp', 'svg']
     private readonly videoExtensions: string[] = ['mp4', 'avi', 'mov', 'webm']
+
     public constructor() {
         super()
     }
@@ -47,7 +48,7 @@ class AddMomentModal extends ModalBaseLayer {
                     <div class="w-full h-full flex flex-col items-center justify-center">
                         <input type="file" id="media-input" class="hidden">
                         <label for="media-input">
-                        <img src="/illustration/take-pic.png">
+                        <img src="/illustrations/taking-pic.svg">
                         </label>
                         <button
                             id="pick-media"
@@ -56,7 +57,7 @@ class AddMomentModal extends ModalBaseLayer {
                 </div>
                 <div id="add-moment-2" role="tabpanel" aria-hidden="true" tabindex="0" class="flex flex-col items-center justify-center flex-grow w-full overflow-x-hidden overflow-y-scroll sm:overflow-y-hidden aria-hidden:hidden">
                     <div class="flex flex-col h-full w-full items-center justify-center gap-6 sm:flex-row">
-                        <img src="/illustration/calming-girl.png" class="w-1/2 sm:w-2/5">
+                        <img src="/illustrations/calming-girl.svg" class="w-1/2 sm:w-2/5">
                         <div class="flex flex-col h-1/2 w-full items-start gap-2">
                             <label for="description-input" class="text-slate-700">Note, or Reflection</label>
                             <Textarea id="description-input" class="w-full border-ui-300 border-2 p-3 rounded-md h-full"></Textarea>
@@ -75,22 +76,20 @@ class AddMomentModal extends ModalBaseLayer {
         `
     }
 
-    private attachEvents(): void {
-        this.querySelectorAll('button[data-modal-close]').forEach(el =>
-            el.addEventListener('click', () => this.close())
-        )
-        q<HTMLButtonElement>('button#pick-media').addEventListener('click', () => {
-            q<HTMLInputElement>('input#media-input').click()
-        })
-        q<HTMLButtonElement>('button#save-changes-btn').addEventListener('click', async () => {
-            if (q<HTMLInputElement>('input#media-input').value) await this.uploadVideoPic()
-            if (q<HTMLTextAreaElement>('textarea#description-input').value) await this.uploadDescription()
-            this.close()
-        })
-        this.tab()
+    protected static get observedAttributes(): string[] {
+        return ['open', 'memory-id']
     }
 
-    protected tab(): void {
+    protected attributeChangedCallback(prop: string, oldVal: string, newVal: string): void {
+        if (prop === 'open') {
+            q<HTMLDivElement>('[data-modal-base]', this).classList.toggle('hidden')
+        }
+        if (prop === 'memory-id' && newVal && newVal !== oldVal) {
+            this.attachEvents()
+        }
+    }
+
+    private tab(): void {
         const tabs = this.querySelectorAll('[role="tab"]')
 
         const toggle = (ev: MouseEvent): void => {
@@ -109,6 +108,21 @@ class AddMomentModal extends ModalBaseLayer {
         }
 
         tabs.forEach(e => (e as HTMLButtonElement).addEventListener('click', toggle))
+    }
+
+    private attachEvents(): void {
+        this.querySelectorAll('button[data-modal-close]').forEach(el =>
+            el.addEventListener('click', () => this.close())
+        )
+        q<HTMLButtonElement>('button#pick-media').addEventListener('click', () => {
+            q<HTMLInputElement>('input#media-input').click()
+        })
+        q<HTMLButtonElement>('button#save-changes-btn').addEventListener('click', async () => {
+            if (q<HTMLInputElement>('input#media-input').value) await this.uploadVideoPic()
+            if (q<HTMLTextAreaElement>('textarea#description-input').value) await this.uploadDescription()
+            this.close()
+        })
+        this.tab()
     }
 
     private getType(extensionName: string | null): 'image' | 'video' | null {
@@ -155,28 +169,15 @@ class AddMomentModal extends ModalBaseLayer {
         this.open = null
     }
 
-    protected static get observedAttributes(): string[] {
-        return ['open', 'memory-id']
-    }
-
-    protected attributeChangedCallback(prop: string, oldVal: string, newVal: string): void {
-        if (prop === 'open') {
-            q<HTMLDivElement>('[data-modal-base]', this).classList.toggle('hidden')
-        }
-        if (prop === 'memory-id' && newVal && newVal !== oldVal) {
-            this.attachEvents()
-        }
-    }
-
-    public get open(): boolean {
+    private get open(): boolean {
         return this.hasAttribute('open')
     }
 
-    public get memoryId(): Memory['id'] | null {
+    private get memoryId(): Memory['id'] | null {
         return this.getAttribute('memory-id') as Memory['id']
     }
 
-    public set open(val: string | null) {
+    private set open(val: string | null) {
         if (!val || ['false', 'null', '0', '', null].includes(val)) {
             this.removeAttribute('open')
             return

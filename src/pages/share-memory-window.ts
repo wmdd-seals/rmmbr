@@ -2,10 +2,6 @@ import { memoryApi, userApi } from '#api'
 import { Memory, User } from '#domain'
 import { PromiseMaybe, q } from '#utils'
 
-/**
- * How to use this
- *
- */
 class ShareMemoryWindow extends HTMLElement {
     protected collaborators: User[] = []
     public constructor() {
@@ -48,14 +44,6 @@ class ShareMemoryWindow extends HTMLElement {
         )
     }
 
-    private shareLink(): void {
-        q<HTMLButtonElement>('#copy-link').addEventListener('click', async () => {
-            const origin = new URL(import.meta.url).origin
-            await navigator.clipboard.writeText(`${origin}/memory/?id=${this.memoryId}`)
-        })
-        q<HTMLSpanElement>('#show-link').innerHTML = `/memory/?id=${this.memoryId}`
-    }
-
     protected async attributeChangedCallback(oldVal: string, newVal: string): Promise<void> {
         if (this.newMemory) return
         await this.getExistingCollaborators()
@@ -63,6 +51,18 @@ class ShareMemoryWindow extends HTMLElement {
         if (oldVal !== newVal && this.memoryId && this.memoryOwnerId) {
             this.shareLink()
         }
+    }
+
+    protected static get observedAttributes(): string[] {
+        return ['memory-id', 'new-memory']
+    }
+
+    private shareLink(): void {
+        q<HTMLButtonElement>('#copy-link').addEventListener('click', async () => {
+            const origin = new URL(import.meta.url).origin
+            await navigator.clipboard.writeText(`${origin}/memory/?id=${this.memoryId}`)
+        })
+        q<HTMLSpanElement>('#show-link').innerHTML = `/memory/?id=${this.memoryId}`
     }
 
     private async getExistingCollaborators(): PromiseMaybe<void> {
@@ -133,19 +133,15 @@ class ShareMemoryWindow extends HTMLElement {
         })
     }
 
-    protected static get observedAttributes(): string[] {
-        return ['memory-id', 'new-memory']
-    }
-
-    public get memoryId(): Memory['id'] | null {
+    private get memoryId(): Memory['id'] | null {
         return this.getAttribute('memory-id') as Memory['id']
     }
 
-    public get memoryOwnerId(): Memory['ownerId'] | null {
+    private get memoryOwnerId(): Memory['ownerId'] | null {
         return this.getAttribute('memory-owner-id') as Memory['ownerId']
     }
 
-    public get newMemory(): boolean {
+    private get newMemory(): boolean {
         return this.hasAttribute('new-memory')
     }
 }

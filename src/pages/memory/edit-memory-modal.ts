@@ -6,14 +6,10 @@ import { Memory, User } from '#domain'
 import { getLocationInfo } from 'src/utils/gmap'
 
 class EditMemoryModal extends ModalBaseLayer {
-    private exsting: boolean = false
+    private existing: boolean = false
+
     public constructor() {
         super()
-    }
-
-    protected connectedCallback(): void {
-        this.renderBaseLayer()
-        this.renderContent()
     }
 
     private renderContent(): void {
@@ -83,6 +79,59 @@ class EditMemoryModal extends ModalBaseLayer {
 				</footer>
 			</div>
       `
+    }
+
+    protected connectedCallback(): void {
+        this.renderBaseLayer()
+        this.renderContent()
+    }
+
+    protected static get observedAttributes(): string[] {
+        return ['open', 'memory-id', 'memory-owner-id', 'user-id']
+    }
+
+    protected async attributeChangedCallback(prop: string, oldVal: string, newVal: string | null): Promise<void> {
+        switch (prop) {
+            case 'open': {
+                q<HTMLDivElement>('[data-modal-base]', this).classList.toggle('hidden')
+                break
+            }
+            case 'memory-id': {
+                if (newVal === oldVal || !this.memoryId) return
+                q<HTMLElement>('share-memory-window', this).setAttribute('memory-id', this.memoryId)
+                break
+            }
+            case 'memory-owner-id': {
+                if (newVal === oldVal || !this.memoryOwnerId) return
+                q<HTMLElement>('share-memory-window', this).setAttribute('memory-owner-id', this.memoryOwnerId)
+                break
+            }
+        }
+        if (!this.memoryId || !this.memoryOwnerId || !this.userId || this.existing) return
+        await this.attachEvents()
+        this.setCoverImg()
+        this.existing = true
+    }
+
+    private tab(): void {
+        const tabs = this.querySelectorAll('[role="tab"]')
+
+        const toggle = (ev: MouseEvent): void => {
+            const currentTarget = ev.currentTarget as HTMLButtonElement
+            const activePanel = q<HTMLDivElement>('[aria-hidden="false"][role="tabpanel"]', this)
+            const activeButton = q<HTMLButtonElement>('[aria-selected="true"]', this)
+            const targetId = currentTarget.getAttribute('aria-controls')
+
+            activeButton.setAttribute('aria-selected', 'false')
+            activeButton.setAttribute('tabindex', '-1')
+            currentTarget.setAttribute('aria-selected', 'true')
+            currentTarget.setAttribute('tabindex', '0')
+
+            activePanel.setAttribute('aria-hidden', 'true')
+            q<HTMLDivElement>(`#${targetId}`).setAttribute('aria-hidden', 'false')
+        }
+
+        tabs.forEach(e => (e as HTMLButtonElement).addEventListener('click', toggle))
     }
 
     private setCoverImg(): void {
@@ -158,63 +207,15 @@ class EditMemoryModal extends ModalBaseLayer {
         this.open = null
     }
 
-    protected static get observedAttributes(): string[] {
-        return ['open', 'memory-id', 'memory-owner-id', 'user-id']
-    }
-
-    protected async attributeChangedCallback(prop: string, oldVal: string, newVal: string | null): Promise<void> {
-        switch (prop) {
-            case 'open': {
-                q<HTMLDivElement>('[data-modal-base]', this).classList.toggle('hidden')
-                break
-            }
-            case 'memory-id': {
-                if (newVal === oldVal || !this.memoryId) return
-                q<HTMLElement>('share-memory-window', this).setAttribute('memory-id', this.memoryId)
-                break
-            }
-            case 'memory-owner-id': {
-                if (newVal === oldVal || !this.memoryOwnerId) return
-                q<HTMLElement>('share-memory-window', this).setAttribute('memory-owner-id', this.memoryOwnerId)
-                break
-            }
-        }
-        if (!this.memoryId || !this.memoryOwnerId || !this.userId || this.exsting) return
-        await this.attachEvents()
-        this.setCoverImg()
-        this.exsting = true
-    }
-
-    protected tab(): void {
-        const tabs = this.querySelectorAll('[role="tab"]')
-
-        const toggle = (ev: MouseEvent): void => {
-            const currentTarget = ev.currentTarget as HTMLButtonElement
-            const activePanel = q<HTMLDivElement>('[aria-hidden="false"][role="tabpanel"]', this)
-            const activeButton = q<HTMLButtonElement>('[aria-selected="true"]', this)
-            const targetId = currentTarget.getAttribute('aria-controls')
-
-            activeButton.setAttribute('aria-selected', 'false')
-            activeButton.setAttribute('tabindex', '-1')
-            currentTarget.setAttribute('aria-selected', 'true')
-            currentTarget.setAttribute('tabindex', '0')
-
-            activePanel.setAttribute('aria-hidden', 'true')
-            q<HTMLDivElement>(`#${targetId}`).setAttribute('aria-hidden', 'false')
-        }
-
-        tabs.forEach(e => (e as HTMLButtonElement).addEventListener('click', toggle))
-    }
-
     private get memoryOwnerId(): string | null {
         return this.getAttribute('memory-owner-id')
     }
 
-    public get open(): boolean {
+    private get open(): boolean {
         return this.hasAttribute('open')
     }
 
-    public get memoryId(): string | null {
+    private get memoryId(): string | null {
         return this.getAttribute('memory-id')
     }
 
@@ -222,7 +223,7 @@ class EditMemoryModal extends ModalBaseLayer {
         return this.getAttribute('user-id')
     }
 
-    public set open(val: string | null) {
+    private set open(val: string | null) {
         if (!val || ['false', 'null', '0', '', null].includes(val)) {
             this.removeAttribute('open')
             return
