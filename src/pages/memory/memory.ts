@@ -3,6 +3,7 @@ import { Memory, User } from '#domain'
 import { Maybe, q, updateCurrentUserChip } from '#utils'
 import { Moment } from '#domain'
 import './edit-memory-modal'
+import './add-moment-modal'
 
 const urlParams = new URLSearchParams(location.search)
 const memoryId = <Maybe<Memory['id']>>urlParams.get('id')
@@ -173,6 +174,17 @@ userApi
                 editMemoryModal.setAttribute('user-id', user.id)
                 q<HTMLButtonElement>('#edit-memory').addEventListener('click', () => {
                     editMemoryModal.setAttribute('open', 'true')
+                })
+            })
+            .catch(console.error)
+
+        await customElements
+            .whenDefined('add-moment-modal')
+            .then(() => {
+                const addMomentModal = q<HTMLDivElement>('add-moment-modal')
+                q<HTMLButtonElement>('#add-moment').addEventListener('click', () => {
+                    addMomentModal.setAttribute('open', 'true')
+                    addMomentModal.setAttribute('memory-id', memoryId)
                 })
             })
             .catch(console.error)
