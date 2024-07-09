@@ -3,7 +3,7 @@ import { supabase } from './supabase'
 import { ApiTable } from './utils'
 import { PromiseMaybe } from '#utils'
 import { storageApi } from './storageApi'
-import { Moment } from 'src/domain/moment'
+import { Moment } from '#domain'
 
 type MemoryColumns = keyof Memory
 

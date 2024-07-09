@@ -1,7 +1,7 @@
 import { memoryApi, supabase, userApi, storageApi } from '#api'
 import { Memory, User } from '#domain'
 import { Maybe, q, updateCurrentUserChip } from '#utils'
-import { Moment } from 'src/domain/moment'
+import { Moment } from '#domain'
 
 const urlParams = new URLSearchParams(location.search)
 const memoryId = <Maybe<Memory['id']>>urlParams.get('id')
