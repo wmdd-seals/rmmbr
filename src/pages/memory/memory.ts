@@ -2,6 +2,7 @@ import { memoryApi, supabase, userApi, storageApi } from '#api'
 import { Memory, User } from '#domain'
 import { Maybe, q, updateCurrentUserChip } from '#utils'
 import { Moment } from '#domain'
+import './edit-memory-modal'
 
 const urlParams = new URLSearchParams(location.search)
 const memoryId = <Maybe<Memory['id']>>urlParams.get('id')
@@ -162,6 +163,18 @@ userApi
         })
         const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
         renderMoments(moments)
+
+        await customElements
+            .whenDefined('edit-memory-m odal')
+            .then(() => {
+                const editMemoryModal = q<HTMLDivElement>('edit-memory-modal')
+                editMemoryModal.setAttribute('memory-id', memoryId)
+                editMemoryModal.setAttribute('memory-owner-id', memory.ownerId)
+                q<HTMLButtonElement>('#edit-memory').addEventListener('click', () => {
+                    editMemoryModal.setAttribute('open', 'true')
+                })
+            })
+            .catch(console.error)
     })
     .catch(console.error)
 
