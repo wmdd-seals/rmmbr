@@ -17,7 +17,7 @@ class AddMomentModal extends ModalBaseLayer {
     }
 
     protected renderContent(): void {
-        q<HTMLDivElement>('[data-modal-content]', this).innerHTML = /* html */ `
+        q<HTMLDivElement>('[data-modal-content]', this).innerHTML = `
             <div class="w-full h-full flex flex-col justify-between relative">
                 <header class="pb-6 gap-6">
                     <div class="flex items-center justify-between">
