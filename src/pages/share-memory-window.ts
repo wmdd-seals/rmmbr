@@ -63,7 +63,7 @@ class ShareMemoryWindow extends HTMLElement {
     }
 
     private async addNewCollaborator(email: User['email']): Promise<void> {
-        const user = await userApi.findUser({ key: 'email', value: email })
+        const user = await userApi.getUser({ key: 'email', value: email })
         if (!user || user.id === this.memoryOwnerId) {
             /**
              * todo: error handling

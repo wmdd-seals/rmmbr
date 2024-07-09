@@ -1,6 +1,7 @@
-import { memoryApi, storageApi, supabase, userApi } from '#api'
+import { memoryApi, supabase, userApi, storageApi } from '#api'
 import { Memory, User } from '#domain'
 import { Maybe, q, updateCurrentUserChip } from '#utils'
+import { Moment } from '#domain'
 
 const urlParams = new URLSearchParams(location.search)
 const memoryId = <Maybe<Memory['id']>>urlParams.get('id')
@@ -13,6 +14,47 @@ type OnlineCollaborator = {
     id: User['id']
     avatar: User['avatarSrc']
     name: User['firstName']
+}
+
+function renderMoments(moments: Maybe<Moment[]>): void {
+    if (!moments) return
+    const momentList = q<HTMLUListElement>('[data-moment-list]')
+    const [imgMoment, videoMoment, descriptionMoment] = [
+        q<HTMLTemplateElement>('[data-moment-img-item]'),
+        q<HTMLTemplateElement>('[data-moment-video-item]'),
+        q<HTMLTemplateElement>('[data-moment-description-item]')
+    ]
+
+    moments.forEach((m): void => {
+        switch (m.type) {
+            case 'image': {
+                const imgFragment = document.importNode(imgMoment.content, true)
+                const node = q<HTMLLIElement>('li', imgFragment)
+                node.setAttribute('data-moment-id', m.id)
+                const mediaPath = memoryApi.generateMomentMediaPath(m)
+                q<HTMLImageElement>('img', node).src = storageApi.getFileUrl(mediaPath)!
+                momentList.appendChild(node)
+                break
+            }
+            case 'video': {
+                const videoFragment = document.importNode(videoMoment.content, true)
+                const node = q<HTMLLIElement>('li', videoFragment)
+                node.setAttribute('data-moment-id', m.id)
+                const mediaPath = memoryApi.generateMomentMediaPath(m)
+                q<HTMLVideoElement>('video', node).src = storageApi.getFileUrl(mediaPath)!
+                momentList.appendChild(node)
+                break
+            }
+            case 'description': {
+                const descriptionFragment = document.importNode(descriptionMoment.content, true)
+                const node = q<HTMLLIElement>('li', descriptionFragment)
+                q<HTMLParagraphElement>('p', descriptionFragment).innerHTML = m.description!
+                node.setAttribute('data-moment-id', m.id)
+                momentList.appendChild(node)
+                break
+            }
+        }
+    })
 }
 
 userApi
@@ -118,6 +160,8 @@ userApi
         deleteStickerButton.addEventListener('click', async () => {
             await memoryApi.update(memory.id, { stickerId: null })
         })
+        const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
+        renderMoments(moments)
     })
     .catch(console.error)
 

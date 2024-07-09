@@ -61,10 +61,9 @@
                             src=""
                             alt="User avatar"
                             class="object-cover hidden absolute h-full w-full"
-                        />
+                            />
                     </a>
                 </div>
-            </div>
         </header>
 
         <img id="memory-cover" src="" alt="Memory cover" class="hidden" />
@@ -87,14 +86,11 @@
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="font-bold">Moments...</h3>
 
-                    <span>Add moments +</span>
+                    <button id="add-moment">Add moments +</button>
                 </div>
 
-                <ul class="grid grid-cols-2 gap-2">
-                    <li class="bg-gray-200 rounded-lg h-44"></li>
-                    <li class="bg-gray-200 rounded-lg h-44"></li>
-                    <li class="bg-gray-200 rounded-lg h-44"></li>
-                    <li class="bg-gray-200 rounded-lg h-44"></li>
+                <ul data-moment-list class="grid grid-cols-2 gap-2 md:grid-cols-3">
+                    <!-- moments are to be rendered here -->
                 </ul>
             </div>
 
@@ -160,7 +156,21 @@
                 </footer>
             </div>
         </main>
-
+        <template data-moment-img-item>
+            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden">
+                <img class="object-cover min-h-full max-w-full w-full" src="">
+            </li>
+        </template>
+        <template data-moment-video-item>
+            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden">
+                <video class="object-cover min-h-full max-w-full w-full" controls src="">
+            </li>
+        </template>
+        <template data-moment-description-item>
+            <li data-moment-id="" class="h-64 px-8 py-11 bg-gradient-to-tr from-indigo-800 via-indigo-500 to-indigo-500 rounded-lg border border-indigo-200 justify-center items-center gap-2.5 inline-flex">
+                <p class="text-white text-4xl font-bold font-['Source Serif 4'] line-clamp-3"></p>
+            </li>
+        </template>
         <script type="module" src="./memory.ts"></script>
     </body>
 </html>
