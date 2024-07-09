@@ -3,7 +3,7 @@ import { ModalBaseLayer } from 'src/components/modal-base-layer'
 import '../share-memory-window'
 import { memoryApi, storageApi } from '#api'
 import { Memory, User } from '#domain'
-import { reverseGeocode } from 'src/utils/gmap'
+import { getLocationInfo } from 'src/utils/gmap'
 
 class EditMemoryModal extends ModalBaseLayer {
     private exsting: boolean = false
@@ -116,9 +116,11 @@ class EditMemoryModal extends ModalBaseLayer {
 
         if (!currentMemory) throw new Error('The memory does not exist or failed fetch the memory data')
 
+        const locationInfo = currentMemory.location ? await getLocationInfo(currentMemory.location) : null
+
         title.value = currentMemory.title
         date.value = currentMemory.date
-        location.value = currentMemory.location ? await reverseGeocode(currentMemory.location) : ''
+        location.value = locationInfo ? `${locationInfo.city}, ${locationInfo.country}` : ''
         description.value = currentMemory.description || ''
 
         q<HTMLInputElement>('#input-cover-img').addEventListener('change', async ev => {
