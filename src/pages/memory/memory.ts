@@ -18,10 +18,11 @@ type OnlineCollaborator = {
     name: User['firstName']
 }
 
-function reRenderMoments(moments: Maybe<Moment[]>): void {
+const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
+
+function rerenderMoments(moments: Maybe<Moment[]>): void {
     const momentList = q<HTMLUListElement>('[data-moment-list]')
     momentList.innerHTML = ''
-    if (!moments) return
     renderMoments(moments)
 }
 
@@ -169,7 +170,6 @@ userApi
         deleteStickerButton.addEventListener('click', async () => {
             await memoryApi.update(memory.id, { stickerId: null })
         })
-        const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
         renderMoments(moments)
 
         await customElements
@@ -298,7 +298,7 @@ class LatestMoments {
                     table: 'moments',
                     filter: `memoryId=eq.${memoryId}`
                 },
-                async payload => {
+                payload => {
                     switch (payload.eventType) {
                         case 'INSERT': {
                             const newMemory = payload.new
@@ -307,8 +307,8 @@ class LatestMoments {
                             break
                         }
                         case 'DELETE': {
-                            const moments = await memoryApi.getAllMomentsByMemoryId(memoryId!)
-                            reRenderMoments(moments)
+                            const filteredMoments = moments?.filter(item => item.id !== payload.old.id)
+                            rerenderMoments(filteredMoments)
                             break
                         }
                         case 'UPDATE': {
