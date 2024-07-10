@@ -62,9 +62,10 @@
                             src=""
                             alt="User avatar"
                             class="object-cover hidden absolute h-full w-full"
-                            />
+                        />
                     </a>
                 </div>
+            </div>
         </header>
 
         <div class="h-svh overflow-hidden sm:h-[40vh] relative">
@@ -73,28 +74,38 @@
                 id="memory-cover"
                 src=""
                 alt="Memory cover"
-                class="hidden w-full object-cover aria-hidden:hidden"
+                class="hidden h-full object-cover aria-hidden:hidden md:w-full"
             />
-            <button id="edit-memory" class="absolute w-12 aspect-square rounded-full text-white top-8 right-6 bg-thick-blue-500"><i class="fa-regular fa-pen-to-square"></i></button>
+            <button
+                id="edit-memory"
+                class="absolute w-12 aspect-square rounded-full text-white top-8 right-6 bg-thick-blue-500"
+            >
+                <i class="fa-regular fa-pen-to-square"></i>
+            </button>
+            <a href="../" class="absolute top-8 left-6 text-ui-50 font-semibold">← Back</a>
         </div>
 
         <main class="max-w-[1304px] mx-auto px-6">
-
-            <div class="flex items-center mb-4">
-                <a href="../">Back</a>
-            </div>
-
             <div class="bg-gray-200 rounded-lg p-4 flex flex-col items-center mb-6">
                 <h2 class="font-bold" data-memory="title">Memory title</h2>
                 <div>May 27, 2023</div>
             </div>
 
             <div>
-                <div class="flex items-center justify-between mb-2">
+                <div class="flex justify-between mb-2 flex-col w-full items-start">
                     <h3 class="font-bold">Moments...</h3>
 
-                    <div>
-                        <button id="add-moment">Add moments +</button>
+                    <div id="edit-primary-btns" class="flex justify-between w-full">
+                        <button aria-selected="false" id="edit-moment">Edit Moments</button>
+                        <button id="add-moment">Add Moments +</button>
+                    </div>
+                    <div
+                        id="edit-controllers"
+                        aria-hidden="true"
+                        class="flex justify-between w-full aria-hidden:hidden"
+                    >
+                        <button id="delete-moments-btn">Delete</button>
+                        <button id="select-all-moments">Select All</button>
                     </div>
                 </div>
 
@@ -166,18 +177,63 @@
             </div>
         </main>
         <template data-moment-img-item>
-            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden">
-                <img class="object-cover min-h-full max-w-full w-full" src="">
+            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden relative">
+                <label
+                    data-select-label
+                    class="flex items-center cursor-pointer absolute top-3 right-3 z-50 aria-hidden:hidden"
+                    aria-hidden="true"
+                >
+                    <input data-moment-check="" type="checkbox" class="hidden peer" />
+                    <div
+                        class="w-6 h-6 rounded-full border-ui-50 border-2 peer-checked:bg-blue-600 peer-checked:border-blue-600 flex items-center text-transparent peer-checked:text-white justify-center"
+                    >
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                </label>
+                <div class="w-full h-full peer-[:checked]:brightness-50 z-10 relative">
+                    <img class="object-cover min-h-full max-w-full w-full" src />
+                </div>
             </li>
         </template>
         <template data-moment-video-item>
-            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden">
-                <video class="object-cover min-h-full max-w-full w-full" controls src="">
+            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden relative">
+                <label
+                    data-select-label
+                    class="flex items-center cursor-pointer absolute top-3 right-3 z-50 aria-hidden:hidden"
+                    aria-hidden="true"
+                >
+                    <input data-moment-check="" type="checkbox" class="hidden peer" />
+                    <div
+                        class="w-6 h-6 rounded-full border-ui-50 border-2 peer-checked:bg-blue-600 peer-checked:border-blue-600 flex items-center text-transparent peer-checked:text-white justify-center"
+                    >
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                </label>
+                <div class="w-full h-full peer-[:checked]:brightness-50 z-10 relative">
+                    <video class="object-cover min-h-full max-w-full w-full" controls src></video>
+                </div>
             </li>
         </template>
         <template data-moment-description-item>
-            <li data-moment-id="" class="h-64 px-8 py-11 bg-gradient-to-tr from-indigo-800 via-indigo-500 to-indigo-500 rounded-lg border border-indigo-200 justify-center items-center gap-2.5 inline-flex">
-                <p class="text-white text-4xl font-bold font-['Source Serif 4'] line-clamp-3"></p>
+            <li
+                data-moment-id=""
+                class="h-64 px-8 py-11 bg-gradient-to-tr from-indigo-800 via-indigo-500 to-indigo-500 rounded-lg border border-indigo-200 justify-center items-center gap-2.5 inline-flex relative"
+            >
+                <label
+                    data-select-label
+                    class="flex items-center cursor-pointer absolute top-3 right-3 z-50 aria-hidden:hidden"
+                    aria-hidden="true"
+                >
+                    <input data-moment-check="" type="checkbox" class="hidden peer" />
+                    <div
+                        class="w-6 h-6 rounded-full border-ui-50 border-2 peer-checked:bg-blue-600 peer-checked:border-blue-600 flex items-center text-transparent peer-checked:text-white justify-center"
+                    >
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                </label>
+                <div class="w-full h-full flex justify-center items-center peer-[:checked]:brightness-50 z-10 relative">
+                    <p class="text-white text-4xl font-bold font-['Source Serif 4'] line-clamp-3"></p>
+                </div>
             </li>
         </template>
         <add-moment-modal></add-moment-modal>

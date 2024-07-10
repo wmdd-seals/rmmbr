@@ -41,6 +41,7 @@ function renderMoments(moments: Maybe<Moment[]>): void {
                 const imgFragment = document.importNode(imgMoment.content, true)
                 const node = q<HTMLLIElement>('li', imgFragment)
                 node.setAttribute('data-moment-id', m.id)
+                q<HTMLInputElement>('input[type="checkbox"]', node).setAttribute('data-moment-id', m.id)
                 const mediaPath = memoryApi.generateMomentMediaPath(m)
                 q<HTMLImageElement>('img', node).src = storageApi.getFileUrl(mediaPath)!
                 momentList.appendChild(node)
@@ -50,6 +51,7 @@ function renderMoments(moments: Maybe<Moment[]>): void {
                 const videoFragment = document.importNode(videoMoment.content, true)
                 const node = q<HTMLLIElement>('li', videoFragment)
                 node.setAttribute('data-moment-id', m.id)
+                q<HTMLInputElement>('input[type="checkbox"]', node).setAttribute('data-moment-id', m.id)
                 const mediaPath = memoryApi.generateMomentMediaPath(m)
                 q<HTMLVideoElement>('video', node).src = storageApi.getFileUrl(mediaPath)!
                 momentList.appendChild(node)
@@ -60,11 +62,29 @@ function renderMoments(moments: Maybe<Moment[]>): void {
                 const node = q<HTMLLIElement>('li', descriptionFragment)
                 q<HTMLParagraphElement>('p', descriptionFragment).innerHTML = m.description!
                 node.setAttribute('data-moment-id', m.id)
+                q<HTMLInputElement>('input[type="checkbox"]', node).setAttribute('data-moment-id', m.id)
                 momentList.appendChild(node)
                 break
             }
         }
     })
+}
+
+const editMoment: {
+    mode: boolean
+    editControllers: HTMLDivElement
+} = {
+    mode: false,
+    editControllers: q<HTMLDivElement>('#edit-controllers')
+}
+
+function resetEditSelects(): void {
+    editMoment.editControllers.setAttribute('aria-hidden', 'true')
+    document.querySelectorAll<HTMLInputElement>('input[type="checkbox"]').forEach(ele => {
+        ele.checked = false
+    })
+    document.querySelectorAll('label[data-select-label]').forEach(el => el.setAttribute('aria-hidden', 'true'))
+    editMoment.mode = false
 }
 
 userApi
@@ -175,7 +195,38 @@ userApi
                 })
             })
             .catch(console.error)
+
+        // activate real-time update for moments
         new LatestMoments()
+
+        function selectAndDeleteMoments(): void {
+            q<HTMLButtonElement>('#edit-moment').addEventListener('click', () => {
+                if (editMoment.mode) {
+                    resetEditSelects()
+                } else {
+                    editMoment.editControllers.setAttribute('aria-hidden', 'false')
+                    editMoment.mode = true
+                    document
+                        .querySelectorAll('label[data-select-label]')
+                        .forEach(el => el.setAttribute('aria-hidden', 'false'))
+                }
+            })
+
+            q<HTMLButtonElement>('button#delete-moments-btn').addEventListener('click', async () => {
+                const momentIds = Array.from<HTMLInputElement>(
+                    document.querySelectorAll('input[type="checkbox"]:checked[data-moment-id]')
+                ).map(m => m.dataset.momentId)
+                await memoryApi.deleteMoments(momentIds as Array<Moment['id']>)
+                resetEditSelects()
+            })
+
+            q<HTMLButtonElement>('button#select-all-moments').addEventListener('click', () => {
+                document.querySelectorAll<HTMLInputElement>('input[type="checkbox"][data-moment-id]').forEach(e => {
+                    e.checked = true
+                })
+            })
+        }
+        selectAndDeleteMoments()
     })
     .catch(console.error)
 
