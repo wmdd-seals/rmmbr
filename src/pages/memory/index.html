@@ -67,7 +67,7 @@
                 </div>
         </header>
 
-        <div class="h-svh overflow-hidden sm:h-[40vh]">
+        <div class="h-svh overflow-hidden sm:h-[40vh] relative">
             <img
                 data-cover-image
                 id="memory-cover"
@@ -75,13 +75,12 @@
                 alt="Memory cover"
                 class="hidden w-full object-cover aria-hidden:hidden"
             />
+            <button id="edit-memory" class="absolute w-12 aspect-square rounded-full text-white top-8 right-6 bg-thick-blue-500"><i class="fa-regular fa-pen-to-square"></i></button>
         </div>
 
         <main class="max-w-[1304px] mx-auto px-6">
-            <input type="file" id="file-input" />
 
-            <button class="btn btn-filled" id="delete-file">delete cover</button>
-            <button class="btn btn-filled" id="edit-memory">Edit memory</button>
+
             <div class="flex items-center mb-4">
                 <a href="../">Back</a>
             </div>
@@ -95,7 +94,9 @@
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="font-bold">Moments...</h3>
 
-                    <button id="add-moment">Add moments +</button>
+                    <div>
+                        <button id="add-moment">Add moments +</button>
+                    </div>
                 </div>
 
                 <ul data-moment-list class="grid grid-cols-2 gap-2 md:grid-cols-3">
