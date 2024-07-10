@@ -44,18 +44,20 @@ class MemoryCreationModal extends ModalBaseLayer {
         super()
     }
 
-    protected async connectedCallback(): Promise<void> {
+    protected connectedCallback(): void {
         this.renderBaseLayer()
-        await this.renderFirstContent()
-        this.attachValidationListeners()
     }
 
     protected static get observedAttributes(): string[] {
         return ['open']
     }
 
-    protected attributeChangedCallback(): void {
+    protected async attributeChangedCallback(_: string, oldVal: string, newVal: string): Promise<void> {
         q<HTMLDivElement>('[data-modal-base]', this).classList.toggle('hidden')
+        if (!oldVal && newVal) {
+            await this.renderFirstContent()
+            this.attachValidationListeners()
+        }
     }
 
     private async renderFirstContent(): Promise<void> {
@@ -212,6 +214,7 @@ class MemoryCreationModal extends ModalBaseLayer {
             [data-index="${this.inputIndex}"] textarea[required]`
         ).forEach(e =>
             e.addEventListener('input', ev => {
+                console.log(ev, 'input change')
                 ev.preventDefault()
                 q<HTMLButtonElement>('#next', this).disabled = !this.areAllRequiredFieldsFilled()
             })
