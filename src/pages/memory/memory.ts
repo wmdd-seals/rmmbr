@@ -2,6 +2,8 @@ import { memoryApi, supabase, userApi, storageApi } from '#api'
 import { Memory, User } from '#domain'
 import { Maybe, q, updateCurrentUserChip } from '#utils'
 import { Moment } from '#domain'
+import './edit-memory-modal'
+import './add-moment-modal'
 
 const urlParams = new URLSearchParams(location.search)
 const memoryId = <Maybe<Memory['id']>>urlParams.get('id')
@@ -14,6 +16,14 @@ type OnlineCollaborator = {
     id: User['id']
     avatar: User['avatarSrc']
     name: User['firstName']
+}
+
+const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
+
+function rerenderMoments(moments: Maybe<Moment[]>): void {
+    const momentList = q<HTMLUListElement>('[data-moment-list]')
+    momentList.innerHTML = ''
+    renderMoments(moments)
 }
 
 function renderMoments(moments: Maybe<Moment[]>): void {
@@ -71,7 +81,7 @@ userApi
 
         q('[data-memory="title"]').innerHTML = memory.title
 
-        const coverSrc = storageApi.getFileUrl(`memory/${memoryId}/cover`)
+        const coverSrc = storageApi.getFileUrl(`memory/${memoryId}/cover`) + `?t=${Date.now()}`
 
         const img = q<HTMLImageElement>('#memory-cover')
 
@@ -160,8 +170,32 @@ userApi
         deleteStickerButton.addEventListener('click', async () => {
             await memoryApi.update(memory.id, { stickerId: null })
         })
-        const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
         renderMoments(moments)
+
+        await customElements
+            .whenDefined('edit-memory-modal')
+            .then(() => {
+                const editMemoryModal = q<HTMLDivElement>('edit-memory-modal')
+                editMemoryModal.setAttribute('memory-id', memoryId)
+                editMemoryModal.setAttribute('memory-owner-id', memory.ownerId)
+                editMemoryModal.setAttribute('user-id', user.id)
+                q<HTMLButtonElement>('#edit-memory').addEventListener('click', () => {
+                    editMemoryModal.setAttribute('open', 'true')
+                })
+            })
+            .catch(console.error)
+
+        await customElements
+            .whenDefined('add-moment-modal')
+            .then(() => {
+                const addMomentModal = q<HTMLDivElement>('add-moment-modal')
+                q<HTMLButtonElement>('#add-moment').addEventListener('click', () => {
+                    addMomentModal.setAttribute('open', 'true')
+                    addMomentModal.setAttribute('memory-id', memoryId)
+                })
+            })
+            .catch(console.error)
+        new LatestMoments()
     })
     .catch(console.error)
 
@@ -248,5 +282,44 @@ class Collaboration {
         }
 
         this.listWrapper.style.display = 'none'
+    }
+}
+
+class LatestMoments {
+    public constructor() {
+        const latestMoments = supabase.channel(`moments_on_${memoryId}`)
+
+        latestMoments
+            .on<Moment>(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'moments',
+                    filter: `memoryId=eq.${memoryId}`
+                },
+                payload => {
+                    switch (payload.eventType) {
+                        case 'INSERT': {
+                            const newMemory = payload.new
+                            if (newMemory.type !== 'description') return
+                            renderMoments([newMemory])
+                            break
+                        }
+                        case 'DELETE': {
+                            const filteredMoments = moments?.filter(item => item.id !== payload.old.id)
+                            rerenderMoments(filteredMoments)
+                            break
+                        }
+                        case 'UPDATE': {
+                            const newMemory = payload.new
+                            if (newMemory.type === 'description') return
+                            renderMoments([newMemory])
+                            break
+                        }
+                    }
+                }
+            )
+            .subscribe()
     }
 }

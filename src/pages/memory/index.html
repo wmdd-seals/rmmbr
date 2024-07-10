@@ -67,13 +67,21 @@
                 </div>
         </header>
 
-        <img id="memory-cover" src="" alt="Memory cover" class="hidden" />
+        <div class="h-svh overflow-hidden sm:h-[40vh]">
+            <img
+                data-cover-image
+                id="memory-cover"
+                src=""
+                alt="Memory cover"
+                class="hidden w-full object-cover aria-hidden:hidden"
+            />
+        </div>
 
         <main class="max-w-[1304px] mx-auto px-6">
             <input type="file" id="file-input" />
 
             <button class="btn btn-filled" id="delete-file">delete cover</button>
-
+            <button class="btn btn-filled" id="edit-memory">Edit memory</button>
             <div class="flex items-center mb-4">
                 <a href="../">Back</a>
             </div>
@@ -172,6 +180,8 @@
                 <p class="text-white text-4xl font-bold font-['Source Serif 4'] line-clamp-3"></p>
             </li>
         </template>
+        <add-moment-modal></add-moment-modal>
+        <edit-memory-modal></edit-memory-modal>
         <script type="module" src="./memory.ts"></script>
     </body>
 </html>
