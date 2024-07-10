@@ -90,26 +90,6 @@ userApi
             img.classList.toggle('hidden')
         }
 
-        const input = q<HTMLInputElement>('#file-input')
-        input.addEventListener('change', async () => {
-            const cover = input.files?.[0]
-
-            if (!cover) return
-
-            await memoryApi.uploadCover(memoryId, cover)
-
-            img.src = coverSrc!
-            img.onload = (): void => {
-                img.classList.toggle('hidden')
-            }
-        })
-
-        const deleteButton = q('#delete-file')
-        deleteButton.addEventListener('click', () => {
-            void memoryApi.deleteCover(memoryId)
-            img.classList.toggle('hidden')
-        })
-
         // Create UI for Listing Stickers
         const stickers = [
             'airplane',
