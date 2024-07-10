@@ -18,6 +18,13 @@ type OnlineCollaborator = {
     name: User['firstName']
 }
 
+function reRenderMoments(moments: Maybe<Moment[]>): void {
+    const momentList = q<HTMLUListElement>('[data-moment-list]')
+    momentList.innerHTML = ''
+    if (!moments) return
+    renderMoments(moments)
+}
+
 function renderMoments(moments: Maybe<Moment[]>): void {
     if (!moments) return
     const momentList = q<HTMLUListElement>('[data-moment-list]')
@@ -188,6 +195,7 @@ userApi
                 })
             })
             .catch(console.error)
+        new LatestMoments()
     })
     .catch(console.error)
 
@@ -274,5 +282,45 @@ class Collaboration {
         }
 
         this.listWrapper.style.display = 'none'
+    }
+}
+
+class LatestMoments {
+    public constructor() {
+        const latestMoments = supabase.channel(`moments_on_${memoryId}`)
+
+        latestMoments
+            .on<Moment>(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'moments',
+                    filter: `memoryId=eq.${memoryId}`
+                },
+                async payload => {
+                    console.log(payload)
+                    switch (payload.eventType) {
+                        case 'INSERT': {
+                            const newMemory = payload.new
+                            if (newMemory.type !== 'description') return
+                            renderMoments([newMemory])
+                            break
+                        }
+                        case 'DELETE': {
+                            const moments = await memoryApi.getAllMomentsByMemoryId(memoryId!)
+                            reRenderMoments(moments)
+                            break
+                        }
+                        case 'UPDATE': {
+                            const newMemory = payload.new
+                            if (newMemory.type === 'description') return
+                            renderMoments([newMemory])
+                            break
+                        }
+                    }
+                }
+            )
+            .subscribe()
     }
 }
