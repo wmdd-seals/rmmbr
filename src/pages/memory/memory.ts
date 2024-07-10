@@ -299,7 +299,6 @@ class LatestMoments {
                     filter: `memoryId=eq.${memoryId}`
                 },
                 async payload => {
-                    console.log(payload)
                     switch (payload.eventType) {
                         case 'INSERT': {
                             const newMemory = payload.new
