@@ -37,6 +37,7 @@
     },
     "dependencies": {
         "@googlemaps/js-api-loader": "^1.16.6",
-        "@supabase/supabase-js": "^2.43.4"
+        "@supabase/supabase-js": "^2.43.4",
+        "feather-icons": "^4.29.2"
     }
 }
