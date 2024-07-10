@@ -18,7 +18,7 @@ class AddMomentModal extends ModalBaseLayer {
     }
 
     protected renderContent(): void {
-        q<HTMLDivElement>('[data-modal-content]', this).innerHTML = `
+        q<HTMLDivElement>('[data-modal-content]', this).innerHTML = /* html */ `
             <div class="w-full h-full flex flex-col justify-between relative">
                 <header class="pb-6 gap-6">
                     <div class="flex items-center justify-between">
@@ -163,6 +163,7 @@ class AddMomentModal extends ModalBaseLayer {
         if (!this.memoryId) throw new Error('memoryId is not given')
         const desc = q<HTMLTextAreaElement>('textarea#description-input').value
         const res = await memoryApi.createDescriptionMoment(desc, this.memoryId)
+        q<HTMLTextAreaElement>('textarea#description-input').value = ''
         return res
     }
 
