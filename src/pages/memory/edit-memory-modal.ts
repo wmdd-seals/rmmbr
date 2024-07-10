@@ -7,6 +7,7 @@ import { getLocationInfo } from 'src/utils/gmap'
 
 class EditMemoryModal extends ModalBaseLayer {
     private existing: boolean = false
+    private readonly falsyValue: Set<string> = new Set(['false', 'null', '0', ''])
 
     public constructor() {
         super()
@@ -224,7 +225,7 @@ class EditMemoryModal extends ModalBaseLayer {
     }
 
     private set open(val: string | null) {
-        if (!val || ['false', 'null', '0', '', null].includes(val)) {
+        if (!val || this.falsyValue.has(val)) {
             this.removeAttribute('open')
             return
         }

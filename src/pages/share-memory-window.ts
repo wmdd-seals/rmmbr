@@ -4,6 +4,7 @@ import { PromiseMaybe, q } from '#utils'
 
 class ShareMemoryWindow extends HTMLElement {
     protected collaborators: User[] = []
+
     public constructor() {
         super()
     }

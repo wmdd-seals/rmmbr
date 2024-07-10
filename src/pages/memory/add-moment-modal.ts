@@ -4,8 +4,9 @@ import { getExtensionName, PromiseMaybe, q } from '#utils'
 import { ModalBaseLayer } from 'src/components/modal-base-layer'
 
 class AddMomentModal extends ModalBaseLayer {
-    private readonly imageExtensions: string[] = ['png', 'jpg', 'webp', 'svg']
-    private readonly videoExtensions: string[] = ['mp4', 'avi', 'mov', 'webm']
+    private readonly videoExtensions: Set<string> = new Set(['mp4', 'avi', 'mov', 'webm'])
+    private readonly imageExtensions: Set<string> = new Set(['png', 'jpg', 'webp', 'svg'])
+    private readonly falsyValue: Set<string> = new Set(['false', 'null', '0', ''])
 
     public constructor() {
         super()
@@ -128,10 +129,10 @@ class AddMomentModal extends ModalBaseLayer {
     private getType(extensionName: string | null): 'image' | 'video' | null {
         if (!extensionName) return null
 
-        if (this.imageExtensions.includes(extensionName)) {
+        if (this.imageExtensions.has(extensionName)) {
             return 'image'
         }
-        if (this.videoExtensions.includes(extensionName)) {
+        if (this.videoExtensions.has(extensionName)) {
             return 'video'
         }
         return null
@@ -178,7 +179,7 @@ class AddMomentModal extends ModalBaseLayer {
     }
 
     private set open(val: string | null) {
-        if (!val || ['false', 'null', '0', '', null].includes(val)) {
+        if (!val || this.falsyValue.has(val)) {
             this.removeAttribute('open')
             return
         }

@@ -36,8 +36,10 @@ const paginationBtnLabel = [
 ]
 
 class MemoryCreationModal extends ModalBaseLayer {
+    private readonly falsyValue: Set<string> = new Set(['false', 'null', '0', ''])
     private inputIndex: number = 0
     private memory: Memory | null = null
+
     public constructor() {
         super()
     }
@@ -46,6 +48,14 @@ class MemoryCreationModal extends ModalBaseLayer {
         this.renderBaseLayer()
         await this.renderFirstContent()
         this.attachValidationListeners()
+    }
+
+    protected static get observedAttributes(): string[] {
+        return ['open']
+    }
+
+    protected attributeChangedCallback(): void {
+        q<HTMLDivElement>('[data-modal-base]', this).classList.toggle('hidden')
     }
 
     private async renderFirstContent(): Promise<void> {
@@ -239,17 +249,6 @@ class MemoryCreationModal extends ModalBaseLayer {
         q<HTMLButtonElement>('#modal-close-btn', this).addEventListener('click', () => this.close())
     }
 
-    private async close(): Promise<void> {
-        this.open = null
-        await this.reset()
-    }
-
-    private async reset(): Promise<void> {
-        await this.renderFirstContent()
-        this.inputIndex = 0
-        this.memory = null
-    }
-
     private async createMemory(): PromiseMaybe<Memory> {
         const location = await codeAddress(q<HTMLInputElement>('input[name="place"]', this).value)
 
@@ -273,20 +272,23 @@ class MemoryCreationModal extends ModalBaseLayer {
         return memoryApi.create(newMemory)
     }
 
-    protected static get observedAttributes(): string[] {
-        return ['open']
+    private async close(): Promise<void> {
+        this.open = null
+        await this.reset()
     }
 
-    protected attributeChangedCallback(): void {
-        q<HTMLDivElement>('[data-modal-base]', this).classList.toggle('hidden')
+    private async reset(): Promise<void> {
+        await this.renderFirstContent()
+        this.inputIndex = 0
+        this.memory = null
     }
 
-    public get open(): boolean {
+    private get open(): boolean {
         return this.hasAttribute('open')
     }
 
-    public set open(val: string | null) {
-        if (!val || ['false', 'null', '0', '', null].includes(val)) {
+    private set open(val: string | null) {
+        if (!val || this.falsyValue.has(val)) {
             this.removeAttribute('open')
             return
         }
