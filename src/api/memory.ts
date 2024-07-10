@@ -158,6 +158,7 @@ class MemoryApi {
         return res.data?.map(d => d.users)
     }
 
+    // FIXME: here should not return the non-sense array value
     private async createMoment(MomentPayload: MomentPayload): PromiseMaybe<Moment[]> {
         const res = await this.moments.insert(MomentPayload).select<string, Moment>()
         return res.data
@@ -202,6 +203,7 @@ class MemoryApi {
         return res.data
     }
 
+    // FIXME: update method not working correctly
     public async updateMoment(momentId: Moment['id'], payload: Partial<MomentPayload>): Promise<boolean> {
         const res = await this.moments.update(payload).eq('id' satisfies keyof Moment, momentId)
         return !res.error
