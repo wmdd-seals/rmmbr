@@ -36,7 +36,7 @@ class EditMemoryModal extends ModalBaseLayer {
 							<div class="flex gap-3">
 								<input type="file" id="input-cover-img" class="hidden">
 								<button id="delete-cover" class="h-6 aspect-square text-white"><i class="fa-solid fa-trash"></i></button>
-								<button id="upload-cover" class="h-6 aspect-square text-white"><i class="fa-solid fa-pen"></i></button>
+								<label id="upload-cover" for="input-cover-img" class="h-6 aspect-square text-white"><i class="fa-solid fa-pen"></i></label>
 							</div>
 						</div>
 					</div>
@@ -187,14 +187,11 @@ class EditMemoryModal extends ModalBaseLayer {
             await memoryApi.uploadCover(this.memoryId as Memory['id'], file)
             this.setAllCoverImg()
         })
-        q<HTMLButtonElement>('#upload-cover').addEventListener('click', () =>
-            q<HTMLInputElement>('#input-cover-img').click()
-        )
-        q<HTMLButtonElement>('#delete-cover').addEventListener('click', async () => {
+        q<HTMLButtonElement>('#delete-cover', this).addEventListener('click', async () => {
             await memoryApi.deleteCover(this.memoryId as Memory['id'])
             this.deleteAllCoverImg()
         })
-        q<HTMLButtonElement>('#save-changes-btn').addEventListener('click', async () => {
+        q<HTMLButtonElement>('#save-changes-btn', this).addEventListener('click', async () => {
             await memoryApi.update(this.memoryId as Memory['id'], {
                 title: title.value,
                 date: date.value,

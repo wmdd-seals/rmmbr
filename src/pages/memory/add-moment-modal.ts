@@ -51,9 +51,10 @@ class AddMomentModal extends ModalBaseLayer {
                         <label for="media-input">
                         <img src="/illustrations/taking-pic.svg">
                         </label>
-                        <button
+                        <label
                             id="pick-media"
-                            class="mt-4 px-6 py-2 bg-indigo-700 rounded-3xl border border-indigo-300 justify-center items-center gap-2 flex text-white shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">Pick from your gallery <i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+                            for="media-input"
+                            class="mt-4 px-6 py-2 bg-indigo-700 rounded-3xl border border-indigo-300 justify-center items-center gap-2 flex text-white shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">Pick from your gallery <i class="fa-solid fa-arrow-up-from-bracket"></i></label>
                     </div>
                 </div>
                 <div id="add-moment-2" role="tabpanel" aria-hidden="true" tabindex="0" class="flex flex-col items-center justify-center flex-grow w-full overflow-x-hidden overflow-y-scroll sm:overflow-y-hidden aria-hidden:hidden">
@@ -115,9 +116,6 @@ class AddMomentModal extends ModalBaseLayer {
         this.querySelectorAll('button[data-modal-close]').forEach(el =>
             el.addEventListener('click', () => this.close())
         )
-        q<HTMLButtonElement>('button#pick-media').addEventListener('click', () => {
-            q<HTMLInputElement>('input#media-input').click()
-        })
         q<HTMLButtonElement>('button#save-changes-btn').addEventListener('click', async () => {
             if (q<HTMLInputElement>('input#media-input').value) await this.uploadVideoPic()
             if (q<HTMLTextAreaElement>('textarea#description-input').value) await this.uploadDescription()
