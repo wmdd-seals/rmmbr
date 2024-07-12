@@ -180,7 +180,7 @@
             <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden relative">
                 <label
                     data-select-label
-                    class="flex items-center cursor-pointer absolute top-3 right-3 z-50 aria-hidden:hidden"
+                    class="peer flex items-center cursor-pointer absolute top-3 right-3 z-50 aria-hidden:hidden"
                     aria-hidden="true"
                 >
                     <input data-moment-check="" type="checkbox" class="hidden peer" />
@@ -190,7 +190,7 @@
                         <i class="fa-solid fa-check"></i>
                     </div>
                 </label>
-                <div class="w-full h-full peer-[:checked]:brightness-50 z-10 relative">
+                <div class="peer-has-[:checked]:opacity-70 w-full h-full z-10 relative">
                     <img class="object-cover min-h-full max-w-full w-full" src />
                 </div>
             </li>
@@ -199,7 +199,7 @@
             <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden relative">
                 <label
                     data-select-label
-                    class="flex items-center cursor-pointer absolute top-3 right-3 z-50 aria-hidden:hidden"
+                    class="peer flex items-center cursor-pointer absolute top-3 right-3 z-50 aria-hidden:hidden"
                     aria-hidden="true"
                 >
                     <input data-moment-check="" type="checkbox" class="hidden peer" />
@@ -209,7 +209,7 @@
                         <i class="fa-solid fa-check"></i>
                     </div>
                 </label>
-                <div class="w-full h-full peer-[:checked]:brightness-50 z-10 relative">
+                <div class="peer-has-[:checked]:opacity-70 w-full h-full z-10 relative">
                     <video class="object-cover min-h-full max-w-full w-full" controls src></video>
                 </div>
             </li>
@@ -221,7 +221,7 @@
             >
                 <label
                     data-select-label
-                    class="flex items-center cursor-pointer absolute top-3 right-3 z-50 aria-hidden:hidden"
+                    class="flex items-center peer cursor-pointer absolute top-3 right-3 z-50 aria-hidden:hidden"
                     aria-hidden="true"
                 >
                     <input data-moment-check="" type="checkbox" class="hidden peer" />
@@ -231,7 +231,9 @@
                         <i class="fa-solid fa-check"></i>
                     </div>
                 </label>
-                <div class="w-full h-full flex justify-center items-center peer-[:checked]:brightness-50 z-10 relative">
+                <div
+                    class="w-full h-full peer-has-[:checked]:opacity-70 flex justify-center items-center z-10 relative"
+                >
                     <p class="text-white text-4xl font-bold font-['Source Serif 4'] line-clamp-3"></p>
                 </div>
             </li>
