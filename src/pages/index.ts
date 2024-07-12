@@ -78,7 +78,8 @@ function renderMemories(memories: Memory[]): void {
         q('[data-memory="title"]', node).innerHTML = memory.title
         q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
         q<HTMLAnchorElement>('[data-memory="link"]', node).href = `/memory/?id=${memory.id}`
-        q<HTMLImageElement>('[data-memory=cover]', node).src = storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
+        q<HTMLImageElement>('[data-memory="cover"]', node).src =
+            storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
 
         if (memory.location) {
             getLocationInfo(memory.location).then(location => {
