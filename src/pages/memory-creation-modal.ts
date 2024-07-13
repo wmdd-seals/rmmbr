@@ -239,7 +239,7 @@ class MemoryCreationModal extends ModalBaseLayer {
                     <p class="text-lg text-center text-basketball-600">Awesome!<br>Your event is created.<br><span class="text-slate-600">Share the fun with friends!</span></p>
                 </div>
                 <div class="w-full flex flex-col flex-grow items-center justify-start h-[70%]">
-                    <h3 class="h-[1.8rem] w-full text-left text-slate-900 text-sm">Add contributers to your event</h3>
+                    <h3 class="h-[1.8rem] w-full text-left text-slate-900 text-sm">Add contributors to your event</h3>
                     <share-memory-window memory-id new-memory="true" class="w-full h-[calc(100%-1.8rem)]"></share-memory-window>
                 </div>
             </section>
