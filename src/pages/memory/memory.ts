@@ -71,7 +71,7 @@ function renderMoments(moments: Maybe<Moment[]>): void {
     })
 }
 
-const editMoment: {
+const deleteMoment: {
     mode: boolean
     editControllers: HTMLDivElement
 } = {
@@ -79,13 +79,13 @@ const editMoment: {
     editControllers: q<HTMLDivElement>('#edit-controllers')
 }
 
-function resetEditSelects(): void {
-    editMoment.editControllers.setAttribute('aria-hidden', 'true')
+function resetSelectedMoments(): void {
+    deleteMoment.editControllers.setAttribute('aria-hidden', 'true')
     document.querySelectorAll<HTMLInputElement>('input[type="checkbox"]').forEach(ele => {
         ele.checked = false
     })
     document.querySelectorAll('label[data-select-label]').forEach(el => el.setAttribute('aria-hidden', 'true'))
-    editMoment.mode = false
+    deleteMoment.mode = false
 }
 
 function checkIfImageExists(url: string): Promise<string> {
@@ -222,11 +222,11 @@ userApi
 
         function selectAndDeleteMoments(): void {
             q<HTMLButtonElement>('#edit-moment').addEventListener('click', () => {
-                if (editMoment.mode) {
-                    resetEditSelects()
+                if (deleteMoment.mode) {
+                    resetSelectedMoments()
                 } else {
-                    editMoment.editControllers.setAttribute('aria-hidden', 'false')
-                    editMoment.mode = true
+                    deleteMoment.editControllers.setAttribute('aria-hidden', 'false')
+                    deleteMoment.mode = true
                     document
                         .querySelectorAll('label[data-select-label]')
                         .forEach(el => el.setAttribute('aria-hidden', 'false'))
@@ -238,7 +238,7 @@ userApi
                     document.querySelectorAll('input[type="checkbox"]:checked[data-moment-id]')
                 ).map(m => m.dataset.momentId)
                 await memoryApi.deleteMoments(momentIds as Array<Moment['id']>)
-                resetEditSelects()
+                resetSelectedMoments()
             })
 
             q<HTMLButtonElement>('button#select-all-moments').addEventListener('click', () => {
