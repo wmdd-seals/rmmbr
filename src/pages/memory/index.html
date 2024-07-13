@@ -171,7 +171,7 @@
         </div>
 
         <main class="max-w-[1304px] mx-auto px-6">
-            <div>
+            <div class="group">
                 <div class="flex justify-between mb-2 flex-col w-full items-start">
                     <h3 class="font-bold">Moments...</h3>
 
@@ -187,6 +187,21 @@
                         <button id="delete-moments-btn">Delete</button>
                         <button id="select-all-moments">Select All</button>
                     </div>
+                </div>
+
+                <div id="moments-wrapper" class="flex flex-col items-center justify-center"></div>
+                <div
+                    id="default-moment"
+                    class="flex group-has-[li[data-moment-id]]:hidden flex-col items-center justify-center gap-4 border-1 border rounded-xl p-10"
+                >
+                    <img src="/illustrations/reading-book.svg" alt="" />
+                    <p>No moments yet...</p>
+                    <button
+                        id="default-add-moment"
+                        class="px-6 py-2 bg-indigo-700 rounded-3xl border border-indigo-300 justify-center items-center gap-2 flex text-white shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]"
+                    >
+                        Add new moments +
+                    </button>
                 </div>
 
                 <ul data-moment-list class="grid grid-cols-2 gap-2 md:grid-cols-3">
