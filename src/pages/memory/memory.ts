@@ -208,10 +208,12 @@ userApi
             .whenDefined('add-moment-modal')
             .then(() => {
                 const addMomentModal = q<HTMLDivElement>('add-moment-modal')
-                q<HTMLButtonElement>('#add-moment').addEventListener('click', () => {
-                    addMomentModal.setAttribute('open', 'true')
-                    addMomentModal.setAttribute('memory-id', memoryId)
-                })
+                document.querySelectorAll<HTMLButtonElement>('#add-moment, #default-add-moment').forEach(e =>
+                    e.addEventListener('click', () => {
+                        addMomentModal.setAttribute('open', 'true')
+                        addMomentModal.setAttribute('memory-id', memoryId)
+                    })
+                )
             })
             .catch(console.error)
 
