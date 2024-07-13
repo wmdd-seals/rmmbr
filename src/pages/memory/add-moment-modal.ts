@@ -165,8 +165,15 @@ class AddMomentModal extends ModalBaseLayer {
         return res
     }
 
+    private initContent(): void {
+        q<HTMLDivElement>('[data-modal-content]', this).innerHTML = ''
+        this.renderContent()
+        this.attachEvents()
+    }
+
     private close(): void {
         this.open = null
+        this.initContent()
     }
 
     private get open(): boolean {
