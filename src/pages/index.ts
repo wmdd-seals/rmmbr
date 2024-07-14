@@ -4,6 +4,7 @@ import { createMapWithMarkers, formatDate, q, updateCurrentUserChip } from '#uti
 import { Location } from '#utils'
 import { getLocationInfo } from 'src/utils/gmap'
 import { Memory } from '#domain'
+import { m } from 'vitest/dist/reporters-yx5ZTtEV.js'
 
 const tabs = {
     ['#home']: document.getElementById('home')!,
@@ -59,7 +60,12 @@ userApi
 
         renderCountdowns(memories.filter(memory => Date.now() < +new Date(memory.date)))
 
-        renderFlashbacks(memories)
+        const flashbacks = memories.filter(memory => Date.now() - +new Date(memory.date) > 1000 * 60 * 60 * 24 * 365)
+
+        if (flashbacks.length >= 4) {
+            // select up to 6 random memories
+            renderFlashbacks(flashbacks.sort(() => 0.5 - Math.random()).slice(0, 6))
+        }
 
         renderMemories(memories)
 
@@ -71,27 +77,30 @@ function renderMemories(memories: Memory[]): void {
     const thumbnail = document.getElementById('memory-thumbnail') as HTMLTemplateElement
     const memoryList = document.getElementById('memory-list') as HTMLUListElement
 
-    memories.forEach(memory => {
-        const node = thumbnail.content.cloneNode(true) as HTMLLIElement
-        const liElem = node.firstElementChild
+    ;[...memories]
+        .sort((a, b) => +new Date(b.date) - +new Date(a.date))
+        .forEach(memory => {
+            const node = thumbnail.content.cloneNode(true) as HTMLLIElement
+            const liElem = node.firstElementChild
 
-        q('[data-memory="title"]', node).innerHTML = memory.title
-        q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
-        q<HTMLAnchorElement>('[data-memory="link"]', node).href = `/memory/?id=${memory.id}`
-        q<HTMLImageElement>('[data-memory=cover]', node).src = storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
+            q('[data-memory="title"]', node).innerHTML = memory.title
+            q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
+            q<HTMLAnchorElement>('[data-memory="link"]', node).href = `/memory/?id=${memory.id}`
+            q<HTMLImageElement>('[data-memory=cover]', node).src =
+                storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
 
-        if (memory.location) {
-            getLocationInfo(memory.location).then(location => {
-                if (!location) return
-                const { country, city } = location
-                q('[data-memory="location"]', <HTMLLIElement>liElem).innerHTML = city
-                    ? `in ${city}, ${country}`
-                    : `in ${country}`
-            }, console.error)
-        }
+            if (memory.location) {
+                getLocationInfo(memory.location).then(location => {
+                    if (!location) return
+                    const { country, city } = location
+                    q('[data-memory="location"]', <HTMLLIElement>liElem).innerHTML = city
+                        ? `in ${city}, ${country}`
+                        : `in ${country}`
+                }, console.error)
+            }
 
-        memoryList.appendChild(node)
-    })
+            memoryList.appendChild(node)
+        })
 
     const count = memories.length
     document.querySelectorAll('[data-memory="count"]').forEach(el => {
@@ -101,18 +110,26 @@ function renderMemories(memories: Memory[]): void {
 
 function renderFlashbacks(memories: Memory[]): void {
     const memoryFlashbackList = q('#flashback-list')
+    const parent = memoryFlashbackList.parentElement!
+
+    parent.classList.toggle('hidden')
+    parent.classList.toggle('flex')
+
     const memoryFlashbackhTemplate = q<HTMLTemplateElement>('#memory-flashback-thumbnail')
 
-    memories.forEach(memory => {
-        const node = memoryFlashbackhTemplate.content.cloneNode(true) as HTMLLIElement
+    ;[...memories]
+        .sort((a, b) => +new Date(b.date) - +new Date(a.date))
+        .forEach(memory => {
+            const node = memoryFlashbackhTemplate.content.cloneNode(true) as HTMLLIElement
 
-        q('[data-memory=title]', node).innerHTML = memory.title
-        q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
-        q<HTMLAnchorElement>('[data-memory=link]', node).href = `/memory/?id=${memory.id}`
-        q<HTMLImageElement>('[data-memory=cover]', node).src = storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
+            q('[data-memory=title]', node).innerHTML = memory.title
+            q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
+            q<HTMLAnchorElement>('[data-memory=link]', node).href = `/memory/?id=${memory.id}`
+            q<HTMLImageElement>('[data-memory=cover]', node).src =
+                storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
 
-        memoryFlashbackList.appendChild(node)
-    })
+            memoryFlashbackList.appendChild(node)
+        })
 }
 
 function initFilterDrawer(): void {
