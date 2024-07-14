@@ -351,11 +351,11 @@ class OnlineCollaboratorBadges {
 }
 
 class LatestMoments {
-    public static init(moments: Moment[]): void {
+    public static init(moments: Moment[] | []): void {
         let allMoments: Moment[] = []
 
         const latestMoments = supabase.channel(`moments_on_${memoryId}`)
-        if (moments) allMoments = moments
+        if (moments.length) allMoments = moments
 
         latestMoments
             .on<Moment>(
