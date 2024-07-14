@@ -3,7 +3,7 @@ import { ModalBaseLayer } from 'src/components/modal-base-layer'
 import '../share-memory-window'
 import { memoryApi, storageApi } from '#api'
 import { Memory, User } from '#domain'
-import { getLocationInfo } from 'src/utils/gmap'
+import { getLocationInfo } from '#utils'
 
 class EditMemoryModal extends ModalBaseLayer {
     private existing: boolean = false
@@ -166,7 +166,15 @@ class EditMemoryModal extends ModalBaseLayer {
 
         if (!currentMemory) throw new Error('The memory does not exist or failed fetch the memory data')
 
-        const locationInfo = currentMemory.location ? await getLocationInfo(currentMemory.location) : null
+        const locationInfo = currentMemory.location
+            ? await getLocationInfo(currentMemory.location).then(
+                  loc => loc,
+                  err => {
+                      console.error(err)
+                      return null
+                  }
+              )
+            : null
 
         title.value = currentMemory.title
         date.value = currentMemory.date
@@ -190,7 +198,13 @@ class EditMemoryModal extends ModalBaseLayer {
             await memoryApi.update(this.memoryId as Memory['id'], {
                 title: title.value,
                 date: date.value,
-                location: (await codeAddress(location.value)) || null,
+                location: await codeAddress(location.value).then(
+                    loc => loc,
+                    err => {
+                        console.error(err)
+                        return null
+                    }
+                ),
                 description: description.value
             })
         })

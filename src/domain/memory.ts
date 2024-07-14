@@ -1,6 +1,15 @@
 import { ID, Location, Maybe } from '#utils'
 import { User } from './user'
 
+export type MemoryMessage = {
+    id: ID<string, 'memory-message-id'>
+    message: string
+    memoryId: Memory['id']
+    userId: User['id']
+    userFirstName: string
+    createdAt: string
+}
+
 export abstract class Memory {
     public abstract id: ID<string, 'memory-id'>
     public abstract title: string

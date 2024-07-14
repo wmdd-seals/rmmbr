@@ -57,7 +57,7 @@
                 </button>
             </div>
 
-            <div class="lg:flex lg:gap-10">
+            <div class="lg:flex lg:gap-10 mb-12">
                 <section id="nav-btn" class="grid gap-2 grid-cols-3 mt-16 md:hidden">
                     <a
                         href="#home"
@@ -76,7 +76,7 @@
                     >
                 </section>
 
-                <section id="home" class="md:block flex flex-col overflow-hidden">
+                <section id="home" class="md:block flex flex-col overflow-hidden flex-grow">
                     <div class="flex flex-col gap-2">
                         <h2 class="font-bold text-xl flex justify-between items-center">
                             Upcoming adventures
@@ -110,47 +110,49 @@
                         </ul>
                     </div>
 
-                    <h2 class="font-bold text-xl mt-8 mb-4">Remember this?</h2>
+                    <div class="flex-col hidden">
+                        <h2 class="font-bold text-xl mt-8 mb-4">Remember this?</h2>
 
-                    <ul class="flex gap-3 overflow-x-auto w-full no-scrollbar" id="flashback-list">
-                        <template id="memory-flashback-thumbnail">
-                            <li>
-                                <a
-                                    href="#"
-                                    class="aspect-[4/5] h-64 flex flex-col bg-ui-100 rounded-2xl relative overflow-hidden"
-                                    data-memory="link"
-                                >
-                                    <img
-                                        src=""
-                                        alt="Memory cover"
-                                        class="object-cover absolute h-full w-full"
-                                        data-memory="cover"
-                                    />
-                                    <div
-                                        class="absolute inset-0"
-                                        aria-hidden="true"
-                                        style="
-                                            background-image: linear-gradient(
-                                                to bottom,
-                                                transparent 62%,
-                                                rgb(0 0 0 / 0.8) 100%
-                                            );
-                                        "
-                                    ></div>
+                        <ul class="flex gap-3 overflow-x-auto w-full no-scrollbar" id="flashback-list">
+                            <template id="memory-flashback-thumbnail">
+                                <li>
+                                    <a
+                                        href="#"
+                                        class="aspect-[4/5] h-64 flex flex-col bg-ui-100 rounded-2xl relative overflow-hidden"
+                                        data-memory="link"
+                                    >
+                                        <img
+                                            src=""
+                                            alt="Memory cover"
+                                            class="object-cover absolute h-full w-full"
+                                            data-memory="cover"
+                                        />
+                                        <div
+                                            class="absolute inset-0"
+                                            aria-hidden="true"
+                                            style="
+                                                background-image: linear-gradient(
+                                                    to bottom,
+                                                    transparent 62%,
+                                                    rgb(0 0 0 / 0.8) 100%
+                                                );
+                                            "
+                                        ></div>
 
-                                    <div class="mt-auto flex flex-col items-start p-4 text-white z-10">
-                                        <span class="text-xs" data-memory="date"></span>
-                                        <span class="font-bold" data-memory="title"></span>
-                                    </div>
-                                </a>
-                            </li>
-                        </template>
-                    </ul>
+                                        <div class="mt-auto flex flex-col items-start p-4 text-white z-10">
+                                            <span class="text-xs" data-memory="date"></span>
+                                            <span class="font-bold" data-memory="title"></span>
+                                        </div>
+                                    </a>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
                 </section>
 
                 <section
                     id="timeline"
-                    class="hidden w-96 flex-shrink-0 flex-grow gap-2 md:flex md:justify-stretch md:gap-3 md:flex-col"
+                    class="hidden max-w-96 flex-shrink-0 flex-grow gap-2 md:flex md:justify-stretch md:gap-3 md:flex-col"
                 >
                     <h2 class="font-bold text-xl flex justify-between items-center">
                         Your locations
@@ -173,7 +175,7 @@
 
             <section id="memory" class="hidden md:block">
                 <div class="md:flex md:justify-between mb-2">
-                    <h2 class="font-bold text-xl mt-8 mb-2 flex gap-5 justify-between items-center md:justify-start">
+                    <h2 class="font-bold text-xl flex gap-5 justify-between items-center md:justify-start">
                         Your memories<span class="font-normal"><span data-memory="count"></span></span>
                     </h2>
                     <button class="md:self-end btn-outlined btn-md" id="filter-btn">Filter</button>
@@ -200,7 +202,7 @@
                                 </div>
                                 <div class="py-2 px-3">
                                     <h3 data-memory="title">title</h3>
-                                    <p data-memory="location" class="text-xs">location</p>
+                                    <p data-memory="location" class="text-xs">Somewhere on Earth</p>
                                 </div>
                             </a>
                         </li>

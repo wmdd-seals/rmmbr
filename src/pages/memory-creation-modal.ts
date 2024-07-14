@@ -1,5 +1,5 @@
 import { Memory } from '#domain'
-import { Location, PromiseMaybe, initAutoComplete, codeAddress, q } from '#utils'
+import { PromiseMaybe, initAutoComplete, codeAddress, q } from '#utils'
 import { memoryApi } from 'src/api/memory'
 import { userApi } from '#api'
 import { ModalBaseLayer } from '../components/modal-base-layer'
@@ -225,7 +225,7 @@ class MemoryCreationModal extends ModalBaseLayer {
                 <button id="modal-close-btn" class="text-basketball-500 text-3xl">
                     &#10005;
                 </button>
-            </header>
+            </headsr>
             <section
                 class="flex flex-col flex-grow align-center overflow-hidden justify-start items-center w-full sm:max-w-[43.75rem] sm:gap-5"
             >
@@ -250,26 +250,32 @@ class MemoryCreationModal extends ModalBaseLayer {
     }
 
     private async createMemory(): PromiseMaybe<Memory> {
-        const location = await codeAddress(q<HTMLInputElement>('input[name="place"]', this).value)
+        const title = q<HTMLInputElement>('input[name="title"]', this).value
+        if (!title.length) return
+
+        const date = q<HTMLInputElement>('input[name="date"]', this).value
+        if (!date.length) return
 
         const currentUser = await userApi.getCurrent()
         if (!currentUser) {
             return
         }
 
-        const newMemory = {
-            title: q<HTMLInputElement>('input[name="title"]', this).value,
-            location: location ? ([location[0], location[1]] as Location) : null,
+        const location = await codeAddress(q<HTMLInputElement>('input[name="place"]', this).value).then(
+            loc => loc,
+            err => {
+                console.error(err)
+                return null
+            }
+        )
+
+        return memoryApi.create({
+            title,
+            location,
             ownerId: currentUser.id,
-            description: q<HTMLTextAreaElement>('textarea#description', this).value,
-            date: q<HTMLInputElement>('input[name="date"]', this).value
-        }
-
-        if (newMemory.title.length < 1 || newMemory.ownerId.length < 1 || newMemory.date.length < 1) {
-            return
-        }
-
-        return memoryApi.create(newMemory)
+            date,
+            description: q<HTMLTextAreaElement>('textarea#description', this).value
+        })
     }
 
     private async close(): Promise<void> {

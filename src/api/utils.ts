@@ -2,5 +2,6 @@ export const enum ApiTable {
     Users = 'users',
     Memories = 'memories',
     Collaborators = 'collaborators',
-    Moments = 'moments'
+    Moments = 'moments',
+    Messages = 'messages'
 }

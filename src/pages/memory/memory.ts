@@ -1,5 +1,5 @@
 import { memoryApi, supabase, userApi, storageApi } from '#api'
-import { Memory, User } from '#domain'
+import { Memory, MemoryMessage, User } from '#domain'
 import { Maybe, q, updateCurrentUserChip } from '#utils'
 import { Moment } from '#domain'
 import './edit-memory-modal'
@@ -18,7 +18,7 @@ type OnlineCollaborator = {
     name: User['firstName']
 }
 
-const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
+// const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
 
 function rerenderMoments(moments: Maybe<Moment[]>): void {
     const momentList = q<HTMLUListElement>('[data-moment-list]')
@@ -77,9 +77,15 @@ userApi
         const memory = await memoryApi.get(memoryId, user.id)
         if (!memory) return
 
-        new Collaboration(user, memoryId)
+        const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
 
-        q('[data-memory="title"]').innerHTML = memory.title
+        OnlineCollaboratorBadges.init(user, memoryId)
+
+        document.querySelectorAll('[data-memory="title"]').forEach(el => {
+            el.innerHTML = memory.title
+        })
+
+        void MemoryChat.init(memoryId, memory.ownerId, user)
 
         const coverSrc = storageApi.getFileUrl(`memory/${memoryId}/cover`) + `?t=${Date.now()}`
 
@@ -195,24 +201,27 @@ userApi
                 })
             })
             .catch(console.error)
-        new LatestMoments()
+
+        if (moments && moments.length > 0) {
+            LatestMoments.init(moments)
+        }
     })
     .catch(console.error)
 
-class Collaboration {
-    private readonly collaborators = new Map<User['id'], OnlineCollaborator>()
-    private readonly list: HTMLUListElement
-    private readonly listWrapper: HTMLDivElement
-    private readonly template: HTMLTemplateElement
-    private readonly currentUserId: User['id']
+class OnlineCollaboratorBadges {
+    private static readonly collaborators = new Map<User['id'], OnlineCollaborator>()
+    private static list: HTMLUListElement
+    private static listWrapper: HTMLDivElement
+    private static template: HTMLTemplateElement
+    private static currentUserId: User['id']
 
-    public constructor(currentUser: User, memoryId: Memory['id']) {
+    public static init(currentUser: User, memoryId: Memory['id']): void {
         this.currentUserId = currentUser.id
         this.listWrapper = q('#online-collaborators')
         this.list = q<HTMLUListElement>('#collaborator-list', this.listWrapper)
         this.template = q<HTMLTemplateElement>('#collaborator-avatar', this.list)
 
-        const room = supabase.channel(memoryId)
+        const room = supabase.channel(`collaborators:${memoryId}`)
 
         room.on('presence', { event: 'sync' }, () => {
             const state = room.presenceState<OnlineCollaborator>()
@@ -246,10 +255,12 @@ class Collaboration {
             })
     }
 
-    public add(collaborator: OnlineCollaborator): void {
+    private static add(collaborator: OnlineCollaborator): void {
         if (collaborator.id === this.currentUserId || this.collaborators.has(collaborator.id)) return
 
         const collaboratorElem = this.template.content.cloneNode(true) as HTMLElement
+
+        collaboratorElem.firstElementChild!.addEventListener('click', () => MemoryChat.toggleChat())
 
         const avatar = q<HTMLImageElement>('[data-collaborator=avatar]', collaboratorElem)
         q('[data-collaborator=initials]', collaboratorElem).innerHTML = collaborator.name.slice(0, 1).toUpperCase()
@@ -267,7 +278,7 @@ class Collaboration {
         this.sync()
     }
 
-    public remove(id: OnlineCollaborator['id']): void {
+    private static remove(id: OnlineCollaborator['id']): void {
         if (id === this.currentUserId) return
 
         this.collaborators.delete(id)
@@ -275,7 +286,11 @@ class Collaboration {
         this.sync()
     }
 
-    private sync(): void {
+    public static isOnline(userId: User['id']): boolean {
+        return this.collaborators.has(userId)
+    }
+
+    private static sync(): void {
         if (this.collaborators.size !== 0) {
             this.listWrapper.style.display = 'flex'
             return
@@ -286,7 +301,7 @@ class Collaboration {
 }
 
 class LatestMoments {
-    public constructor() {
+    public static init(moments: Moment[]): void {
         const latestMoments = supabase.channel(`moments_on_${memoryId}`)
 
         latestMoments
@@ -307,7 +322,7 @@ class LatestMoments {
                             break
                         }
                         case 'DELETE': {
-                            const filteredMoments = moments?.filter(item => item.id !== payload.old.id)
+                            const filteredMoments = moments.filter(item => item.id !== payload.old.id)
                             rerenderMoments(filteredMoments)
                             break
                         }
@@ -321,5 +336,131 @@ class LatestMoments {
                 }
             )
             .subscribe()
+    }
+}
+
+class MemoryChat {
+    private static isOpen: boolean = false
+    private static readonly messagesElem: HTMLDivElement = q('#messages-box')
+    private static readonly messageTemplate: HTMLTemplateElement = q<HTMLTemplateElement>('#message-template')
+    private static readonly chat: HTMLTemplateElement = q<HTMLTemplateElement>('#chat')
+    private static readonly arrow: HTMLElement = q<HTMLTemplateElement>('#chat #chat-arrow')
+
+    public constructor() {}
+
+    public static toggleChat(): void {
+        if (this.isOpen) {
+            this.closeChat()
+        } else {
+            this.openChat()
+        }
+    }
+
+    public static openChat(): void {
+        if (this.isOpen) return
+
+        this.isOpen = true
+        this.chat.classList.toggle('-bottom-96')
+        this.chat.classList.toggle('bottom-0')
+        this.arrow.classList.toggle('rotate-180')
+        this.scrollToEnd()
+    }
+
+    public static closeChat(): void {
+        if (!this.isOpen) return
+
+        this.isOpen = false
+        this.chat.classList.toggle('-bottom-96')
+        this.chat.classList.toggle('bottom-0')
+        this.arrow.classList.toggle('rotate-180')
+    }
+
+    public static async init(memoryId: Memory['id'], ownerId: User['id'], currentUser: User): Promise<void> {
+        q('#toggle-chat-btn').addEventListener('click', () => this.toggleChat())
+
+        q('#chat #send').addEventListener('click', (): void => {
+            this.sendMessage(memoryId, currentUser.id)
+        })
+
+        q('#chat input').addEventListener('keydown', e => {
+            if (e.key !== 'Enter') return
+            this.sendMessage(memoryId, currentUser.id)
+        })
+
+        const owner =
+            currentUser.id === ownerId ? currentUser : ((await userApi.getUser({ key: 'id', value: ownerId })) as User)
+
+        const memoryCollaborators = new Map<User['id'], User>([[owner.id, owner]])
+
+        const [messages, collaborators] = await Promise.all([
+            memoryApi.getMessages(memoryId),
+            memoryApi.getAllCollaborators(memoryId)
+        ])
+
+        collaborators.forEach(collaborator => memoryCollaborators.set(collaborator.id, collaborator))
+
+        this.renderMessages(messages.filter(mes => memoryCollaborators.has(mes.userId)))
+        this.scrollToEnd()
+
+        memoryApi.subscribeOnMessages(memoryId, message => {
+            const collaborator = memoryCollaborators.get(message.userId)
+            if (!collaborator) return
+
+            const messageElem = this.buildMessage({ ...message, userFirstName: collaborator.firstName })
+            this.messagesElem.appendChild(messageElem)
+
+            document.querySelector('#no-messages')?.remove()
+
+            if (this.isOpen) {
+                this.scrollToEnd()
+            }
+        })
+    }
+
+    private static sendMessage(memoryId: Memory['id'], userId: User['id']): void {
+        const input = q<HTMLInputElement>('#chat input')
+        const message = input.value
+
+        if (!message) return
+
+        input.value = ''
+
+        void memoryApi.sendMessage(memoryId, userId, message)
+    }
+
+    private static scrollToEnd(): void {
+        Array.from(this.messagesElem.children).at(-1)?.scrollIntoView({ block: 'end' })
+    }
+
+    private static renderMessages(messages: MemoryMessage[]): void {
+        if (!messages.length) return
+
+        document.querySelector('#no-messages')?.remove()
+
+        const fragment = new DocumentFragment()
+
+        messages.forEach(message => fragment.appendChild(this.buildMessage(message)))
+
+        this.messagesElem.appendChild(fragment)
+    }
+
+    private static buildMessage(message: MemoryMessage): HTMLDivElement {
+        const messageElem = this.messageTemplate.content.cloneNode(true) as HTMLDivElement
+
+        const date = new Date(message.createdAt)
+
+        const authorAvatar = q<HTMLImageElement>('[data-message=avatar]', messageElem)
+        authorAvatar.src = userApi.getAvatarUrl(message.userId)
+        authorAvatar.onload = (): void => {
+            authorAvatar.classList.toggle('hidden')
+        }
+
+        q('[data-message=initials]', messageElem).innerHTML = message.userFirstName.slice(0, 1)
+        q('[data-message=author]', messageElem).innerHTML = message.userFirstName
+        q('[data-message=time]', messageElem).innerHTML =
+            `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+        q('[data-message=body]', messageElem).innerHTML = message.message
+
+        return messageElem
     }
 }

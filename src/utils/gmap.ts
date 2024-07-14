@@ -42,9 +42,9 @@ export async function initAutoComplete(inputElement: HTMLInputElement): Promise<
     new Autocomplete(inputElement)
 }
 
-export async function codeAddress(address: string): Promise<Location | void> {
+export async function codeAddress(address: string): PromiseMaybe<Location> {
     if (!address) {
-        return
+        return null
     }
 
     const { Geocoder } = await loader.importLibrary('geocoding')
