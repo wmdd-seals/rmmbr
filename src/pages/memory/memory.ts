@@ -216,7 +216,7 @@ class OnlineCollaboratorBadges {
         this.list = q<HTMLUListElement>('#collaborator-list', this.listWrapper)
         this.template = q<HTMLTemplateElement>('#collaborator-avatar', this.list)
 
-        const room = supabase.channel(memoryId)
+        const room = supabase.channel(`collaborators:${memoryId}`)
 
         room.on('presence', { event: 'sync' }, () => {
             const state = room.presenceState<OnlineCollaborator>()

@@ -196,7 +196,7 @@ class MemoryApi {
         onMessage: (message: Pick<MemoryMessage, 'userId' | 'createdAt' | 'message' | 'memoryId' | 'id'>) => void
     ): void {
         supabase
-            .channel(memoryId)
+            .channel(`chat:${memoryId}`)
             .on<Pick<MemoryMessage, 'userId' | 'createdAt' | 'message' | 'memoryId' | 'id'>>(
                 'postgres_changes',
                 {
