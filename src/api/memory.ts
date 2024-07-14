@@ -28,7 +28,6 @@ type UpdateMemoryPayload = Partial<Pick<Memory, 'title' | 'date' | 'location' | 
 class MemoryApi {
     private readonly memories = supabase.from(ApiTable.Memories)
     private readonly collaborators = supabase.from(ApiTable.Collaborators)
-    private readonly moments = supabase.from(ApiTable.Moments)
 
     public async get(memoryId: Memory['id'], userId: User['id']): PromiseMaybe<Memory> {
         const res = await this.memories
