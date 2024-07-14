@@ -202,7 +202,9 @@ userApi
             })
             .catch(console.error)
 
-        new LatestMoments(moments || [])
+        if (moments && moments.length > 0) {
+            LatestMoments.init(moments)
+        }
     })
     .catch(console.error)
 
@@ -299,7 +301,7 @@ class OnlineCollaboratorBadges {
 }
 
 class LatestMoments {
-    public constructor(moments: Moment[]) {
+    public static init(moments: Moment[]): void {
         const latestMoments = supabase.channel(`moments_on_${memoryId}`)
 
         latestMoments
