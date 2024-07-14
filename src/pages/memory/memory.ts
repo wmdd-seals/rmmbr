@@ -255,6 +255,15 @@ userApi
             })
         }
         selectAndDeleteMoments()
+
+        const countDate = new CountTime(memory.date)
+        q<HTMLSpanElement>('[data-yearly-count]').innerHTML = countDate.yearly()
+        q<HTMLSpanElement>('[data-monthly-count]').innerHTML = countDate.monthly()
+        q<HTMLSpanElement>('[data-weekly-count]').innerHTML = countDate.weekly()
+        q<HTMLSpanElement>('[data-daily-count]').innerHTML = countDate.daily()
+        q<HTMLSpanElement>('[data-hourly-count]').innerHTML = countDate.hourly()
+        q<HTMLSpanElement>('[data-minutes-count]').innerHTML = countDate.minutes()
+        q<HTMLSpanElement>('[data-seconds-count]').innerHTML = countDate.seconds()
     })
     .catch(console.error)
 
@@ -517,5 +526,55 @@ class MemoryChat {
         q('[data-message=body]', messageElem).innerHTML = message.message
 
         return messageElem
+    }
+}
+
+class CountTime {
+    private readonly memoryDate: number
+    public constructor(memoryDate: string) {
+        this.memoryDate = Date.parse(memoryDate)
+    }
+
+    private getDiff(): number {
+        const now = new Date().getTime()
+        const memoryDate = new Date(this.memoryDate).getTime()
+        return now - memoryDate
+    }
+
+    public yearly(): string {
+        const diff = this.getDiff()
+        return (diff / (1000 * 60 * 60 * 24 * 365)).toFixed(2)
+    }
+
+    public monthly(): string {
+        const now = new Date()
+        const memoryDate = new Date(this.memoryDate)
+        const yearlyMonths = (now.getFullYear() - memoryDate.getFullYear()) * 12
+        return String(yearlyMonths + now.getMonth() - memoryDate.getMonth())
+    }
+
+    public weekly(): string {
+        const diff = this.getDiff()
+        return (diff / (1000 * 60 * 60 * 24 * 7)).toFixed(0)
+    }
+
+    public hourly(): string {
+        const diff = this.getDiff()
+        return (diff / (1000 * 60 * 60)).toFixed(0)
+    }
+
+    public daily(): string {
+        const diff = this.getDiff()
+        return (diff / (1000 * 60 * 60 * 24)).toFixed(0)
+    }
+
+    public minutes(): string {
+        const diff = this.getDiff()
+        return (diff / (1000 * 60)).toFixed(0)
+    }
+
+    public seconds(): string {
+        const diff = this.getDiff()
+        return (diff / 1000).toFixed(2)
     }
 }

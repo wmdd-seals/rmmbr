@@ -267,13 +267,11 @@ class MemoryApi {
     }
 
     public async deleteMoments(momentIds: Moment['id'][]): PromiseMaybe<void> {
-        console.log({ momentIds })
         const res = await supabase
             .from('moments')
             .delete()
             .in('id' satisfies keyof Moment, momentIds)
             .select<string, Moment>()
-        console.log({ res })
         if (!res.data) return
 
         res.data.forEach(async moment => {
