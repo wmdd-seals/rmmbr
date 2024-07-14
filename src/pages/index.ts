@@ -4,7 +4,6 @@ import { createMapWithMarkers, formatDate, q, updateCurrentUserChip } from '#uti
 import { Location } from '#utils'
 import { getLocationInfo } from 'src/utils/gmap'
 import { Memory } from '#domain'
-import { m } from 'vitest/dist/reporters-yx5ZTtEV.js'
 
 const tabs = {
     ['#home']: document.getElementById('home')!,
