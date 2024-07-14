@@ -218,7 +218,7 @@ userApi
             .catch(console.error)
 
         // activate real-time update for moments
-        new LatestMoments()
+        new LatestMoments(moments)
 
         function selectAndDeleteMoments(): void {
             q<HTMLButtonElement>('#edit-moment').addEventListener('click', () => {
@@ -237,6 +237,7 @@ userApi
                 const momentIds = Array.from<HTMLInputElement>(
                     document.querySelectorAll('input[type="checkbox"]:checked[data-moment-id]')
                 ).map(m => m.dataset.momentId)
+
                 await memoryApi.deleteMoments(momentIds as Array<Moment['id']>)
                 resetSelectedMoments()
             })
@@ -338,42 +339,47 @@ class Collaboration {
 }
 
 class LatestMoments {
-    public constructor() {
+    private allMoments: Moment[] = []
+    public constructor(firstMoments: Maybe<Moment[]>) {
         const latestMoments = supabase.channel(`moments_on_${memoryId}`)
-
-        // FIXME: the real-time update is not working properly after second changes
+        if (firstMoments) this.allMoments = firstMoments
         latestMoments
             .on<Moment>(
                 'postgres_changes',
                 {
                     event: '*',
                     schema: 'public',
-                    table: 'moments'
-                    //* filter: `memoryId=eq.${memoryId}`
+                    table: 'moments',
+                    filter: `memoryId=eq.${memoryId}`
                 },
                 payload => {
                     console.log(payload)
                     switch (payload.eventType) {
                         case 'INSERT': {
-                            const newMemory = payload.new
-                            if (newMemory.type !== 'description') return
-                            renderMoments([newMemory])
+                            const newMoment = payload.new
+                            if (newMoment.type !== 'description') return
+                            renderMoments([newMoment])
+                            this.addMoments(newMoment)
                             break
                         }
                         case 'DELETE': {
-                            const filteredMoments = moments?.filter(item => item.id !== payload.old.id)
-                            rerenderMoments(filteredMoments)
+                            this.allMoments = this.allMoments.filter(item => item.id !== payload.old.id)
+                            rerenderMoments(this.allMoments)
                             break
                         }
                         case 'UPDATE': {
-                            const newMemory = payload.new
-                            if (newMemory.type === 'description') return
-                            renderMoments([newMemory])
+                            const newMoment = payload.new
+                            if (newMoment.type === 'description') return
+                            renderMoments([newMoment])
+                            this.addMoments(newMoment)
                             break
                         }
                     }
                 }
             )
             .subscribe()
+    }
+    private addMoments(newMoment: Moment): void {
+        this.allMoments.push(newMoment)
     }
 }
