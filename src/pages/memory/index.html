@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="../app.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
         <script type="module" src="../auth.ts"></script>
-        <script type="module" defer src="../icons.ts"></script>
+        <script type="module" src="../icons.ts"></script>
         <script type="module" src="./memory.ts"></script>
     </head>
 
@@ -28,25 +28,26 @@
                 >
                     <ul class="flex items-center gap-4" id="collaborator-list">
                         <template id="collaborator-avatar">
-                            <li
-                                class="rounded-full aspect-square w-10 overflow-hidden flex relative bg-ui-50 cursor-pointer"
-                            >
+                            <li class="flex relative cursor-pointer">
+                                <div class="overflow-hidden rounded-full aspect-square bg-ui-50 w-10 flex relative">
+                                    <span
+                                        data-collaborator="initials"
+                                        class="font-bold font-source text-xl flex items-center justify-center flex-grow"
+                                    ></span>
+                                    <img
+                                        src=""
+                                        data-collaborator="avatar"
+                                        alt="User avatar"
+                                        class="object-cover hidden absolute h-full w-full"
+                                    />
+                                </div>
+
                                 <span
-                                    data-collaborator="initials"
-                                    class="font-bold font-source text-xl flex items-center justify-center flex-grow"
+                                    class="absolute right-0 bottom-0 w-2.5 h-2.5 border border-pale-marigold-300 rounded-full bg-green-300 shadow-green-50"
                                 ></span>
-                                <img
-                                    src=""
-                                    data-collaborator="avatar"
-                                    alt="User avatar"
-                                    class="object-cover hidden absolute h-full w-full"
-                                />
                             </li>
                         </template>
                     </ul>
-
-                    <span class="text-ui-50 text-sm font-medium">Online</span>
-                    <span class="w-2.5 h-2.5 rounded-full bg-green-300 shadow-green-50"></span>
                 </div>
 
                 <div class="flex gap-4">
@@ -65,10 +66,73 @@
                             src=""
                             alt="User avatar"
                             class="object-cover hidden absolute h-full w-full"
-                            />
+                        />
                     </a>
                 </div>
+            </div>
         </header>
+
+        <div
+            id="chat"
+            class="fixed w-80 flex flex-col -bottom-96 right-6 bg-white rounded-t-lg text-lg shadow-xl border border-ui-50 transition-all"
+        >
+            <div class="flex items-center justify-between shadow-md px-3">
+                <span data-memory="title" class="font-bold py-3 whitespace-nowrap truncate"></span>
+
+                <button id="toggle-chat-btn"><i data-feather="chevron-up" id="chat-arrow"></i></button>
+            </div>
+
+            <div class="p-3 h-96 flex flex-col" id="chat-window">
+                <div
+                    class="flex-grow pb-3 flex flex-col gap-4 overflow-auto overscroll-contain no-scrollbar"
+                    id="messages-box"
+                >
+                    <template id="message-template">
+                        <div class="flex items-start gap-2">
+                            <div class="relative flex rounded-full aspect-square overflow-hidden w-6 bg-ui-50">
+                                <div
+                                    data-message="initials"
+                                    class="uppercase font-bold font-source text-sm flex items-center justify-center flex-grow"
+                                ></div>
+
+                                <img
+                                    src=""
+                                    alt="Author avatar"
+                                    data-message="avatar"
+                                    class="hidden absolute w-full h-full object-cover"
+                                />
+                            </div>
+
+                            <div class="flex flex-col flex-grow">
+                                <div class="flex justify-between items-center">
+                                    <span data-message="author" class="font-bold text-sm"></span>
+                                    <span data-message="time" class="text-xs text-type-400"></span>
+                                </div>
+                                <p data-message="body" class="text-sm"></p>
+                            </div>
+                        </div>
+                    </template>
+
+                    <div class="text-sm text-type-400 text-center mt-auto" id="no-messages">
+                        No one has started chating, send a message to start the conversation
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <input
+                        type="text"
+                        class="input input-md h-8 rounded-full text-sm flex-grow"
+                        placeholder="Message"
+                    />
+                    <button
+                        class="btn-md btn-filled !w-8 !h-8 !p-0 rounded-full flex items-center justify-center"
+                        id="send"
+                    >
+                        <i data-feather="send" class="w-4 h-4 mr-0.5 mt-0.5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <div class="h-svh overflow-hidden sm:h-[40vh]">
             <img
@@ -170,16 +234,19 @@
         </main>
         <template data-moment-img-item>
             <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden">
-                <img class="object-cover min-h-full max-w-full w-full" src="">
+                <img class="object-cover min-h-full max-w-full w-full" src="" />
             </li>
         </template>
         <template data-moment-video-item>
             <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden">
-                <video class="object-cover min-h-full max-w-full w-full" controls src="">
+                <video class="object-cover min-h-full max-w-full w-full" controls src=""></video>
             </li>
         </template>
         <template data-moment-description-item>
-            <li data-moment-id="" class="h-64 px-8 py-11 bg-gradient-to-tr from-indigo-800 via-indigo-500 to-indigo-500 rounded-lg border border-indigo-200 justify-center items-center gap-2.5 inline-flex">
+            <li
+                data-moment-id=""
+                class="h-64 px-8 py-11 bg-gradient-to-tr from-indigo-800 via-indigo-500 to-indigo-500 rounded-lg border border-indigo-200 justify-center items-center gap-2.5 inline-flex"
+            >
                 <p class="text-white text-4xl font-bold font-['Source Serif 4'] line-clamp-3"></p>
             </li>
         </template>
