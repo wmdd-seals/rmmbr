@@ -7,7 +7,7 @@ import { Moment } from '#domain'
 
 type MemoryColumns = keyof Memory
 
-type CreateMemoryPayload = Pick<Memory, 'ownerId' | 'title' | 'location' | 'date'>
+type CreateMemoryPayload = Pick<Memory, 'ownerId' | 'title' | 'location' | 'date' | 'description'>
 
 type CollaboratorJoinedUser = Collaborator & {
     users: User
@@ -40,18 +40,24 @@ class MemoryApi {
     private readonly messages = supabase.from(ApiTable.Messages)
 
     public async get(memoryId: Memory['id'], userId: User['id']): PromiseMaybe<Memory> {
-        const res = await this.memories
-            .select<'*', Memory>('*')
-            .eq<Memory['id']>('id' satisfies MemoryColumns, memoryId)
-            .eq<Memory['ownerId']>('ownerId' satisfies MemoryColumns, userId)
+        const res = await supabase
+            .rpc<
+                'get_memory',
+                {
+                    Args: { user_id: User['id']; memory_id: Memory['id'] }
+                    Returns: Memory[]
+                }
+            >('get_memory', { user_id: userId, memory_id: memoryId })
+            .single()
 
-        return res.data?.[0]
+        return res.data
     }
 
     public async getAll(userId: User['id']): Promise<Memory[]> {
-        const res = await this.memories
-            .select<'*', Memory>('*')
-            .eq<Memory['ownerId']>('ownerId' satisfies MemoryColumns, userId)
+        const res = await supabase.rpc<'get_memories', { Args: { user_id: User['id'] }; Returns: Memory[] }>(
+            'get_memories',
+            { user_id: userId }
+        )
 
         return res.data || []
     }
