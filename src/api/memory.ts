@@ -27,7 +27,16 @@ type UpdateMemoryPayload = Partial<Pick<Memory, 'title' | 'date' | 'location' | 
 class MemoryApi {
     private readonly memories = supabase.from(ApiTable.Memories)
     private readonly collaborators = supabase.from(ApiTable.Collaborators)
-    private readonly moments = supabase.from(ApiTable.Moments)
+
+    // we need this getter here because supabase caches parameters from every query builder.
+    // `from` returns a new query builder and we need a separate one for every query we use.
+    //
+    // supabase doesn't have types exported to put them here. Inferring them in this case is completely fine
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    private get moments() {
+        return supabase.from(ApiTable.Moments)
+    }
+
     private readonly messages = supabase.from(ApiTable.Messages)
 
     public async get(memoryId: Memory['id'], userId: User['id']): PromiseMaybe<Memory> {
