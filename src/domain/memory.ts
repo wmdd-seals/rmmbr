@@ -1,4 +1,4 @@
-import { ID, Location, Maybe } from '#utils'
+import { ID, Location, Maybe, Category } from '#utils'
 import { User } from './user'
 
 export type MemoryMessage = {
@@ -19,4 +19,5 @@ export abstract class Memory {
     public abstract ownerId: User['id']
     public abstract cover: Maybe<string>
     public abstract stickerId: Maybe<string>
+    public abstract category: Maybe<Category>
 }
