@@ -114,7 +114,7 @@ userApi
         void MemoryChat.init(memoryId, memory.ownerId, user)
 
         const memoryLocation = memory.location ? await getLocationInfo(memory.location) : null
-        q<HTMLSpanElement>('[data-memory="title"]').innerHTML = memory.title
+        document.querySelectorAll('[data-memory="title"]').forEach(e => (e.innerHTML = memory.title))
         q<HTMLImageElement>('[data-memory="cover-sticker"]').src = memory.stickerId
             ? `/illustrations/${memory.stickerId}`
             : ''
@@ -222,9 +222,7 @@ userApi
             })
             .catch(console.error)
 
-        if (moments && moments.length > 0) {
-            LatestMoments.init(moments)
-        }
+        LatestMoments.init(moments)
 
         function selectAndDeleteMoments(): void {
             q<HTMLButtonElement>('#edit-moment').addEventListener('click', () => {
@@ -360,11 +358,11 @@ class OnlineCollaboratorBadges {
 }
 
 class LatestMoments {
-    public static init(moments: Moment[] | []): void {
-        let allMoments: Moment[] = []
+    public static init(moments: Maybe<Moment[]>): void {
+        let allMoments: Moment[] | [] = []
 
         const latestMoments = supabase.channel(`moments_on_${memoryId}`)
-        if (moments.length) allMoments = moments
+        if (moments && moments.length > 0) allMoments = moments
 
         latestMoments
             .on<Moment>(
@@ -376,24 +374,25 @@ class LatestMoments {
                     filter: `memoryId=eq.${memoryId}`
                 },
                 payload => {
+                    console.log({ payload })
                     switch (payload.eventType) {
                         case 'INSERT': {
                             const newMoment = payload.new
                             if (newMoment.type !== 'description') return
                             renderMoments([newMoment])
-                            allMoments.push(newMoment)
+                            ;(allMoments as Moment[]).push(newMoment)
                             break
                         }
                         case 'DELETE': {
-                            const filteredMoments = allMoments.filter(item => item.id !== payload.old.id)
-                            rerenderMoments(filteredMoments)
+                            allMoments = allMoments.filter(item => item.id !== payload.old.id)
+                            rerenderMoments(allMoments)
                             break
                         }
                         case 'UPDATE': {
                             const newMoment = payload.new
                             if (newMoment.type === 'description') return
                             renderMoments([newMoment])
-                            allMoments.push(newMoment)
+                            ;(allMoments as Moment[]).push(newMoment)
                             break
                         }
                     }
