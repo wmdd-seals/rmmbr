@@ -1,3 +1,4 @@
+import { getLocationInfo } from 'src/utils/gmap'
 import { memoryApi, supabase, userApi, storageApi } from '#api'
 import { Memory, MemoryMessage, User } from '#domain'
 import { Maybe, q, updateCurrentUserChip } from '#utils'
@@ -87,6 +88,15 @@ function resetEditSelects(): void {
     editMoment.mode = false
 }
 
+function checkIfImageExists(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const img = new Image()
+        img.src = url
+        img.onload = (): void => resolve(url)
+        img.onerror = (): void => reject(new Error('failed to fetch cover image'))
+    })
+}
+
 userApi
     .getCurrent()
     .then(async user => {
@@ -101,20 +111,28 @@ userApi
 
         OnlineCollaboratorBadges.init(user, memoryId)
 
-        document.querySelectorAll('[data-memory="title"]').forEach(el => {
-            el.innerHTML = memory.title
-        })
-
         void MemoryChat.init(memoryId, memory.ownerId, user)
 
-        const coverSrc = storageApi.getFileUrl(`memory/${memoryId}/cover`) + `?t=${Date.now()}`
+        const memoryLocation = memory.location ? await getLocationInfo(memory.location) : null
+        q<HTMLSpanElement>('[data-memory="title"]').innerHTML = memory.title
+        q<HTMLImageElement>('[data-memory="cover-sticker"]').src = memory.stickerId
+            ? `/illustrations/${memory.stickerId}`
+            : ''
+        q<HTMLSpanElement>('[data-memory="cover-date"]').innerHTML = memory.date
+        q<HTMLSpanElement>('[data-memory="cover-location"]').innerHTML = memoryLocation
+            ? `, ${memoryLocation.city}, ${memoryLocation.country}`
+            : ''
 
         const img = q<HTMLImageElement>('#memory-cover')
 
-        img.src = coverSrc!
-        img.onload = (): void => {
-            img.classList.toggle('hidden')
-        }
+        const coverSrc = storageApi.getFileUrl(`memory/${memoryId}/cover`) + `?t=${Date.now()}`
+        await checkIfImageExists(coverSrc)
+            .then(res => {
+                img.src = res
+            })
+            .catch(err => {
+                console.error(err)
+            })
 
         // Create UI for Listing Stickers
         const stickers = [
@@ -339,8 +357,8 @@ class LatestMoments {
                 {
                     event: '*',
                     schema: 'public',
-                    table: 'moments',
-                    filter: `memoryId=eq.${memoryId}`
+                    table: 'moments'
+                    //* filter: `memoryId=eq.${memoryId}`
                 },
                 payload => {
                     switch (payload.eventType) {
