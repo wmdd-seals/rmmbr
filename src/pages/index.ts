@@ -239,25 +239,27 @@ function filterByCategory(memory: Memory, selectedValues: SelectedValue): boolea
 }
 
 function filterByDate(memory: Memory, selectedValues: SelectedValue): boolean {
-    const startDate = selectedValues.startDate[0]
-    const endDate = selectedValues.endDate[0]
+    const startDateLocal = selectedValues.startDate[0] ? new Date(selectedValues.startDate[0]) : null
+    const endDateLocal = selectedValues.endDate[0] ? new Date(selectedValues.endDate[0]) : null
 
-    if (!startDate) {
-        if (!endDate) return true
+    const startDateUtc = startDateLocal
+        ? new Date(startDateLocal.getTime() - startDateLocal.getTimezoneOffset() * 60000)
+        : null
+    const endDateUtc = endDateLocal ? new Date(endDateLocal.getTime() - endDateLocal.getTimezoneOffset() * 60000) : null
 
-        return new Date(memory.date) <= new Date(endDate)
+    const memoryDateUtc = new Date(memory.date)
+
+    if (!startDateUtc) {
+        if (!endDateUtc) return true
+
+        return memoryDateUtc <= endDateUtc
     }
 
-    if (!endDate) {
-        if (!startDate) return true
-
-        return new Date(startDate) <= new Date(memory.date)
+    if (!endDateUtc) {
+        return startDateUtc <= memoryDateUtc
     }
 
-    console.log(startDate, memory.date, endDate)
-    console.log(new Date(startDate) <= new Date(startDate) && new Date(startDate) <= new Date(endDate))
-
-    return new Date(startDate) <= new Date(startDate) && new Date(startDate) <= new Date(endDate)
+    return startDateUtc <= memoryDateUtc && memoryDateUtc <= endDateUtc
 }
 
 function filterByLocation(memory: Memory, selectedValues: SelectedValue): boolean {
