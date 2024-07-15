@@ -461,7 +461,7 @@ class MemoryChat {
             memoryApi.getAllCollaborators(memoryId)
         ])
 
-        collaborators.forEach(collaborator => memoryCollaborators.set(collaborator.id, collaborator))
+        collaborators?.forEach(collaborator => memoryCollaborators.set(collaborator.id, collaborator))
 
         this.renderMessages(messages.filter(mes => memoryCollaborators.has(mes.userId)))
         this.scrollToEnd()
