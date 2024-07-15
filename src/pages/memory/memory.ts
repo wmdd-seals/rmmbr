@@ -243,6 +243,7 @@ userApi
                 const momentIds = Array.from<HTMLInputElement>(
                     document.querySelectorAll('input[type="checkbox"]:checked[data-moment-id]')
                 ).map(m => m.dataset.momentId)
+
                 await memoryApi.deleteMoments(momentIds as Array<Moment['id']>)
                 resetSelectedMoments()
             })
@@ -351,7 +352,10 @@ class OnlineCollaboratorBadges {
 
 class LatestMoments {
     public static init(moments: Moment[]): void {
+        let allMoments: Moment[] = []
+
         const latestMoments = supabase.channel(`moments_on_${memoryId}`)
+        if (moments) allMoments = moments
 
         latestMoments
             .on<Moment>(
@@ -359,26 +363,28 @@ class LatestMoments {
                 {
                     event: '*',
                     schema: 'public',
-                    table: 'moments'
-                    //* filter: `memoryId=eq.${memoryId}`
+                    table: 'moments',
+                    filter: `memoryId=eq.${memoryId}`
                 },
                 payload => {
                     switch (payload.eventType) {
                         case 'INSERT': {
-                            const newMemory = payload.new
-                            if (newMemory.type !== 'description') return
-                            renderMoments([newMemory])
+                            const newMoment = payload.new
+                            if (newMoment.type !== 'description') return
+                            renderMoments([newMoment])
+                            allMoments.push(newMoment)
                             break
                         }
                         case 'DELETE': {
-                            const filteredMoments = moments.filter(item => item.id !== payload.old.id)
+                            const filteredMoments = allMoments.filter(item => item.id !== payload.old.id)
                             rerenderMoments(filteredMoments)
                             break
                         }
                         case 'UPDATE': {
-                            const newMemory = payload.new
-                            if (newMemory.type === 'description') return
-                            renderMoments([newMemory])
+                            const newMoment = payload.new
+                            if (newMoment.type === 'description') return
+                            renderMoments([newMoment])
+                            allMoments.push(newMoment)
                             break
                         }
                     }
