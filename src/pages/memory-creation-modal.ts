@@ -214,7 +214,6 @@ class MemoryCreationModal extends ModalBaseLayer {
             [data-index="${this.inputIndex}"] textarea[required]`
         ).forEach(e =>
             e.addEventListener('input', ev => {
-                console.log(ev, 'input change')
                 ev.preventDefault()
                 q<HTMLButtonElement>('#next', this).disabled = !this.areAllRequiredFieldsFilled()
             })
