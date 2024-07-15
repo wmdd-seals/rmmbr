@@ -71,7 +71,7 @@ class ShareMemoryWindow extends HTMLElement {
             return
         }
         const collaborators = await memoryApi.getAllCollaborators(this.memoryId)
-        this.collaborators = collaborators
+        this.collaborators = collaborators || []
     }
 
     private async addNewCollaborator(email: User['email']): Promise<void> {
