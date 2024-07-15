@@ -212,7 +212,7 @@ class MemoryApi {
     }
 
     private async createMoment(MomentPayload: MomentPayload): PromiseMaybe<Moment[]> {
-        const res = await supabase.from('moments').insert(MomentPayload).select<string, Moment>()
+        const res = await this.moments.insert(MomentPayload).select<string, Moment>()
         return res.data
     }
 
@@ -249,26 +249,19 @@ class MemoryApi {
     }
 
     public async getAllMomentsByMemoryId(memoryId: Memory['id']): PromiseMaybe<Moment[]> {
-        const res = await supabase
-            .from('moments')
-            .select<string, Moment>('*')
-            .eq<Moment['memoryId']>('memoryId', memoryId)
+        const res = await this.moments.select<string, Moment>('*').eq<Moment['memoryId']>('memoryId', memoryId)
         if (!res.data) return
 
         return res.data
     }
 
     public async updateMoment(momentId: Moment['id'], payload: Partial<MomentPayload>): Promise<boolean> {
-        const res = await supabase
-            .from('moments')
-            .update(payload)
-            .eq('id' satisfies keyof Moment, momentId)
+        const res = await this.moments.update(payload).eq('id' satisfies keyof Moment, momentId)
         return !res.error
     }
 
     public async deleteMoments(momentIds: Moment['id'][]): PromiseMaybe<void> {
-        const res = await supabase
-            .from('moments')
+        const res = await this.moments
             .delete()
             .in('id' satisfies keyof Moment, momentIds)
             .select<string, Moment>()
