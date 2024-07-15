@@ -161,7 +161,7 @@ class AddMomentModal extends ModalBaseLayer {
             el.addEventListener('click', () => this.close())
         )
         q<HTMLButtonElement>('button#save-changes-btn').addEventListener('click', async () => {
-            if (q<HTMLInputElement>('input#media-input').value) await this.uploadVideoPic()
+            if (this.currentFiles.length) await this.uploadVideoPic()
             if (q<HTMLTextAreaElement>('textarea#description-input').value) await this.uploadDescription()
             this.close()
         })
@@ -216,6 +216,7 @@ class AddMomentModal extends ModalBaseLayer {
         q<HTMLDivElement>('[data-modal-content]', this).innerHTML = ''
         this.renderContent()
         this.attachEvents()
+        this.currentFiles = []
     }
 
     private close(): void {
