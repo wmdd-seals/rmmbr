@@ -1,13 +1,13 @@
 import { memoryApi } from '#api'
 import { Memory, Moment } from '#domain'
-import { getExtensionName, PromiseMaybe, q } from '#utils'
+import { Maybe, PromiseMaybe, q } from '#utils'
 import { ModalBaseLayer } from 'src/components/modal-base-layer'
 
 class AddMomentModal extends ModalBaseLayer {
-    private readonly videoExtensions: Set<string> = new Set(['mp4', 'avi', 'mov', 'webm'])
-    private readonly imageExtensions: Set<string> = new Set(['png', 'jpg', 'webp', 'svg'])
     private readonly falsyValue: Set<string> = new Set(['false', 'null', '0', ''])
-
+    private readonly imageMime: Set<string> = new Set(['image/jpeg', 'image/png', 'image/webp'])
+    private readonly videoMime: Set<string> = new Set(['video/mp4', 'video/x-msvideo', 'video/webm'])
+    private currentFiles: Array<File> = []
     public constructor() {
         super()
     }
@@ -47,14 +47,16 @@ class AddMomentModal extends ModalBaseLayer {
                 </header>
                 <div id="add-moment-1" role="tabpanel" aria-hidden="false" tabindex="0" class="flex flex-col flex-grow w-full overflow-x-hidden overflow-y-scroll sm:overflow-y-hidden aria-hidden:hidden">
                     <div class="w-full h-full flex flex-col items-center justify-center">
-                        <input type="file" id="media-input" class="hidden">
-                        <label for="media-input">
-                        <img src="/illustrations/taking-pic.svg">
+                        <input type="file" id="media-input" class="hidden" multiple>
+                        <div data-media-preview class="peer h-full hidden has-[[data-preview-item]]:flex justify-center items-start sm:justify-start gap-4 flex-wrap w-full content-start overflow-y-scroll">
+                        </div>
+                        <label for="media-input" class="peer-has-[[data-preview-item]]:hidden">
+                            <img src="/illustrations/taking-pic.svg">
                         </label>
                         <label
                             id="pick-media"
                             for="media-input"
-                            class="mt-4 px-6 py-2 bg-indigo-700 rounded-3xl border border-indigo-300 justify-center items-center gap-2 flex text-white shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">Pick from your gallery <i class="fa-solid fa-arrow-up-from-bracket"></i></label>
+                            class="peer-has-[[data-preview-item]]:hidden mt-4 px-6 py-2 bg-indigo-700 rounded-3xl border border-indigo-300 justify-center items-center gap-2 flex text-white shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">Pick from your gallery <i class="fa-solid fa-arrow-up-from-bracket"></i></label>
                     </div>
                 </div>
                 <div id="add-moment-2" role="tabpanel" aria-hidden="true" tabindex="0" class="flex flex-col items-center justify-center flex-grow w-full overflow-x-hidden overflow-y-scroll sm:overflow-y-hidden aria-hidden:hidden">
@@ -75,6 +77,12 @@ class AddMomentModal extends ModalBaseLayer {
 					</div>
                 </footer>
             </div>
+            <template id="preview-item-template">
+                <div data-preview-item class="flex h-32 relative">
+                    <span data-file-modifier class="absolute -top-1 -right-1 w-6 h-6 text-sm flex justify-center items-center rounded-full bg-white font-bold text-indigo-700">&#10005;</span>
+
+                </div>
+            </template>
         `
     }
 
@@ -89,6 +97,42 @@ class AddMomentModal extends ModalBaseLayer {
         if (prop === 'memory-id' && newVal && newVal !== oldVal) {
             this.attachEvents()
         }
+    }
+
+    protected renderPreviews(): void {
+        const previewArea = q<HTMLDivElement>('[data-media-preview]')
+        q<HTMLInputElement>('input#media-input', this).addEventListener('change', (ev: Event) => {
+            const currentTarget = ev.currentTarget as HTMLInputElement
+            Array.from<File>(currentTarget.files as FileList).forEach(item => {
+                this.currentFiles.push(item)
+            })
+            this.currentFiles.forEach((file: File) => {
+                const fileType = (): string | null => {
+                    if (this.imageMime.has(file.type)) return 'img'
+                    if (this.videoMime.has(file.type)) return 'video'
+                    return null
+                }
+
+                if (!fileType()) return
+                const template = q<HTMLTemplateElement>('#preview-item-template', this).content.cloneNode(
+                    true
+                ) as HTMLDivElement
+                const preview = document.createElement(fileType()!) as HTMLImageElement | HTMLVideoElement
+                preview.classList.add('flex', 'object-cover', 'h-full', 'aspect-square')
+                preview.src = URL.createObjectURL(file)
+                template.querySelector('div')!.append(preview)
+                template
+                    .querySelector('[data-file-modifier]')
+                    ?.setAttribute('data-file-modifier', String(file.lastModified))
+                template.querySelector('[data-file-modifier]')?.addEventListener('click', (ev: Event) => {
+                    this.currentFiles = this.currentFiles.filter(
+                        item => item.lastModified !== Number((ev.currentTarget as HTMLSpanElement).dataset.fileModifier)
+                    )
+                    ;(ev.currentTarget as HTMLSpanElement).parentElement?.remove()
+                })
+                previewArea.appendChild(template)
+            })
+        })
     }
 
     private tab(): void {
@@ -121,40 +165,43 @@ class AddMomentModal extends ModalBaseLayer {
             if (q<HTMLTextAreaElement>('textarea#description-input').value) await this.uploadDescription()
             this.close()
         })
+        this.renderPreviews()
         this.tab()
     }
 
-    private getType(extensionName: string | null): 'image' | 'video' | null {
-        if (!extensionName) return null
+    private getType(type: string | null): 'image' | 'video' | null {
+        if (!type) return null
 
-        if (this.imageExtensions.has(extensionName)) {
+        if (this.imageMime.has(type)) {
             return 'image'
         }
-        if (this.videoExtensions.has(extensionName)) {
+        if (this.videoMime.has(type)) {
             return 'video'
         }
         return null
     }
 
-    private async uploadVideoPic(): PromiseMaybe<Moment> {
-        const mediaInput = q<HTMLInputElement>('input#media-input')
+    private uploadVideoPic(): Promise<Maybe<Moment>[]> | void {
+        if (!this.currentFiles.length || !this.memoryId) return
 
-        if (!mediaInput.value || !mediaInput.files || !this.memoryId) return
+        const results = Promise.all(
+            Array.from<File>(this.currentFiles).map(async (file: File) => {
+                const type = this.getType(file.type)
 
-        const extName = getExtensionName(mediaInput.value)
-        const type = this.getType(extName)
+                if (!type) throw new Error('could not identify the file type')
 
-        if (!type) throw new Error('could not identify the file type')
-
-        const res = await memoryApi.createMediaMoment(
-            {
-                type: type,
-                file: mediaInput.files[0]
-            },
-            this.memoryId
+                const res = await memoryApi.createMediaMoment(
+                    {
+                        type: type,
+                        file: file
+                    },
+                    this.memoryId as Memory['id']
+                )
+                return res
+            })
         )
 
-        return res
+        return results
     }
 
     private async uploadDescription(): PromiseMaybe<Moment[]> {
