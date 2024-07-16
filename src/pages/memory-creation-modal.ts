@@ -227,7 +227,7 @@ class MemoryCreationModal extends ModalBaseLayer {
                 <button id="modal-close-btn" class="text-basketball-500 text-3xl">
                     &#10005;
                 </button>
-            </headsr>
+            </header>
             <section
                 class="flex flex-col flex-grow align-center overflow-hidden justify-start items-center w-full sm:max-w-[43.75rem] sm:gap-5"
             >
