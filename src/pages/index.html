@@ -41,90 +41,183 @@
             </div>
         </header>
 
-        <main class="max-w-[1304px] mx-auto px-6">
-            <div
-                class="flex flex-col mb-10 items-center gap-8 md:flex-row md:justify-between md:items-end lg:row-start-1 lg:col-span-2"
-            >
-                <span class="flex flex-col items-center md:items-start md:text-xl lg:text-2xl">
-                    <span class="text-xl font-bold">Hello,</span>
-                    <span class="text-5xl leading-tight font-bold font-source" data-user="name"></span>
-                    <span class="text-lg font-medium">You have <span data-memory="count"></span> saved!</span>
-                </span>
-
-                <button class="btn-cta btn-md" id="create-memory-btn">
-                    Create New
-                    <span>+</span>
-                </button>
-            </div>
-
-            <div class="lg:flex lg:gap-10 mb-12">
-                <section id="nav-btn" class="grid gap-2 grid-cols-3 mt-16 md:hidden">
-                    <a
-                        href="#home"
-                        class="grow h-9 rounded-lg my-2 ml-2 py-2 bg-black text-white flex justify-center items-center"
-                        >Home</a
+        <main class="relative px-6 pb-14 md:pb-16 bg-no-repeat bg-top" style="background-image: url(/sign-bg.jpg); background-size: 100% 40%; ">
+            
+            <div class=" max-w-[1304px] mx-auto" >
+                <div class="flex justify-center items-center pt-36 pb-40 md:pt-16 md:pb-10">
+                    <div
+                        class="flex flex-col gap-8 md:grow md:flex-row md:justify-between md:items-end lg:row-start-1 lg:col-span-2 items-center"
                     >
-                    <a
-                        href="#timeline"
-                        class="grow h-9 rounded-lg my-2 mx-0 py-2 bg-black text-white flex justify-center items-center"
-                        >Timeline</a
-                    >
-                    <a
-                        href="#memory"
-                        class="grow h-9 rounded-lg my-2 mr-2 py-2 bg-black text-white flex justify-center items-center"
-                        >Memories</a
-                    >
-                </section>
+                        <span class="flex flex-col items-center md:items-start md:text-xl lg:text-2xl">
+                            <span class="text-xl text-white font-bold">Hello,</span>
+                            <span class="text-5xl text-white leading-tight font-bold font-source" data-user="name"></span>
+                            <span class="text-lg text-white font-medium">You have <span data-memory="count"></span> saved!</span>
+                        </span>
 
-                <section id="home" class="md:block flex flex-col overflow-hidden flex-grow">
-                    <div class="flex flex-col gap-2">
-                        <h2 class="font-bold text-xl flex justify-between items-center">
-                            Upcoming adventures
-                            <span class="text-base font-normal text-type-200" data-user="countdowns"></span>
-                        </h2>
+                        <button class="btn-cta btn-md" id="create-memory-btn" data-memory="create">
+                            Create New
+                            <span>+</span>
+                        </button>
+                    </div>
+                </div>
 
-                        <ul
-                            id="countdown-list"
-                            class="rounded-xl bg-gradient-to-b from-white/20 to-white/50 backdrop-blur snap-mandatory snap-x flex overflow-auto min-h-80 no-scrollbar"
+                <div class="lg:flex lg:gap-10 mb-12">
+                    <section id="nav-btn" class="p-2 flex gap-2 md:hidden">
+                        <a
+                            href="#home"
+                            class="grow py-2 flex justify-center items-center text-indigo-700 border-b border-indigo-700"
+                            >Home</a
                         >
-                            <template id="countdown-thumbnail">
-                                <li class="w-full snap-center flex-shrink-0">
-                                    <div class="py-14 px-10 flex flex-col gap-2 items-center">
-                                        <div
-                                            class="flex flex-col text-center px-10 border-b border-dashed border-neutral-900 pb-2"
-                                        >
-                                            <span class="text-thick-blue-900 text-xs" data-memory="date"></span>
-                                            <span
-                                                class="text-thick-blue-900 font-bold text-md"
-                                                data-memory="title"
-                                            ></span>
-                                        </div>
+                        <a href="#memory" class="grow py-2 flex justify-center items-center text-indigo-700 ">Memories</a>
+                    </section>
 
-                                        <span class="font-source text-5xl text-type-50" data-memory="countdown"
-                                            >Not far away...</span
-                                        >
+                    <section id="home" class="grow flex flex-col gap-9 overflow-hidden md:flex lg:flex-row">
+                        <div class="grow shrink flex flex-col gap-9 lg:w-2/3">
+                            <!-- Countdown part ("Upcoming adventure")  -->
+                            <div class="grow flex flex-col gap-2">
+                                <h2 class="font-bold text-xl flex justify-between items-center">
+                                    Upcoming adventures
+                                    <span class="text-base font-normal text-type-200" data-user="countdowns"></span>
+                                </h2>
+
+                                <ul
+                                    id="countdown-list"
+                                    class="grow rounded-xl bg-gradient-to-b from-white/20 to-white/50 backdrop-blur snap-mandatory snap-x flex overflow-auto min-h-80 no-scrollbar"
+                                >
+                                    <!-- default state start -->
+                                    <div
+                                        id="countdown-overlay"
+                                        class="flex flex-col gap-3 items-center justify-center p-5 w-full"
+                                    >
+                                        <span><i class="fa-regular fa-clock text-xl" aria-hidden="true"></i></span>
+                                        <div>
+                                            <p class="text-center">You don't have any upcoming events yet.</p>
+                                            <p class="font-bold text-center">Add one to start counting down!</p>
+                                        </div>
+                                        <p data-memory="create">
+                                            Create New
+                                            <button><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+                                        </p>
                                     </div>
-                                    <div></div>
-                                </li>
-                            </template>
-                        </ul>
+                                    <!-- default state ends -->
+                                     
+                                    <template id="countdown-thumbnail">
+                                        <li class="w-full snap-center shrink-0">
+                                            <div class="py-14 px-10 flex flex-col gap-2 items-center">
+                                                <div
+                                                    class="flex flex-col text-center px-10 border-b border-dashed border-neutral-900 pb-2"
+                                                >
+                                                    <span class="text-thick-blue-900 text-xs" data-memory="date"></span>
+                                                    <span
+                                                        class="text-thick-blue-900 font-bold text-md"
+                                                        data-memory="title"
+                                                    ></span>
+                                                </div>
+
+                                                <span class="font-source text-5xl text-type-50" data-memory="countdown"
+                                                    >Not far away...</span
+                                                >
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+
+                            <!-- Flashback part ("Remember this?)  -->
+                            <div class="grow flex-col gap-2 hidden" id="flashback">
+                                <h2 class="font-bold text-xl mt-8 mb-4">Remember this?</h2>
+
+                                <ul class="flex gap-3 overflow-x-auto no-scrollbar w-full" id="flashback-list">
+                                    <template id="memory-flashback-thumbnail">
+                                        <li>
+                                            <a
+                                                href="#"
+                                                class="aspect-[4/5] h-64 flex flex-col bg-ui-100 rounded-2xl relative overflow-hidden"
+                                                data-memory="link"
+                                            >
+                                                <img
+                                                    src=""
+                                                    alt="Memory cover"
+                                                    class="object-cover absolute h-full w-full"
+                                                    data-memory="cover"
+                                                />
+                                                <div
+                                                    class="absolute inset-0"
+                                                    aria-hidden="true"
+                                                    style="
+                                                        background-image: linear-gradient(
+                                                            to bottom,
+                                                            transparent 62%,
+                                                            rgb(0 0 0 / 0.8) 100%
+                                                        );
+                                                    "
+                                                ></div>
+
+                                                <div class="mt-auto flex flex-col items-start p-4 text-white z-10">
+                                                    <span class="text-xs" data-memory="date"></span>
+                                                    <span class="font-bold" data-memory="title"></span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- 直下はもしかしたら後で要注意箇所かもしれない。divにhidden classをつけるべきなのか。 -->
+                        <!-- Map part ("Your locations") -->
+                        <div id="location" class="  grow gap-2 flex flex-col md:justify-stretch lg:w-1/3">
+                            <h2 class="font-bold text-xl flex justify-between items-center">
+                                Your locations
+                                <span class="text-type-200 text-base font-normal" data-user="locations-count"></span>
+                            </h2>
+
+                            <div
+                                class="relative grow flex flex-col rounded-xl overflow-hidden md:shadow-2xl min-h-[400px]"
+                            >
+                                <div id="locations-map" class="flex-grow bg-gray-200"></div>
+                                <div
+                                    id="map-overlay"
+                                    class="backdrop-blur absolute inset-0 p-8 flex flex-col gap-1 items-center justify-center text-center"
+                                >
+                                    <p class="font-bold">No places added yet!</p>
+                                    <p>Make your memorories more meaningful by adding locations where they happened.</p>
+                                    <p>You can do this from the memory details screen.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <section id="memory" class="hidden md:block">
+                    <div class="flex flex-col gap-4 md:flex-row md:justify-between py-8">
+                        <h2
+                            class="font-bold text-xl flex gap-5 justify-between items-center md:justify-start"
+                        >
+                            Your memories<span class="font-normal"><span data-memory="count"></span></span>
+                        </h2>
+                        <button class="flex gap-1 justify-center items-center md:self-end btn-outlined btn-md" id="filter-btn">Filter<i class="fa-solid fa-filter"></i></button>
                     </div>
 
-                    <div class="flex-col hidden">
-                        <h2 class="font-bold text-xl mt-8 mb-4">Remember this?</h2>
+                    <!--default state start -->
+                    <div id="memory-overlay" class="flex flex-col gap-4 justify-center items-center py-10">
+                        <img src="/girl.svg" alt="default photo" />
+                        <div>
+                            <p class="text-center">This is where your published memories will appear.</p>
+                            <p class="font-bold text-center">Capture a special moment and share it with the world!</p>
+                        </div>
+                        <p data-memory="create">Create New <i class="fa-solid fa-plus" aria-hidden="true"></i></p>
+                    </div>
+                    <!-- default state end -->
 
-                        <ul class="flex gap-3 overflow-x-auto w-full no-scrollbar" id="flashback-list">
-                            <template id="memory-flashback-thumbnail">
-                                <li>
-                                    <a
-                                        href="#"
-                                        class="aspect-[4/5] h-64 flex flex-col bg-ui-100 rounded-2xl relative overflow-hidden"
-                                        data-memory="link"
-                                    >
+                    <ul class="grid gap-6 md:grid-cols-3 lg:grid-cols-4" id="memory-list">
+                        <template id="memory-thumbnail">
+                            <li class="bg-white rounded-lg overflow-hidden">
+                                <a data-memory="link" href="" class="block">
+                                    <div class="aspect-[5/3] bg-gray-200 relative flex">
                                         <img
                                             src=""
                                             alt="Memory cover"
-                                            class="object-cover absolute h-full w-full"
+                                            class="object-cover w-full"
                                             data-memory="cover"
                                         />
                                         <div
@@ -138,176 +231,71 @@
                                                 );
                                             "
                                         ></div>
-
-                                        <div class="mt-auto flex flex-col items-start p-4 text-white z-10">
-                                            <span class="text-xs" data-memory="date"></span>
-                                            <span class="font-bold" data-memory="title"></span>
-                                        </div>
-                                    </a>
-                                </li>
-                            </template>
-                        </ul>
-                    </div>
-                </section>
-
-                <section
-                    id="timeline"
-                    class="hidden max-w-96 flex-shrink-0 flex-grow gap-2 md:flex md:justify-stretch md:gap-3 md:flex-col"
-                >
-                    <h2 class="font-bold text-xl flex justify-between items-center">
-                        Your locations
-                        <span class="text-type-200 text-base font-normal" data-user="locations-count"></span>
-                    </h2>
-
-                    <div class="relative flex-grow flex rounded-xl overflow-hidden md:shadow-2xl">
-                        <div id="locations-map" class="flex-grow bg-gray-200"></div>
-                        <div
-                            id="map-overlay"
-                            class="backdrop-blur absolute inset-0 p-8 flex flex-col gap-1 items-center justify-center text-center"
-                        >
-                            <p class="font-bold">No places added yet!</p>
-                            <p>Make your memorories more meaningful by adding locations where they happened.</p>
-                            <p>You can do this from the memory details screen.</p>
-                        </div>
-                    </div>
+                                        <div
+                                            class="text-xs text-white absolute right-2 bottom-3"
+                                            data-memory="date"
+                                        ></div>
+                                    </div>
+                                    <div class="py-2 px-3">
+                                        <h3 data-memory="title">title</h3>
+                                        <p data-memory="location" class="text-xs">Somewhere on Earth</p>
+                                    </div>
+                                </a>
+                            </li>
+                        </template>
+                    </ul>
                 </section>
             </div>
-
-            <section id="memory" class="hidden md:block">
-                <div class="md:flex md:justify-between mb-2">
-                    <h2 class="font-bold text-xl flex gap-5 justify-between items-center md:justify-start">
-                        Your memories<span class="font-normal"><span data-memory="count"></span></span>
-                    </h2>
-                    <button class="md:self-end btn-outlined btn-md" id="filter-btn">Filter</button>
-                </div>
-
-                <ul class="grid gap-6 md:grid-cols-3 lg:grid-cols-4" id="memory-list">
-                    <template id="memory-thumbnail">
-                        <li class="bg-white rounded-lg overflow-hidden">
-                            <a data-memory="link" href="" class="block">
-                                <div class="aspect-[5/3] bg-gray-200 relative flex">
-                                    <img src="" alt="Memory cover" class="object-cover w-full" data-memory="cover" />
-                                    <div
-                                        class="absolute inset-0"
-                                        aria-hidden="true"
-                                        style="
-                                            background-image: linear-gradient(
-                                                to bottom,
-                                                transparent 62%,
-                                                rgb(0 0 0 / 0.8) 100%
-                                            );
-                                        "
-                                    ></div>
-                                    <div class="text-xs text-white absolute right-2 bottom-3" data-memory="date"></div>
-                                </div>
-                                <div class="py-2 px-3">
-                                    <h3 data-memory="title">title</h3>
-                                    <p data-memory="location" class="text-xs">Somewhere on Earth</p>
-                                </div>
-                            </a>
-                        </li>
-                    </template>
-                </ul>
-            </section>
         </main>
 
         <div
             class="fixed rounded-l-2xl z-30 top-0 right-0 bg-white h-screen translate-x-full w-[40%] transition-all duration-300"
             id="filter-drawer"
         >
-            <div class="bg-gray-100 my-8 mx-6 px-6 py-7 rounded-lg">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold">Filters</h2>
-                    <button class="text-gray-700 text-2xl">&times;</button>
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-2">Filter by categories</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.ail</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.waii</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.odie</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.mmit</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.orkel</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lore</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.ne</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.Jungle</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.waii</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.waii</span
-                        >
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-2">Filter by date</h3>
-                    <input type="date" class="w-full border border-gray-300 px-3 py-2 rounded-lg" />
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold">Filter by place</h3>
-                    <input type="input" class="w-full border border-gray-300 px-3 py-2 rounded-lg my-2" />
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Mexico</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Spain</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Chile</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Italia</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; USA</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Egipt</span>
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold">Filter by collaborator</h3>
-                    <input type="input" class="w-full border border-gray-300 px-3 py-2 rounded-lg my-2" />
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.l Scott</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem. Schrute</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.lpert</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.Martinez</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.esly</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.Malone</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem. Martin</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.th Palmer</span>
-                    </div>
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold">Filters</h2>
+                <button class="text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div class="flex flex-col gap-2">
+                <h3 class="text-xl font-semibold">Filter by categories</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button class="btn-text border-2 btn-md border-basketball-500 border-solid">Travel</button>
+                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Party</button>
+                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">
+                        Family events
+                    </button>
+                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Food</button>
+                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">
+                        Excercise
+                    </button>
+                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Recital</button>
+                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Office</button>
+                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Wedding</button>
+                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Ceremony</button>
+                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Hobby</button>
+                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">School</button>
+                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Park</button>
                 </div>
             </div>
+            <h3 class="text-xl font-semibold">Other filters</h3>
+            <div class="flex flex-col gap-2">
+                <h4 class="text-lg">Filter by period</h4>
+                <label for="filter-period-start">from</label>
+                <input type="date" class="input input-sm w-full" id="filter-period-start" />
+                <label for="filter-period-end">to</label>
+                <input type="date" class="input input-sm w-full" id="filter-period-end" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <h4 class="text-lg">Filter by place</h4>
+                <input
+                    type="input"
+                    placeholder="Add a place to filter"
+                    class="input input-sm w-full"
+                    id="input-place"
+                />
+                <div class="flex flex-wrap gap-2" id="render-place"></div>
+            </div>
+            <button class="btn-filled btn-md" id="filter-start-btn">Filter</button>
         </div>
 
         <memory-creation-modal></memory-creation-modal>

@@ -7,12 +7,15 @@ import { Memory } from '#domain'
 
 const tabs = {
     ['#home']: document.getElementById('home')!,
-    ['#timeline']: document.getElementById('timeline')!,
     ['#memory']: document.getElementById('memory')!
 }
 
-const isTab = (hash: string): hash is keyof typeof tabs =>
-    hash === '#home' || hash === '#timeline' || hash === '#memory'
+const anchors = {
+    ['#home']: document.querySelector('a[href="#home"]')!,
+    ['#memory']: document.querySelector('a[href="#memory"]')!
+}
+
+const isTab = (hash: string): hash is keyof typeof tabs => hash === '#home' || hash === '#memory'
 
 let currentTabId: keyof typeof tabs = '#home'
 
@@ -22,10 +25,14 @@ function changeTab(): void {
 
     // toggle previous tab
     tabs[currentTabId].classList.toggle('hidden')
+    anchors[currentTabId].classList.toggle('border-b')
+    anchors[currentTabId].classList.toggle('border-indigo-700')
 
     currentTabId = isTab(hash) ? hash : '#home'
 
     tabs[currentTabId].classList.toggle('hidden')
+    anchors[currentTabId].classList.toggle('border-b')
+    anchors[currentTabId].classList.toggle('border-indigo-700')
 }
 
 changeTab()
@@ -35,10 +42,13 @@ window.addEventListener('hashchange', changeTab)
 customElements
     .whenDefined('memory-creation-modal')
     .then(() => {
-        q('#create-memory-btn').addEventListener('click', ev => {
-            ev.preventDefault()
-            q('memory-creation-modal').setAttribute('open', 'true')
-        })
+        const triggerMemoryCreation = document.querySelectorAll('[data-memory="create"]')
+        triggerMemoryCreation.forEach(el =>
+            el.addEventListener('click', ev => {
+                ev.preventDefault()
+                q('memory-creation-modal').setAttribute('open', 'true')
+            })
+        )
     })
     .catch(console.error)
 
@@ -56,6 +66,10 @@ userApi
         initFilterDrawer()
 
         const memories = await memoryApi.getAll(user.id)
+
+        if (memories.length === 0) {
+            q('#filter-btn').classList.add('hidden')
+        }
 
         renderCountdowns(memories.filter(memory => Date.now() < +new Date(memory.date)))
 
@@ -75,6 +89,10 @@ userApi
 function renderMemories(memories: Memory[]): void {
     const thumbnail = document.getElementById('memory-thumbnail') as HTMLTemplateElement
     const memoryList = document.getElementById('memory-list') as HTMLUListElement
+
+    if (memories.length > 0) {
+        q('#memory-overlay').style.display = 'none'
+    }
 
     ;[...memories]
         .sort((a, b) => +new Date(b.date) - +new Date(a.date))
@@ -165,6 +183,10 @@ function renderCountdowns(memories: Memory[]): void {
     const thumbnail = q<HTMLTemplateElement>('#countdown-thumbnail')
     const countdownList = q<HTMLUListElement>('#countdown-list')
 
+    if (memories.length > 0) {
+        q('#countdown-overlay').style.display = 'none'
+    }
+
     memories.forEach(memory => {
         const { title } = memory
 
@@ -178,6 +200,12 @@ function renderCountdowns(memories: Memory[]): void {
 }
 
 function renderMapMarks(memories: Memory[]): void {
+    if (memories.length === 0) {
+        q('#timeline').style.display = 'none'
+        q('#timeline h2').innerHTML = ''
+        return
+    }
+
     const locations = memories.filter(memory => !!memory.location).map(memory => memory.location!)
 
     const map = q('#locations-map')
