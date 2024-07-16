@@ -201,8 +201,8 @@ function renderCountdowns(memories: Memory[]): void {
 
 function renderMapMarks(memories: Memory[]): void {
     if (memories.length === 0) {
-        q('#timeline').style.display = 'none'
-        q('#timeline h2').innerHTML = ''
+        q('#location').style.display = 'none'
+        q('#location h2').innerHTML = ''
         return
     }
 

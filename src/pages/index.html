@@ -73,7 +73,6 @@
 
                     <section id="home" class="flex flex-col gap-9 overflow-hidden grow md:flex lg:flex-row">
                         <div class="grow shrink flex flex-col gap-9 lg:w-2/3">
-                            <!-- Countdown part ("Upcoming adventure")  -->
                             <div class="grow flex flex-col gap-2">
                                 <h2 class="font-bold text-xl flex justify-between items-center">
                                     Upcoming adventures
@@ -84,12 +83,11 @@
                                     id="countdown-list"
                                     class="grow rounded-xl bg-gradient-to-b from-white/20 to-white/50 backdrop-blur snap-mandatory snap-x flex overflow-auto min-h-80 no-scrollbar"
                                 >
-                                    <!-- default state start -->
                                     <div
                                         id="countdown-overlay"
                                         class="flex flex-col gap-3 items-center justify-center p-5 w-full"
                                     >
-                                        <span><i class="fa-regular fa-clock text-xl" aria-hidden="true"></i></span>
+                                        <span><i data-feather="clock" aria-hidden="true"></i></span>
                                         <div>
                                             <p class="text-center">You don't have any upcoming events yet.</p>
                                             <p class="font-bold text-center">Add one to start counting down!</p>
@@ -99,7 +97,6 @@
                                             <button><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
                                         </p>
                                     </div>
-                                    <!-- default state ends -->
                                      
                                     <template id="countdown-thumbnail">
                                         <li class="w-full snap-center shrink-0">
@@ -122,8 +119,6 @@
                                     </template>
                                 </ul>
                             </div>
-
-                            <!-- Flashback part ("Remember this?)  -->
                             <div class="grow flex-col gap-2 hidden" id="flashback">
                                 <h2 class="font-bold text-xl mt-8 mb-4">Remember this?</h2>
 
@@ -163,8 +158,6 @@
                                 </ul>
                             </div>
                         </div>
-                        <!-- 直下はもしかしたら後で要注意箇所かもしれない。divにhidden classをつけるべきなのか。 -->
-                        <!-- Map part ("Your locations") -->
                         <div id="location" class="grow shrink gap-2 flex flex-col md:justify-stretch lg:w-1/3">
                             <h2 class="font-bold text-xl flex justify-between items-center">
                                 Your locations
@@ -189,7 +182,7 @@
                 </div>
 
                 <section id="memory" class="hidden md:block">
-                    <div class="flex flex-col gap-4 md:flex-row md:justify-between pb-2">
+                    <div class="flex flex-col gap-4 md:flex-row md:justify-between pb-4">
                         <h2
                             class="font-bold text-xl flex gap-5 justify-between items-center md:justify-start"
                         >
@@ -198,16 +191,14 @@
                         <button class="flex gap-1 justify-center items-center md:self-end btn-outlined btn-md" id="filter-btn">Filter<i class="fa-solid fa-filter"></i></button>
                     </div>
 
-                    <!--default state start -->
                     <div id="memory-overlay" class="flex flex-col gap-4 justify-center items-center py-10">
-                        <img src="/girl.svg" alt="default photo" />
+                        <img src="/illustrations/girl.svg" alt="default photo" />
                         <div>
                             <p class="text-center">This is where your published memories will appear.</p>
                             <p class="font-bold text-center">Capture a special moment and share it with the world!</p>
                         </div>
                         <p data-memory="create">Create New <i class="fa-solid fa-plus" aria-hidden="true"></i></p>
                     </div>
-                    <!-- default state end -->
 
                     <ul class="grid gap-6 md:grid-cols-3 lg:grid-cols-4" id="memory-list">
                         <template id="memory-thumbnail">
