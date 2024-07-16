@@ -21,12 +21,6 @@ type OnlineCollaborator = {
 
 // const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
 
-function rerenderMoments(moments: Maybe<Moment[]>): void {
-    const momentList = q<HTMLUListElement>('[data-moment-list]')
-    momentList.innerHTML = ''
-    renderMoments(moments)
-}
-
 function renderMoments(moments: Maybe<Moment[]>): void {
     if (!moments) return
     const momentList = q<HTMLUListElement>('[data-moment-list]')
@@ -222,7 +216,7 @@ userApi
             })
             .catch(console.error)
 
-        LatestMoments.init(moments)
+        LatestMoments.init()
 
         function selectAndDeleteMoments(): void {
             q<HTMLButtonElement>('#edit-moment').addEventListener('click', () => {
@@ -358,11 +352,8 @@ class OnlineCollaboratorBadges {
 }
 
 class LatestMoments {
-    public static init(moments: Maybe<Moment[]>): void {
-        let allMoments: Moment[] | [] = []
-
+    public static init(): void {
         const latestMoments = supabase.channel(`moments_on_${memoryId}`)
-        if (moments && moments.length > 0) allMoments = moments
 
         latestMoments
             .on<Moment>(
@@ -374,25 +365,21 @@ class LatestMoments {
                     filter: `memoryId=eq.${memoryId}`
                 },
                 payload => {
-                    console.log({ payload })
                     switch (payload.eventType) {
                         case 'INSERT': {
                             const newMoment = payload.new
                             if (newMoment.type !== 'description') return
                             renderMoments([newMoment])
-                            ;(allMoments as Moment[]).push(newMoment)
                             break
                         }
                         case 'DELETE': {
-                            allMoments = allMoments.filter(item => item.id !== payload.old.id)
-                            rerenderMoments(allMoments)
+                            q<HTMLLinkElement>(`li[data-moment-id="${payload.old.id}"]`).remove()
                             break
                         }
                         case 'UPDATE': {
                             const newMoment = payload.new
                             if (newMoment.type === 'description') return
                             renderMoments([newMoment])
-                            ;(allMoments as Moment[]).push(newMoment)
                             break
                         }
                     }
