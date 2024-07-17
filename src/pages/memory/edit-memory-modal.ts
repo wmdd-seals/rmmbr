@@ -187,6 +187,7 @@ class EditMemoryModal extends ModalBaseLayer {
                 location: await codeAddress(location.value),
                 description: description.value
             })
+            this.close()
         })
         q<HTMLButtonElement>('#delete-memory-btn').addEventListener('click', async () => {
             await memoryApi.delete(this.memoryId as Memory['id'], this.userId as User['id']).then(res => {
