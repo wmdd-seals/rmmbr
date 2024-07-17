@@ -19,4 +19,5 @@ export abstract class Memory {
     public abstract ownerId: User['id']
     public abstract cover: Maybe<string>
     public abstract stickerId: Maybe<string>
+    public abstract categories: string[]
 }

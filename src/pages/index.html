@@ -237,51 +237,44 @@
         </main>
 
         <div
-            class="fixed rounded-l-2xl z-30 top-0 right-0 bg-white h-screen translate-x-full w-[40%] transition-all duration-300"
+            class="!translate-x-full overflow-y-auto fixed z-30 left-1/2 -translate-x-1/2 w-[90%] top-1/2 -translate-y-1/2 h-[90%] md:left-auto md:right-0 md:h-screen rounded-2xl bg-white md:w-[35%] md:translate-x-0 transition-all duration-300 p-6 flex flex-col gap-6 md:rounded-tr-none md:rounded-br-none"
             id="filter-drawer"
         >
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">Filters</h2>
-                <button class="text-gray-700 text-2xl">&times;</button>
+                <p class="text-xl font-bold">Filters</p>
+                <button class="text-basketball-500 text-4xl" id="close-drawer-btn">&times;</button>
             </div>
             <div class="flex flex-col gap-2">
-                <h3 class="text-xl font-semibold">Filter by categories</h3>
-                <div class="flex flex-wrap gap-2">
-                    <button class="btn-text border-2 btn-md border-basketball-500 border-solid">Travel</button>
-                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Party</button>
-                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">
-                        Family events
-                    </button>
-                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Food</button>
-                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">
-                        Excercise
-                    </button>
-                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Recital</button>
-                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Office</button>
-                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Wedding</button>
-                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Ceremony</button>
-                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Hobby</button>
-                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">School</button>
-                    <button class="btn-text btn-md border-2 btn-md border-basketball-500 border-solid">Park</button>
+                <label for="input-categories">Filter by categories</label>
+                <select name="categories" id="input-categories" class="input input-sm">
+                    <option selected="true" disabled>Select a category</option>
+                </select>
+                <div class="flex flex-wrap gap-1"></div>
+            </div>
+            <div class="flex gap-2">
+                <div class="grow flex flex-col gap-2 min-w-0">
+                    <label for="filter-start-date">Start date</label>
+                    <input type="date" class="input input-sm" id="filter-start-date" />
+                </div>
+                <div class="grow flex flex-col gap-2 min-w-0">
+                    <label for="filter-end-date">End date</label>
+                    <input type="date" class="input input-sm" id="filter-end-date" />
                 </div>
             </div>
-            <h3 class="text-xl font-semibold">Other filters</h3>
             <div class="flex flex-col gap-2">
-                <h4 class="text-lg">Filter by period</h4>
-                <label for="filter-period-start">from</label>
-                <input type="date" class="input input-sm w-full" id="filter-period-start" />
-                <label for="filter-period-end">to</label>
-                <input type="date" class="input input-sm w-full" id="filter-period-end" />
+                <label for="input-locations">Filter by visited places</label>
+                <select name="locations" id="input-locations" class="input input-sm w-full">
+                    <option selected disabled>Select a place</option>
+                </select>
+                <div class="flex flex-wrap gap-1"></div>
             </div>
-            <div class="flex flex-col gap-2">
-                <h4 class="text-lg">Filter by place</h4>
-                <input
-                    type="input"
-                    placeholder="Add a place to filter"
-                    class="input input-sm w-full"
-                    id="input-place"
-                />
-                <div class="flex flex-wrap gap-2" id="render-place"></div>
+            <div>
+                <label for="input-collaborators">Filter by collaborator</label>
+                <select name="collaborators" id="input-collaborators" class="input input-sm w-full">
+                    <option selected disabled>Select a collaborator</option>
+                </select>
+                <div class="flex flex-wrap gap-1"></div>
+
             </div>
             <button class="btn-filled btn-md" id="filter-start-btn">Filter</button>
         </div>

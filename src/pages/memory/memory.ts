@@ -1,9 +1,11 @@
+import { getLocationInfo } from 'src/utils/gmap'
 import { memoryApi, supabase, userApi, storageApi } from '#api'
 import { Memory, MemoryMessage, User } from '#domain'
-import { Maybe, q, updateCurrentUserChip } from '#utils'
+import { daysFrom, Maybe, monthsFrom, q, updateCurrentUserChip, weeksFrom, yearsFrom } from '#utils'
 import { Moment } from '#domain'
 import './edit-memory-modal'
 import './add-moment-modal'
+import feather from 'feather-icons'
 
 const urlParams = new URLSearchParams(location.search)
 const memoryId = <Maybe<Memory['id']>>urlParams.get('id')
@@ -16,55 +18,6 @@ type OnlineCollaborator = {
     id: User['id']
     avatar: User['avatarSrc']
     name: User['firstName']
-}
-
-// const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
-
-function rerenderMoments(moments: Maybe<Moment[]>): void {
-    const momentList = q<HTMLUListElement>('[data-moment-list]')
-    momentList.innerHTML = ''
-    renderMoments(moments)
-}
-
-function renderMoments(moments: Maybe<Moment[]>): void {
-    if (!moments) return
-    const momentList = q<HTMLUListElement>('[data-moment-list]')
-    const [imgMoment, videoMoment, descriptionMoment] = [
-        q<HTMLTemplateElement>('[data-moment-img-item]'),
-        q<HTMLTemplateElement>('[data-moment-video-item]'),
-        q<HTMLTemplateElement>('[data-moment-description-item]')
-    ]
-
-    moments.forEach((m): void => {
-        switch (m.type) {
-            case 'image': {
-                const imgFragment = document.importNode(imgMoment.content, true)
-                const node = q<HTMLLIElement>('li', imgFragment)
-                node.setAttribute('data-moment-id', m.id)
-                const mediaPath = memoryApi.generateMomentMediaPath(m)
-                q<HTMLImageElement>('img', node).src = storageApi.getFileUrl(mediaPath)!
-                momentList.appendChild(node)
-                break
-            }
-            case 'video': {
-                const videoFragment = document.importNode(videoMoment.content, true)
-                const node = q<HTMLLIElement>('li', videoFragment)
-                node.setAttribute('data-moment-id', m.id)
-                const mediaPath = memoryApi.generateMomentMediaPath(m)
-                q<HTMLVideoElement>('video', node).src = storageApi.getFileUrl(mediaPath)!
-                momentList.appendChild(node)
-                break
-            }
-            case 'description': {
-                const descriptionFragment = document.importNode(descriptionMoment.content, true)
-                const node = q<HTMLLIElement>('li', descriptionFragment)
-                q<HTMLParagraphElement>('p', descriptionFragment).innerHTML = m.description!
-                node.setAttribute('data-moment-id', m.id)
-                momentList.appendChild(node)
-                break
-            }
-        }
-    })
 }
 
 userApi
@@ -81,83 +34,28 @@ userApi
 
         OnlineCollaboratorBadges.init(user, memoryId)
 
-        document.querySelectorAll('[data-memory="title"]').forEach(el => {
-            el.innerHTML = memory.title
-        })
-
         void MemoryChat.init(memoryId, memory.ownerId, user)
 
-        const coverSrc = storageApi.getFileUrl(`memory/${memoryId}/cover`) + `?t=${Date.now()}`
+        const memoryLocation = memory.location ? await getLocationInfo(memory.location) : null
+
+        document.querySelectorAll('[data-memory="title"]').forEach(e => (e.innerHTML = memory.title))
+        q<HTMLImageElement>('[data-memory="cover-sticker"]').src = memory.stickerId
+            ? `/illustrations/${memory.stickerId}`
+            : ''
+        q<HTMLSpanElement>('[data-memory="cover-date"]').innerHTML = memory.date
+        q<HTMLSpanElement>('[data-memory="cover-location"]').innerHTML = memoryLocation
+            ? `, ${memoryLocation.city}, ${memoryLocation.country}`
+            : ''
 
         const img = q<HTMLImageElement>('#memory-cover')
 
-        img.src = coverSrc!
-        img.onload = (): void => {
-            img.classList.toggle('hidden')
-        }
+        const coverSrc = storageApi.getFileUrl(`memory/${memoryId}/cover`) + `?t=${Date.now()}`
+        await checkIfImageExists(coverSrc)
+            .then(res => (img.src = res))
+            .catch(console.error)
 
-        const input = q<HTMLInputElement>('#file-input')
-        input.addEventListener('change', async () => {
-            const cover = input.files?.[0]
-
-            if (!cover) return
-
-            await memoryApi.uploadCover(memoryId, cover)
-
-            img.src = coverSrc!
-            img.onload = (): void => {
-                img.classList.toggle('hidden')
-            }
-        })
-
-        const deleteButton = q('#delete-file')
-        deleteButton.addEventListener('click', () => {
-            void memoryApi.deleteCover(memoryId)
-            img.classList.toggle('hidden')
-        })
-
-        // Create UI for Listing Stickers
-        const stickers = [
-            'airplane',
-            'beach-ball',
-            'camera',
-            'coconut-palm-tree',
-            'glasses',
-            'globe',
-            'heart-heart',
-            'heart',
-            'i-love-you',
-            'juice',
-            'leaf',
-            'love-love-love-love',
-            'love',
-            'parasol',
-            'pencil',
-            'present',
-            'shell',
-            'ship',
-            'sparkle',
-            'starfish',
-            'straw-hat',
-            'suitcase',
-            'sun',
-            'sunglasses',
-            'tropical-juice',
-            'yacht'
-        ]
-        function renderStickers(): void {
-            const container = q('#sticker')
-            stickers.forEach(id => {
-                const img = document.createElement('img')
-                img.id = id
-                img.src = `/sticker/${id}.svg`
-                img.alt = id
-                container.appendChild(img)
-            })
-        }
         renderStickers()
 
-        // Update Sticker
         let clickedStickerId: Maybe<string>
         const stickerSection = q('#sticker')
         stickerSection.addEventListener('click', (event: MouseEvent) => {
@@ -167,15 +65,11 @@ userApi
         })
 
         const saveStickerButton = q('#save-sticker-btn')
-        saveStickerButton.addEventListener('click', async () => {
-            await memoryApi.update(memoryId, { stickerId: clickedStickerId })
-        })
+        saveStickerButton.addEventListener('click', () => memoryApi.update(memoryId, { stickerId: clickedStickerId }))
 
-        // Delete Sticker
         const deleteStickerButton = q('#delete-sticker-btn')
-        deleteStickerButton.addEventListener('click', async () => {
-            await memoryApi.update(memory.id, { stickerId: null })
-        })
+        deleteStickerButton.addEventListener('click', () => memoryApi.update(memory.id, { stickerId: null }))
+
         renderMoments(moments)
 
         await customElements
@@ -195,18 +89,167 @@ userApi
             .whenDefined('add-moment-modal')
             .then(() => {
                 const addMomentModal = q<HTMLDivElement>('add-moment-modal')
-                q<HTMLButtonElement>('#add-moment').addEventListener('click', () => {
-                    addMomentModal.setAttribute('open', 'true')
-                    addMomentModal.setAttribute('memory-id', memoryId)
-                })
+                document.querySelectorAll<HTMLButtonElement>('#add-moment, #default-add-moment').forEach(e =>
+                    e.addEventListener('click', () => {
+                        addMomentModal.setAttribute('open', 'true')
+                        addMomentModal.setAttribute('memory-id', memoryId)
+                    })
+                )
             })
             .catch(console.error)
 
-        if (moments && moments.length > 0) {
-            LatestMoments.init(moments)
+        LatestMoments.init()
+
+        function selectAndDeleteMoments(): void {
+            q<HTMLButtonElement>('#edit-moment').addEventListener('click', () => {
+                if (deleteMoment.mode) {
+                    resetSelectedMoments()
+                } else {
+                    deleteMoment.editControllers.setAttribute('aria-hidden', 'false')
+                    deleteMoment.mode = true
+                    document
+                        .querySelectorAll('label[data-select-label]')
+                        .forEach(el => el.setAttribute('aria-hidden', 'false'))
+                    feather.replace()
+                }
+            })
+
+            q<HTMLButtonElement>('button#delete-moments-btn').addEventListener('click', async () => {
+                const momentIds = Array.from<HTMLInputElement>(
+                    document.querySelectorAll('input[type="checkbox"]:checked[data-moment-id]')
+                ).map(m => m.dataset.momentId)
+
+                await memoryApi.deleteMoments(momentIds as Array<Moment['id']>)
+                resetSelectedMoments()
+            })
+
+            q<HTMLButtonElement>('button#select-all-moments').addEventListener('click', () => {
+                document.querySelectorAll<HTMLInputElement>('input[type="checkbox"][data-moment-id]').forEach(e => {
+                    e.checked = true
+                })
+            })
+        }
+
+        selectAndDeleteMoments()
+
+        if (Date.now() >= Date.parse(memory.date)) {
+            q('#time-passed').classList.toggle('hidden')
+
+            q<HTMLSpanElement>('[data-years-count]').innerHTML = yearsFrom(memory.date).toString()
+            q<HTMLSpanElement>('[data-months-count]').innerHTML = monthsFrom(memory.date).toString()
+            q<HTMLSpanElement>('[data-weeks-count]').innerHTML = weeksFrom(memory.date).toString()
+            q<HTMLSpanElement>('[data-days-count]').innerHTML = daysFrom(memory.date).toString()
         }
     })
     .catch(console.error)
+
+const stickers = [
+    'airplane',
+    'beach-ball',
+    'camera',
+    'coconut-palm-tree',
+    'glasses',
+    'globe',
+    'heart-heart',
+    'heart',
+    'i-love-you',
+    'juice',
+    'leaf',
+    'love-love-love-love',
+    'love',
+    'parasol',
+    'pencil',
+    'present',
+    'shell',
+    'ship',
+    'sparkle',
+    'starfish',
+    'straw-hat',
+    'suitcase',
+    'sun',
+    'sunglasses',
+    'tropical-juice',
+    'yacht'
+]
+
+function renderStickers(): void {
+    const container = q('#sticker')
+    stickers.forEach(id => {
+        const img = document.createElement('img')
+        img.id = id
+        img.src = `/sticker/${id}.svg`
+        img.alt = id
+        container.appendChild(img)
+    })
+}
+
+function renderMoments(moments: Maybe<Moment[]>): void {
+    if (!moments) return
+    const momentList = q<HTMLUListElement>('[data-moment-list]')
+    const [imgMoment, videoMoment, descriptionMoment] = [
+        q<HTMLTemplateElement>('[data-moment-img-item]'),
+        q<HTMLTemplateElement>('[data-moment-video-item]'),
+        q<HTMLTemplateElement>('[data-moment-description-item]')
+    ]
+
+    moments.forEach((m): void => {
+        switch (m.type) {
+            case 'image': {
+                const imgFragment = document.importNode(imgMoment.content, true)
+                const node = q<HTMLLIElement>('li', imgFragment)
+                node.setAttribute('data-moment-id', m.id)
+                q<HTMLInputElement>('input[type="checkbox"]', node).setAttribute('data-moment-id', m.id)
+                const mediaPath = memoryApi.generateMomentMediaPath(m)
+                q<HTMLImageElement>('img', node).src = storageApi.getFileUrl(mediaPath)!
+                momentList.appendChild(node)
+                break
+            }
+            case 'video': {
+                const videoFragment = document.importNode(videoMoment.content, true)
+                const node = q<HTMLLIElement>('li', videoFragment)
+                node.setAttribute('data-moment-id', m.id)
+                q<HTMLInputElement>('input[type="checkbox"]', node).setAttribute('data-moment-id', m.id)
+                const mediaPath = memoryApi.generateMomentMediaPath(m)
+                q<HTMLVideoElement>('video', node).src = storageApi.getFileUrl(mediaPath)!
+                momentList.appendChild(node)
+                break
+            }
+            case 'description': {
+                const descriptionFragment = document.importNode(descriptionMoment.content, true)
+                const node = q<HTMLLIElement>('li', descriptionFragment)
+                q<HTMLParagraphElement>('p', descriptionFragment).innerHTML = m.description!
+                node.setAttribute('data-moment-id', m.id)
+                q<HTMLInputElement>('input[type="checkbox"]', node).setAttribute('data-moment-id', m.id)
+                momentList.appendChild(node)
+                break
+            }
+        }
+    })
+}
+
+const deleteMoment: {
+    mode: boolean
+    editControllers: HTMLDivElement
+} = {
+    mode: false,
+    editControllers: q<HTMLDivElement>('#edit-controllers')
+}
+
+function resetSelectedMoments(): void {
+    deleteMoment.editControllers.setAttribute('aria-hidden', 'true')
+    document.querySelectorAll<HTMLInputElement>('input[type="checkbox"]').forEach(el => (el.checked = false))
+    document.querySelectorAll('label[data-select-label]').forEach(el => el.setAttribute('aria-hidden', 'true'))
+    deleteMoment.mode = false
+}
+
+function checkIfImageExists(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const img = new Image()
+        img.src = url
+        img.onload = (): void => resolve(url)
+        img.onerror = (): void => reject(new Error('failed to fetch cover image'))
+    })
+}
 
 class OnlineCollaboratorBadges {
     private static readonly collaborators = new Map<User['id'], OnlineCollaborator>()
@@ -301,7 +344,7 @@ class OnlineCollaboratorBadges {
 }
 
 class LatestMoments {
-    public static init(moments: Moment[]): void {
+    public static init(): void {
         const latestMoments = supabase.channel(`moments_on_${memoryId}`)
 
         latestMoments
@@ -316,20 +359,19 @@ class LatestMoments {
                 payload => {
                     switch (payload.eventType) {
                         case 'INSERT': {
-                            const newMemory = payload.new
-                            if (newMemory.type !== 'description') return
-                            renderMoments([newMemory])
+                            const newMoment = payload.new
+                            if (newMoment.type !== 'description') return
+                            renderMoments([newMoment])
                             break
                         }
                         case 'DELETE': {
-                            const filteredMoments = moments.filter(item => item.id !== payload.old.id)
-                            rerenderMoments(filteredMoments)
+                            q<HTMLLinkElement>(`li[data-moment-id="${payload.old.id}"]`).remove()
                             break
                         }
                         case 'UPDATE': {
-                            const newMemory = payload.new
-                            if (newMemory.type === 'description') return
-                            renderMoments([newMemory])
+                            const newMoment = payload.new
+                            if (newMoment.type === 'description') return
+                            renderMoments([newMoment])
                             break
                         }
                     }
@@ -397,7 +439,7 @@ class MemoryChat {
             memoryApi.getAllCollaborators(memoryId)
         ])
 
-        collaborators.forEach(collaborator => memoryCollaborators.set(collaborator.id, collaborator))
+        collaborators?.forEach(collaborator => memoryCollaborators.set(collaborator.id, collaborator))
 
         this.renderMessages(messages.filter(mes => memoryCollaborators.has(mes.userId)))
         this.scrollToEnd()

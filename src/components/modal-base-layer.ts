@@ -10,12 +10,9 @@ export class ModalBaseLayer extends HTMLElement {
                     overflow: hidden
                 }
             </style>
-            <div data-modal-base class="hidden flex fixed top-0 left-0 bg-black bg-opacity-80 h-screen w-screen justify-center items-center z-10">
-                <div data-modal-content class="
-                    flex z-20 flex-col items-center overflow-hidden
-                    w-11/12 h-[95%] p-6 bg-white rounded-2xl
-                    sm:w-3/5 sm:h-[90%] sm:max-w-[56rem] s
-                "></div>
+
+            <div data-modal-base class="hidden flex fixed inset-0 bg-black bg-opacity-80 justify-center items-end z-10">
+                <div data-modal-content class="flex z-20 flex-col items-center overflow-hidden w-11/12 h-[80%] mb-[5%] p-6 bg-white rounded-2xl sm:w-3/5 sm:max-w-[56rem]"></div>
             </div>
         `
     }
