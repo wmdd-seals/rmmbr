@@ -180,7 +180,7 @@
                     </h2>
                     <button class="md:self-end btn-outlined btn-md" id="filter-btn">Filter</button>
                 </div>
-
+                <div data-label="show-after-filter" class="flex flex-wrap gap-1 py-2"></div>
                 <ul class="grid gap-6 md:grid-cols-3 lg:grid-cols-4" id="memory-list">
                     <template id="memory-thumbnail">
                         <li class="bg-white rounded-lg overflow-hidden">
@@ -212,102 +212,45 @@
         </main>
 
         <div
-            class="fixed rounded-l-2xl z-30 top-0 right-0 bg-white h-screen translate-x-full w-[40%] transition-all duration-300"
+            class="!translate-x-full overflow-y-auto fixed z-30 left-1/2 -translate-x-1/2 w-[90%] top-1/2 -translate-y-1/2 h-[90%] md:left-auto md:right-0 md:h-screen rounded-2xl bg-white md:w-[35%] md:translate-x-0 transition-all duration-300 p-6 flex flex-col gap-6 md:rounded-tr-none md:rounded-br-none"
             id="filter-drawer"
         >
-            <div class="bg-gray-100 my-8 mx-6 px-6 py-7 rounded-lg">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold">Filters</h2>
-                    <button class="text-gray-700 text-2xl">&times;</button>
+            <div class="flex justify-between items-center">
+                <p class="text-xl font-bold">Filters</p>
+                <button class="text-basketball-500 text-4xl" id="close-drawer-btn">&times;</button>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label for="input-categories">Filter by categories</label>
+                <select name="categories" id="input-categories" class="input input-sm">
+                    <option selected="true" disabled>Select a category</option>
+                </select>
+                <div class="flex flex-wrap gap-1"></div>
+            </div>
+            <div class="flex gap-2">
+                <div class="grow flex flex-col gap-2 min-w-0">
+                    <label for="filter-start-date">Start date</label>
+                    <input type="date" class="input input-sm" id="filter-start-date" />
                 </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-2">Filter by categories</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.ail</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.waii</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.odie</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.mmit</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.orkel</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lore</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.ne</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.Jungle</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.waii</span
-                        >
-                        <span
-                            class="text-gray-800 border-2 border-gray-700 border-solid px-3 py-1 rounded-full active:bg-gray-700 active:text-white"
-                            >Lorem.waii</span
-                        >
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-2">Filter by date</h3>
-                    <input type="date" class="w-full border border-gray-300 px-3 py-2 rounded-lg" />
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold">Filter by place</h3>
-                    <input type="input" class="w-full border border-gray-300 px-3 py-2 rounded-lg my-2" />
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Mexico</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Spain</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Chile</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Italia</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; USA</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Egipt</span>
-                    </div>
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold">Filter by collaborator</h3>
-                    <input type="input" class="w-full border border-gray-300 px-3 py-2 rounded-lg my-2" />
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.l Scott</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem. Schrute</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.lpert</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.Martinez</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.esly</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.Malone</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem. Martin</span>
-                        <span class="bg-gray-700 text-white px-3 py-1 rounded-md">&times; Lorem.th Palmer</span>
-                    </div>
+                <div class="grow flex flex-col gap-2 min-w-0">
+                    <label for="filter-end-date">End date</label>
+                    <input type="date" class="input input-sm" id="filter-end-date" />
                 </div>
             </div>
+            <div class="flex flex-col gap-2">
+                <label for="input-locations">Filter by visited places</label>
+                <select name="locations" id="input-locations" class="input input-sm w-full">
+                    <option selected disabled>Select a place</option>
+                </select>
+                <div class="flex flex-wrap gap-1"></div>
+            </div>
+            <div>
+                <label for="input-collaborators">Filter by collaborator</label>
+                <select name="collaborators" id="input-collaborators" class="input input-sm w-full">
+                    <option selected disabled>Select a collaborator</option>
+                </select>
+                <div class="flex flex-wrap gap-1"></div>
+            </div>
+            <button class="btn-filled btn-md" id="filter-start-btn">Filter</button>
         </div>
 
         <memory-creation-modal></memory-creation-modal>

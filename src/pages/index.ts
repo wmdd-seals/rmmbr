@@ -1,9 +1,17 @@
 import './memory-creation-modal'
 import { memoryApi, storageApi, userApi } from '#api'
-import { createMapWithMarkers, formatDate, q, updateCurrentUserChip } from '#utils'
-import { Location } from '#utils'
+import { createMapWithMarkers, formatDate, Maybe, q, updateCurrentUserChip } from '#utils'
+import { Location, LocationInfo } from '#utils'
 import { getLocationInfo } from 'src/utils/gmap'
 import { Memory } from '#domain'
+
+type FilterCriteria = {
+    categories: string[]
+    startDate: string
+    endDate: string
+    locations: string[]
+    collaborators: string[]
+}
 
 const tabs = {
     ['#home']: document.getElementById('home')!,
@@ -53,9 +61,9 @@ userApi
 
         q('[data-user=name]').innerHTML = user.firstName
 
-        initFilterDrawer()
-
         const memories = await memoryApi.getAll(user.id)
+
+        initFilterDrawer(memories)
 
         renderCountdowns(memories.filter(memory => Date.now() < +new Date(memory.date)))
 
@@ -89,13 +97,28 @@ function renderMemories(memories: Memory[]): void {
                 storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
 
             if (memory.location) {
-                getLocationInfo(memory.location).then(location => {
-                    if (!location) return
+                const hasLocationInfo = memoryLocations.has(memory.id)
+
+                function setLocationInfo(location: LocationInfo): void {
                     const { country, city } = location
                     q('[data-memory="location"]', <HTMLLIElement>liElem).innerHTML = city
                         ? `in ${city}, ${country}`
                         : `in ${country}`
-                }, console.error)
+                }
+
+                if (hasLocationInfo) {
+                    const location = memoryLocations.get(memory.id)
+
+                    if (!location) return
+                    setLocationInfo(location)
+                } else {
+                    getLocationInfo(memory.location).then(location => {
+                        memoryLocations.set(memory.id, location)
+
+                        if (!location) return
+                        setLocationInfo(location)
+                    }, console.error)
+                }
             }
 
             memoryList.appendChild(node)
@@ -131,34 +154,140 @@ function renderFlashbacks(memories: Memory[]): void {
         })
 }
 
-function initFilterDrawer(): void {
+function initFilterDrawer(memories: Memory[]): void {
     let filtersOpen = false
+    let el: HTMLDivElement | null = null
 
     q('#filter-btn').addEventListener('click', () => {
         if (filtersOpen) return
 
         const drawer = q('#filter-drawer')
 
-        const el = document.createElement('div')
+        el = document.createElement('div')
         el.classList.add('fixed', 'z-20', 'inset-0', 'transition-all', 'duration-300')
         document.body.prepend(el)
 
         // allow reflow/repaint browser events to happen
-        setTimeout(() => el.classList.add('backdrop-blur', 'bg-black', 'bg-opacity-65'))
+        setTimeout(() => el!.classList.add('backdrop-blur', 'bg-black', 'bg-opacity-65'))
 
-        el.addEventListener('click', () => {
-            if (!filtersOpen) return
+        const filterBtn = q('#filter-start-btn')
+        const closeBtn = q('#close-drawer-btn')
+        const triggerCloseDrawer = [el, closeBtn, filterBtn]
 
-            el.classList.remove('backdrop-blur', 'bg-black', 'bg-opacity-65')
-            setTimeout(() => document.body.removeChild(el), 300)
-            drawer.style.transform = 'translateX(100%)'
-            filtersOpen = false
+        triggerCloseDrawer.forEach(each => {
+            each.addEventListener('click', () => {
+                if (!filtersOpen) return
+
+                el!.classList.remove('backdrop-blur', 'bg-black', 'bg-opacity-65')
+                setTimeout(() => document.body.removeChild(el!), 300)
+                drawer.classList.add('!translate-x-full')
+
+                filtersOpen = false
+            })
         })
 
-        drawer.style.transform = 'translateX(0)'
+        drawer.classList.remove('!translate-x-full')
+
+        renderCategoriesOnFilter(memories)
+        renderLocationsOnFilter()
 
         filtersOpen = true
     })
+
+    const filterCriteria: FilterCriteria = {
+        categories: [],
+        startDate: '',
+        endDate: '',
+        locations: [],
+        collaborators: []
+    }
+
+    const selectElements = [
+        { selectElemId: '#input-categories', filterCriteria: filterCriteria.categories },
+        { selectElemId: '#input-locations', filterCriteria: filterCriteria.locations },
+        { selectElemId: '#input-collaborators', filterCriteria: filterCriteria.collaborators }
+    ]
+
+    selectElements.forEach(element => {
+        q(element.selectElemId).addEventListener('change', () => {
+            const selectElem = q<HTMLSelectElement>(element.selectElemId)
+            const selectedOption = selectElem.options[selectElem.selectedIndex]
+            const value = selectedOption.value
+
+            if (element.filterCriteria.includes(value)) return
+            element.filterCriteria.push(value)
+            showLabelOnFilter(selectElem, value, element.filterCriteria)
+            selectElem.value = ''
+        })
+    })
+
+    const filterBtn = q('#filter-start-btn')
+
+    filterBtn.addEventListener('click', () => {
+        filterCriteria.startDate = q<HTMLInputElement>('#filter-start-date').value
+        filterCriteria.endDate = q<HTMLInputElement>('#filter-end-date').value
+
+        filterMemories(memories, filterCriteria)
+        showLabelOnHomePage(memories, filterCriteria)
+    })
+}
+
+function filterMemories(memories: Memory[], filterCriteria: FilterCriteria): void {
+    const filteredMemories = memories.filter(memory => {
+        return (
+            filterByCategory(memory, filterCriteria) &&
+            filterByDate(memory, filterCriteria) &&
+            filterByLocation(memory, filterCriteria)
+        )
+    })
+
+    const memoryList = document.getElementById('memory-list') as HTMLUListElement
+    const memoriesArray = Array.from(memoryList.querySelectorAll('li'))
+    memoriesArray.forEach(memory => {
+        memoryList.removeChild(memory)
+    })
+
+    renderMemories(filteredMemories)
+}
+
+function filterByCategory(memory: Memory, filterCriteria: FilterCriteria): boolean {
+    if (filterCriteria.categories.length === 0) return true
+    return memory.categories.some(
+        memoryCategory => memoryCategory && filterCriteria.categories.includes(memoryCategory)
+    )
+}
+
+function filterByDate(memory: Memory, filterCriteria: FilterCriteria): boolean {
+    const startDateLocal = filterCriteria.startDate ? new Date(filterCriteria.startDate) : null
+    const endDateLocal = filterCriteria.endDate ? new Date(filterCriteria.endDate) : null
+
+    const startDateUtc = startDateLocal
+        ? new Date(startDateLocal.getTime() - startDateLocal.getTimezoneOffset() * 60000)
+        : null
+    const endDateUtc = endDateLocal ? new Date(endDateLocal.getTime() - endDateLocal.getTimezoneOffset() * 60000) : null
+
+    const memoryDateUtc = new Date(memory.date)
+
+    if (!startDateUtc) {
+        if (!endDateUtc) return true
+
+        return memoryDateUtc <= endDateUtc
+    }
+
+    if (!endDateUtc) {
+        return startDateUtc <= memoryDateUtc
+    }
+
+    return startDateUtc <= memoryDateUtc && memoryDateUtc <= endDateUtc
+}
+
+function filterByLocation(memory: Memory, filterCriteria: FilterCriteria): boolean {
+    if (filterCriteria.locations.length === 0) return true
+
+    const memoryCountry = memoryLocations.get(memory.id)?.country
+    if (!memoryCountry) return false
+
+    return filterCriteria.locations.includes(memoryCountry)
 }
 
 function renderCountdowns(memories: Memory[]): void {
@@ -198,4 +327,145 @@ function renderMapMarks(memories: Memory[]): void {
             void createMapWithMarkers(map, { markers: locations })
         }
     )
+}
+
+function renderCategoriesOnFilter(memories: Memory[]): void {
+    if (memories.length === 0) return
+
+    const categorySet: Set<string> = new Set()
+    memories.forEach(memory => {
+        memory.categories.forEach(category => {
+            if (category) {
+                categorySet.add(category)
+            }
+        })
+    })
+
+    renderDropdownMenu(categorySet, 'input-categories')
+}
+
+const memoryLocations = new Map<Memory['id'], Maybe<LocationInfo>>()
+
+function renderLocationsOnFilter(): void {
+    const countrySet: Set<string> = new Set()
+    memoryLocations.forEach(loc => {
+        if (!loc) return
+        countrySet.add(loc.country)
+    })
+    renderDropdownMenu(countrySet, 'input-locations')
+}
+
+function renderDropdownMenu(values: Set<string>, selectElemId: string): void {
+    const dropdown = document.getElementById(selectElemId) as HTMLSelectElement
+    // clear every entry except the default placeholder
+    dropdown.querySelectorAll('option:not([disabled])').forEach(el => el.remove())
+
+    values.forEach(value => {
+        const option = document.createElement('option')
+        option.value = value
+        option.text = value
+
+        dropdown.appendChild(option)
+    })
+}
+
+export function showLabelOnFilter(selectElem: HTMLSelectElement, value: string, filterCriteria: string[]): void {
+    const label = document.createElement('div')
+    label.classList.add('btn-text', 'btn-md', 'border-2', 'btn-sm', 'border-basketball-500', 'border-solid')
+    label.setAttribute('data-label', 'filter-label')
+    label.innerHTML = `${value} <button class='text-lg'>&times;</button>`
+
+    const space = selectElem.nextElementSibling!
+    space.appendChild(label)
+
+    const removeButton = label.querySelector('button')
+    removeButton!.addEventListener('click', () => {
+        label.remove()
+        const index = filterCriteria.indexOf(value)
+        if (index > -1) {
+            filterCriteria.splice(index, 1)
+        }
+        selectElem.value = ''
+    })
+}
+
+function showLabelOnHomePage(memories: Memory[], filterCriteria: FilterCriteria): void {
+    const displayDiv = q('[data-label="show-after-filter"]')
+    displayDiv.innerHTML = ''
+
+    for (const key in filterCriteria) {
+        const value = filterCriteria[key as keyof FilterCriteria]
+
+        if (key === 'startDate' || key === 'endDate') {
+            if (value !== '') {
+                createLabelOnHomePage(
+                    value as string,
+                    key as keyof FilterCriteria,
+                    filterCriteria,
+                    memories,
+                    displayDiv
+                )
+            }
+        } else {
+            ;(value as string[]).forEach(val => {
+                if (val !== '') {
+                    createLabelOnHomePage(val, key as keyof FilterCriteria, filterCriteria, memories, displayDiv)
+                }
+            })
+        }
+    }
+}
+
+function createLabelOnHomePage(
+    value: string,
+    key: keyof FilterCriteria,
+    filterCriteria: FilterCriteria,
+    memories: Memory[],
+    displayDiv: HTMLElement
+): void {
+    const closeButton = `<button class='text-lg'>&times;</button>`
+    let labelContent = ''
+
+    if (key === 'startDate' || key === 'endDate') {
+        labelContent = `${key === 'startDate' ? `from ${value}` : `to ${value}`} ${closeButton}`
+    } else {
+        labelContent = `${value} ${closeButton}`
+    }
+
+    const label = document.createElement('div')
+    label.classList.add('btn-text', 'btn-md', 'border-2', 'btn-sm', 'border-basketball-500', 'border-solid')
+    label.innerHTML = labelContent
+    displayDiv.appendChild(label)
+
+    const removeButton = label.querySelector('button')
+    removeButton!.addEventListener('click', () => {
+        label.remove()
+
+        if (key === 'startDate' || key === 'endDate') {
+            const inputFieldId = key === 'startDate' ? '#filter-start-date' : '#filter-end-date'
+            q<HTMLInputElement>(inputFieldId).value = ''
+        } else {
+            const selectElement = q<HTMLSelectElement>(`select[name="${key}"]`)
+            const optionToDeselect = Array.from(selectElement.options).find(option => option.value === value)
+            optionToDeselect!.selected = false
+        }
+
+        const labelsOnFilter = document.querySelectorAll('[data-label="filter-label"]')
+        labelsOnFilter.forEach(labelOnFilter => {
+            if (labelOnFilter.textContent!.includes(value)) {
+                labelOnFilter.remove()
+            }
+        })
+
+        if (key === 'startDate' || key === 'endDate') {
+            filterCriteria[key] = ''
+        } else {
+            const criteria = filterCriteria[key]
+            const index = criteria.indexOf(value)
+            if (index !== -1) {
+                criteria.splice(index, 1)
+            }
+        }
+        filterMemories(memories, filterCriteria)
+    })
 }
