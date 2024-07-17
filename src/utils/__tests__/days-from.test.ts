@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
 import { daysFrom } from '../days-from'
 
-describe('daysFrom', () => {
+describe('daysUntil', () => {
     beforeEach(() => {
         vi.useFakeTimers()
     })

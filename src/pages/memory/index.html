@@ -113,7 +113,7 @@
                     </template>
 
                     <div class="text-sm text-type-400 text-center mt-auto" id="no-messages">
-                        No one has started chating, send a message to start the conversation
+                        No one has started chatting, send a message to start the conversation
                     </div>
                 </div>
 
@@ -154,14 +154,27 @@
             <div
                 class="flex flex-col items-center gap-3 justify-end h-4/5 absolute z-10 bottom-0 w-full bg-gradient-to-b from-transparent to-black/30 rounded-lg p-4"
             >
-                <h2 class="flex justify-center font-bold text-white text-7xl relative">
-                    <span data-memory="title" class="z-2 flex justify-center w-full text-wrap text-center">
+                <h2
+                    data-past-memory-area
+                    aria-hidden
+                    class="aria-hidden:hidden flex justify-center font-bold text-white text-7xl relative"
+                >
+                    <span data-memory="title" class="z-2 font-source flex justify-center w-full text-wrap text-center">
                         <!--* the memory title will be here -->
                     </span>
                     <span class="absolute -top-4 -right-7 z-1">
                         <img data-memory="cover-sticker" src="" alt="" />
                     </span>
                 </h2>
+                <div data-countdown-area aria-hidden="true" class="aria-hidden:hidden flex flex-col items-center gap-3">
+                    <div class="flex justify-center border-b-[1px] px-12 border-white border-dashed">
+                        <p data-memory="title" class="text-white pb-2 text-lg"></p>
+                    </div>
+                    <h2
+                        date-countdown-counts
+                        class="flex font-source justify-center font-bold text-white text-5xl md:text-7xl relative"
+                    ></h2>
+                </div>
                 <div class="bg-black/30 p-2 rounded-2xl text-white">
                     <span data-memory="cover-date" class="">
                         <!-- * the memory date will be here -->
@@ -171,7 +184,100 @@
             </div>
         </div>
 
-        <main class="max-w-[1304px] mx-auto px-6">
+        <div
+            data-countdown-area
+            aria-hidden="true"
+            class="aria-hidden:hidden flex flex-col gap-4 max-w-[1400px] mt-8 mx-auto px-6"
+        >
+            <h3 class="font-bold text-2xl">Until your event</h3>
+            <ul class="flex gap-5 flex-wrap justify-between">
+                <li
+                    class="text-slate-100 basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-l from-slate-900 to-indigo-800 rounded-lg border border-indigo-200 flex-col justify-start items-start gap-3 inline-flex box-border"
+                >
+                    <div class="flex w-full justify-between">
+                        <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
+                            <span data-countdown-num="hours"></span>
+                            hours
+                        </p>
+                        <img src="/illustrations/music-note.svg" alt="" />
+                    </div>
+                    <div>
+                        <p>You can listen to</p>
+                        <p
+                            class="text-5xl font-bold font-['Source Serif 4'] leading-[57.60px]"
+                            data-countdown-special-count="songs"
+                        >
+                            9000
+                        </p>
+                        <p>of 3 minutes songs</p>
+                    </div>
+                </li>
+                <li
+                    class="text-black basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-bl from-amber-200 to-orange-100 rounded-lg border border-red-300 flex-col justify-start items-start gap-3 inline-flex box-border"
+                >
+                    <div class="flex w-full justify-between">
+                        <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
+                            <span data-countdown-num="days"></span>
+                            days
+                        </p>
+                        <img src="/illustrations/location.svg" alt="" />
+                    </div>
+                    <div>
+                        <p>You can walk</p>
+                        <p
+                            class="text-yellow-900 text-5xl font-bold font-['Source Serif 4'] leading-[57.60px]"
+                            data-countdown-special-count="miles"
+                        >
+                            9000
+                        </p>
+                        <p>miles, 20 miles per day.</p>
+                    </div>
+                </li>
+                <li
+                    class="text-slate-100 basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-l from-slate-900 to-indigo-800 rounded-lg border border-indigo-200 flex-col justify-start items-start gap-3 inline-flex box-border"
+                >
+                    <div class="flex w-full justify-between">
+                        <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
+                            <span data-countdown-num="weeks"></span>
+                            weeks
+                        </p>
+                        <img src="/illustrations/tv.svg" alt="" />
+                    </div>
+                    <div>
+                        <p>You can watch</p>
+                        <p
+                            class="text-5xl font-bold font-['Source Serif 4'] leading-[57.60px]"
+                            data-countdown-special-count="tv-series"
+                        >
+                            9000
+                        </p>
+                        <p>complete TV series seasons</p>
+                    </div>
+                </li>
+                <li
+                    class="text-black basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-bl from-amber-200 to-orange-100 rounded-lg border border-red-300 flex-col justify-start items-start gap-3 inline-flex box-border"
+                >
+                    <div class="flex w-full justify-between">
+                        <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
+                            <span data-countdown-num="months"></span>
+                            months
+                        </p>
+                        <img src="/illustrations/book.svg" alt="" />
+                    </div>
+                    <div>
+                        <p>You can read</p>
+                        <p
+                            class="text-yellow-900 text-5xl font-bold font-['Source Serif 4'] leading-[57.60px]"
+                            data-countdown-special-count="books"
+                        >
+                            9000
+                        </p>
+                        <p>books, one book every 5 days</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <main class="max-w-[1400px] mx-auto px-6 pb-6">
             <div class="group mt-8">
                 <div class="flex justify-between gap-2 flex-col w-full items-start md:flex-row md:justify-between">
                     <h3 class="font-bold text-2xl">Moments...</h3>
@@ -230,7 +336,7 @@
 
                 <ul class="grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     <li
-                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-bl from-indigo-500 text-indigo-900"
+                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg overflow-hidden relative bg-gradient-to-bl from-indigo-500 text-indigo-900"
                     >
                         <img
                             src="/illustrations/sun-around-earth.svg"
@@ -242,7 +348,7 @@
                         <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Years</span>
                     </li>
                     <li
-                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-l from-slate-900 to-indigo-800 text-white"
+                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg overflow-hidden relative bg-gradient-to-l from-slate-900 to-indigo-800 text-white"
                     >
                         <img
                             src="/illustrations/moon.svg"
@@ -254,7 +360,7 @@
                         <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Months</span>
                     </li>
                     <li
-                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-l from-indigo-900 to-indigo-500 text-white"
+                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg overflow-hidden relative bg-gradient-to-l from-indigo-900 to-indigo-500 text-white"
                     >
                         <img
                             src="/illustrations/tent-tree.svg"
@@ -266,7 +372,7 @@
                         <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Weeks</span>
                     </li>
                     <li
-                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-bl from-amber-200 to-orange-100 text-indigo-600"
+                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg overflow-hidden relative bg-gradient-to-bl from-amber-200 to-orange-100 text-indigo-600"
                     >
                         <img
                             src="/illustrations/sun-cloud.svg"
