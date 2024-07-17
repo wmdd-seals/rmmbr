@@ -5,6 +5,7 @@ import { Maybe, q, updateCurrentUserChip } from '#utils'
 import { Moment } from '#domain'
 import './edit-memory-modal'
 import './add-moment-modal'
+import feather from 'feather-icons'
 
 const urlParams = new URLSearchParams(location.search)
 const memoryId = <Maybe<Memory['id']>>urlParams.get('id')
@@ -109,6 +110,7 @@ userApi
                     document
                         .querySelectorAll('label[data-select-label]')
                         .forEach(el => el.setAttribute('aria-hidden', 'false'))
+                    feather.replace()
                 }
             })
 
