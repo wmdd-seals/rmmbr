@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
-import { hoursUntil } from '../hours-until'
+import { daysUntil } from '../days-until'
 describe('hoursUntil', () => {
     beforeEach(() => {
         vi.useFakeTimers()
@@ -10,21 +10,20 @@ describe('hoursUntil', () => {
     })
     it('should return the correct number of hours until a date in the future', () => {
         const dstDate = 'March 17, 2024, 04:00'
-        const expectedHours = 48
+        const expectedDays = 2
         const date = new Date('March 15, 2024, 04:00')
         vi.setSystemTime(date)
-        expect(hoursUntil(dstDate)).toBe(expectedHours)
+        expect(daysUntil(dstDate)).toBe(expectedDays)
     })
-    it('should return 0 if the date is in the current time', () => {
-        const dstDate = 'March 15, 2024, 04:00'
-        const date = new Date('March 15, 2024, 04:00')
+    it('should return 0 if the target date is current', () => {
+        const date = new Date()
         vi.setSystemTime(date)
-        expect(hoursUntil(dstDate)).toBe(0)
+        expect(daysUntil(new Date().toISOString())).toBe(0)
     })
-    it('should return 0 if the date is in the past', () => {
-        const dstDate = 'March 13, 2024, 04:00'
+    it('should return 0 if the target date is past', () => {
+        const dstDate = '1800-01-01'
         const date = new Date('March 15, 2024, 04:00')
         vi.setSystemTime(date)
-        expect(hoursUntil(dstDate)).toBe(0)
+        expect(daysUntil(dstDate)).toBe(0)
     })
 })
