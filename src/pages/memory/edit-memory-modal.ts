@@ -145,13 +145,6 @@ class EditMemoryModal extends ModalBaseLayer {
         }
     }
 
-    private setAllCoverImg(): void {
-        document.querySelectorAll('[data-cover-image]').forEach(e => {
-            ;(e as HTMLImageElement).setAttribute('aria-hidden', 'false')
-            ;(e as HTMLImageElement).src = storageApi.getFileUrl(`memory/${this.memoryId}/cover`) + `?t=${Date.now()}`
-        })
-    }
-
     private deleteAllCoverImg(): void {
         document.querySelectorAll('[data-cover-image]').forEach(e => {
             ;(e as HTMLImageElement).setAttribute('aria-hidden', 'true')
@@ -181,7 +174,7 @@ class EditMemoryModal extends ModalBaseLayer {
             const file = (ev.currentTarget as HTMLInputElement).files?.[0]
             if (!file) return
             await memoryApi.uploadCover(this.memoryId as Memory['id'], file)
-            this.setAllCoverImg()
+            this.setCoverImg()
         })
         q<HTMLButtonElement>('#delete-cover', this).addEventListener('click', async () => {
             await memoryApi.deleteCover(this.memoryId as Memory['id'])

@@ -25,9 +25,6 @@ type FileEntry = {
 type UpdateMemoryPayload = Partial<Pick<Memory, 'title' | 'date' | 'location' | 'cover' | 'description' | 'stickerId'>>
 
 class MemoryApi {
-    private readonly memories = supabase.from(ApiTable.Memories)
-    private readonly collaborators = supabase.from(ApiTable.Collaborators)
-
     // we need this getter here because supabase caches parameters from every query builder.
     // `from` returns a new query builder and we need a separate one for every query we use.
     //
@@ -36,6 +33,12 @@ class MemoryApi {
     private get moments() {
         return supabase.from(ApiTable.Moments)
     }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    private get memories() {
+        return supabase.from(ApiTable.Memories)
+    }
+    private readonly collaborators = supabase.from(ApiTable.Collaborators)
 
     private readonly messages = supabase.from(ApiTable.Messages)
 

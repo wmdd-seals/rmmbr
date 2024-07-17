@@ -1,7 +1,7 @@
 import { getLocationInfo } from 'src/utils/gmap'
 import { memoryApi, supabase, userApi, storageApi } from '#api'
 import { Memory, MemoryMessage, User } from '#domain'
-import { daysFrom, Maybe, monthsFrom, q, updateCurrentUserChip, weeksFrom, yearsFrom } from '#utils'
+import { daysFrom, Maybe, monthsFrom, q, updateCurrentUserChip, weeksFrom, yearsFrom, hoursUntil } from '#utils'
 import { Moment } from '#domain'
 import './edit-memory-modal'
 import './add-moment-modal'
@@ -19,6 +19,28 @@ type OnlineCollaborator = {
     avatar: User['avatarSrc']
     name: User['firstName']
 }
+async function renderCover(memory: Memory): Promise<void> {
+    const memoryLocation = memory.location ? await getLocationInfo(memory.location) : null
+    document.querySelectorAll('[data-memory="title"]').forEach(e => (e.innerHTML = memory.title))
+    q<HTMLImageElement>('[data-memory="cover-sticker"]').src = memory.stickerId
+        ? `/illustrations/${memory.stickerId}`
+        : ''
+    q<HTMLSpanElement>('[data-memory="cover-date"]').innerHTML = memory.date
+    q<HTMLSpanElement>('[data-memory="cover-location"]').innerHTML = memoryLocation
+        ? `, ${memoryLocation.city}, ${memoryLocation.country}`
+        : ''
+
+    const img = q<HTMLImageElement>('#memory-cover')
+
+    const coverSrc = storageApi.getFileUrl(`memory/${memory.id}/cover`) + `?t=${Date.now()}`
+    await checkIfImageExists(coverSrc)
+        .then(res => {
+            img.src = res
+        })
+        .catch(err => {
+            console.error(err)
+        })
+}
 
 userApi
     .getCurrent()
@@ -35,6 +57,10 @@ userApi
         OnlineCollaboratorBadges.init(user, memoryId)
 
         void MemoryChat.init(memoryId, memory.ownerId, user)
+        void LatestMemory.init(memoryId)
+
+        await renderCover(memory)
+        toggleOnIfMemoryIsPast(isPastMemory(memory.date))
 
         const memoryLocation = memory.location ? await getLocationInfo(memory.location) : null
 
@@ -139,6 +165,16 @@ userApi
             q<HTMLSpanElement>('[data-months-count]').innerHTML = monthsFrom(memory.date).toString()
             q<HTMLSpanElement>('[data-weeks-count]').innerHTML = weeksFrom(memory.date).toString()
             q<HTMLSpanElement>('[data-days-count]').innerHTML = daysFrom(memory.date).toString()
+        } else {
+            q<HTMLSpanElement>('[data-countdown-num="hours"]').innerHTML = hoursUntil(memory.date).toString()
+            // q<HTMLSpanElement>('[data-countdown-num="days"]').innerHTML = daysFrom(memory.date).toString()
+            // q<HTMLSpanElement>('[data-countdown-num="weeks"]').innerHTML = countDate.weekly()
+            // q<HTMLSpanElement>('[data-countdown-num="months"]').innerHTML = countDate.monthly()
+
+            // q<HTMLSpanElement>('[data-countdown-special-count="songs"]').innerHTML = countDate.songs()
+            // q<HTMLSpanElement>('[data-countdown-special-count="miles"]').innerHTML = countDate.miles()
+            // q<HTMLSpanElement>('[data-countdown-special-count="tv-series"]').innerHTML = countDate.tvSeries()
+            // q<HTMLSpanElement>('[data-countdown-special-count="books"]').innerHTML = countDate.books()
         }
     })
     .catch(console.error)
@@ -180,6 +216,17 @@ function renderStickers(): void {
         img.src = `/sticker/${id}.svg`
         img.alt = id
         container.appendChild(img)
+    })
+}
+
+const isPastMemory = (memoryDate: Memory['date']): boolean => new Date().getTime() > new Date(memoryDate).getTime()
+
+function toggleOnIfMemoryIsPast(isPast: boolean): void {
+    ;(document.querySelectorAll('[data-past-memory-area]') as NodeList).forEach((e): void =>
+        (e as HTMLElement).setAttribute('aria-hidden', `${isPast ? 'false' : 'true'}`)
+    )
+    ;(document.querySelectorAll('[data-countdown-area]') as NodeList).forEach((e): void => {
+        ;(e as HTMLElement).setAttribute('aria-hidden', `${isPast ? 'true' : 'false'}`)
     })
 }
 
@@ -340,6 +387,27 @@ class OnlineCollaboratorBadges {
         }
 
         this.listWrapper.style.display = 'none'
+    }
+}
+
+class LatestMemory {
+    public static init(memoryId: Memory['id']): void {
+        const latestMemory = supabase.channel(`memory_${memoryId}`)
+        console.log(memoryId)
+        latestMemory.on<Memory>(
+            'postgres_changes',
+            {
+                event: '*',
+                schema: 'public',
+                table: 'memories',
+                filter: `id=eq.${memoryId}`
+            },
+            async payload => {
+                console.log({ payload })
+                if (Object.keys(payload.new).length === 0) return
+                await renderCover(payload.new as Memory)
+            }
+        )
     }
 }
 
