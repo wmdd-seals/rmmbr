@@ -1,7 +1,7 @@
 import { getLocationInfo } from 'src/utils/gmap'
 import { memoryApi, supabase, userApi, storageApi } from '#api'
 import { Memory, MemoryMessage, User } from '#domain'
-import { Maybe, q, updateCurrentUserChip } from '#utils'
+import { daysFrom, Maybe, monthsFrom, q, updateCurrentUserChip, weeksFrom, yearsFrom } from '#utils'
 import { Moment } from '#domain'
 import './edit-memory-modal'
 import './add-moment-modal'
@@ -135,12 +135,10 @@ userApi
         if (Date.now() >= Date.parse(memory.date)) {
             q('#time-passed').classList.toggle('hidden')
 
-            const countDate = new CountTime(memory.date)
-
-            q<HTMLSpanElement>('[data-years-count]').innerHTML = Math.floor(+countDate.yearly()).toString()
-            q<HTMLSpanElement>('[data-months-count]').innerHTML = countDate.monthly()
-            q<HTMLSpanElement>('[data-weeks-count]').innerHTML = countDate.weekly()
-            q<HTMLSpanElement>('[data-days-count]').innerHTML = countDate.daily()
+            q<HTMLSpanElement>('[data-years-count]').innerHTML = yearsFrom(memory.date).toString()
+            q<HTMLSpanElement>('[data-months-count]').innerHTML = monthsFrom(memory.date).toString()
+            q<HTMLSpanElement>('[data-weeks-count]').innerHTML = weeksFrom(memory.date).toString()
+            q<HTMLSpanElement>('[data-days-count]').innerHTML = daysFrom(memory.date).toString()
         }
     })
     .catch(console.error)
@@ -506,55 +504,5 @@ class MemoryChat {
         q('[data-message=body]', messageElem).innerHTML = message.message
 
         return messageElem
-    }
-}
-
-class CountTime {
-    private readonly memoryDate: number
-    public constructor(memoryDate: string) {
-        this.memoryDate = Date.parse(memoryDate)
-    }
-
-    private getDiff(): number {
-        const now = new Date().getTime()
-        const memoryDate = new Date(this.memoryDate).getTime()
-        return now - memoryDate
-    }
-
-    public yearly(): string {
-        const diff = this.getDiff()
-        return (diff / (1000 * 60 * 60 * 24 * 365)).toFixed(2)
-    }
-
-    public monthly(): string {
-        const now = new Date()
-        const memoryDate = new Date(this.memoryDate)
-        const yearlyMonths = (now.getFullYear() - memoryDate.getFullYear()) * 12
-        return String(yearlyMonths + now.getMonth() - memoryDate.getMonth())
-    }
-
-    public weekly(): string {
-        const diff = this.getDiff()
-        return (diff / (1000 * 60 * 60 * 24 * 7)).toFixed(0)
-    }
-
-    public hourly(): string {
-        const diff = this.getDiff()
-        return (diff / (1000 * 60 * 60)).toFixed(0)
-    }
-
-    public daily(): string {
-        const diff = this.getDiff()
-        return (diff / (1000 * 60 * 60 * 24)).toFixed(0)
-    }
-
-    public minutes(): string {
-        const diff = this.getDiff()
-        return (diff / (1000 * 60)).toFixed(0)
-    }
-
-    public seconds(): string {
-        const diff = this.getDiff()
-        return (diff / 1000).toFixed(2)
     }
 }
