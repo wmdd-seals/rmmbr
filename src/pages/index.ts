@@ -1,7 +1,7 @@
 import './memory-creation-modal'
 import { memoryApi, storageApi, userApi } from '#api'
-import { createMapWithMarkers, formatDate, q, updateCurrentUserChip } from '#utils'
-import { Location } from '#utils'
+import { createMapWithMarkers, formatDate, Maybe, q, updateCurrentUserChip } from '#utils'
+import { Location, LocationInfo } from '#utils'
 import { getLocationInfo } from 'src/utils/gmap'
 import { Memory } from '#domain'
 
@@ -97,13 +97,28 @@ function renderMemories(memories: Memory[]): void {
                 storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
 
             if (memory.location) {
-                getLocationInfo(memory.location).then(location => {
-                    if (!location) return
+                const hasLocationInfo = memoryLocations.has(memory.id)
+
+                function setLocationInfo(location: LocationInfo): void {
                     const { country, city } = location
                     q('[data-memory="location"]', <HTMLLIElement>liElem).innerHTML = city
                         ? `in ${city}, ${country}`
                         : `in ${country}`
-                }, console.error)
+                }
+
+                if (hasLocationInfo) {
+                    const location = memoryLocations.get(memory.id)
+
+                    if (!location) return
+                    setLocationInfo(location)
+                } else {
+                    getLocationInfo(memory.location).then(location => {
+                        memoryLocations.set(memory.id, location)
+
+                        if (!location) return
+                        setLocationInfo(location)
+                    }, console.error)
+                }
             }
 
             memoryList.appendChild(node)
@@ -177,7 +192,7 @@ function initFilterDrawer(memories: Memory[]): void {
     })
 
     renderCategoriesOnFilter(memories)
-    renderLocationsOnFilter(memories)
+    renderLocationsOnFilter()
 
     const filterCriteria: FilterCriteria = {
         categories: [],
@@ -269,8 +284,10 @@ function filterByDate(memory: Memory, filterCriteria: FilterCriteria): boolean {
 function filterByLocation(memory: Memory, filterCriteria: FilterCriteria): boolean {
     if (filterCriteria.locations.length === 0) return true
 
-    const memoryCountry = locationCountryMap.get(JSON.stringify(memory.location))
-    return filterCriteria.locations.includes(memoryCountry!)
+    const memoryCountry = memoryLocations.get(memory.id)?.country
+    if (!memoryCountry) return false
+
+    return filterCriteria.locations.includes(memoryCountry)
 }
 
 function renderCountdowns(memories: Memory[]): void {
@@ -327,31 +344,15 @@ function renderCategoriesOnFilter(memories: Memory[]): void {
     renderDropdownMenu(categorySet, 'input-categories')
 }
 
-const locationCountryMap = new Map<string, string>()
+const memoryLocations = new Map<Memory['id'], Maybe<LocationInfo>>()
 
-function renderLocationsOnFilter(memories: Memory[]): void {
-    const locationPromises = memories
-        .filter(memory => !!memory.location)
-        .map(memory => getLocationInfo(memory.location!))
-
-    Promise.all(locationPromises)
-        .then(locations => {
-            const countrySet: Set<string> = new Set()
-
-            locations.forEach((location, index) => {
-                if (location) {
-                    const { country } = location
-                    countrySet.add(country)
-
-                    const memoryWithLocation = memories.filter(memory => !!memory.location)[index]
-                    const latitudeAndLongitude = JSON.stringify(memoryWithLocation.location)
-                    locationCountryMap.set(latitudeAndLongitude, country)
-                }
-            })
-
-            renderDropdownMenu(countrySet, 'input-locations')
-        })
-        .catch(console.error)
+function renderLocationsOnFilter(): void {
+    const countrySet: Set<string> = new Set()
+    memoryLocations.forEach(loc => {
+        if (!loc) return
+        countrySet.add(loc.country)
+    })
+    renderDropdownMenu(countrySet, 'input-locations')
 }
 
 function renderDropdownMenu(values: Set<string>, selectElemId: string): void {
