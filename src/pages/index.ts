@@ -3,7 +3,15 @@ import { memoryApi, storageApi, userApi } from '#api'
 import { createMapWithMarkers, formatDate, q, updateCurrentUserChip } from '#utils'
 import { Location } from '#utils'
 import { getLocationInfo } from 'src/utils/gmap'
-import { Memory, FilterCriteria } from '#domain'
+import { Memory } from '#domain'
+
+type FilterCriteria = {
+    categories: string[]
+    startDate: string
+    endDate: string
+    locations: string[]
+    collaborators: string[]
+}
 
 const tabs = {
     ['#home']: document.getElementById('home')!,

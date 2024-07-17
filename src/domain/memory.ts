@@ -21,14 +21,3 @@ export abstract class Memory {
     public abstract stickerId: Maybe<string>
     public abstract categories: string[]
 }
-
-// FIXME: when we will implement having categories for memories, I will change the type of categories to be an array of numbera(Natsuko)
-export type Category = [category?: string, category?: string, category?: string]
-
-export type FilterCriteria = {
-    categories: string[]
-    startDate: string
-    endDate: string
-    locations: string[]
-    collaborators: string[]
-}
