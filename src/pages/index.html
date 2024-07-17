@@ -44,7 +44,7 @@
         <main class="relative px-6 pb-14 md:pb-16 bg-no-repeat bg-top" style="background-image: url(/sign-bg.jpg); background-size: 100% 40%; ">
             
             <div class=" max-w-[1304px] mx-auto flex flex-col gap-10" >
-                <div class="flex justify-center items-center pt-36 pb-40 md:pt-16 md:pb-10">
+                <div class="flex justify-center items-center pt-36 pb-40 md:pt-16 md:pb-0">
                     <div
                         class="flex flex-col gap-8 md:grow md:flex-row md:justify-between md:items-end lg:row-start-1 lg:col-span-2 items-center"
                     >
@@ -54,9 +54,8 @@
                             <span class="text-lg text-white font-medium">You have <span data-memory="count"></span> saved!</span>
                         </span>
 
-                        <button class="btn-cta btn-md" id="create-memory-btn" data-memory="create">
-                            Create New
-                            <span>+</span>
+                        <button class="btn-cta btn-md flex gap-2 items-center p-3" id="create-memory-btn" data-memory="create">
+                            Create New<i data-feather="plus-circle" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
@@ -92,10 +91,10 @@
                                             <p class="text-center">You don't have any upcoming events yet.</p>
                                             <p class="font-bold text-center">Add one to start counting down!</p>
                                         </div>
-                                        <p data-memory="create">
+                                        <button data-memory="create" class="flex gap-2 ">
                                             Create New
-                                            <button><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
-                                        </p>
+                                            <i data-feather="plus-circle" aria-hidden="true"></i>
+                                        </button>
                                     </div>
                                      
                                     <template id="countdown-thumbnail">
@@ -188,7 +187,7 @@
                         >
                             Your memories<span class="font-normal"><span data-memory="count"></span></span>
                         </h2>
-                        <button class="flex gap-1 justify-center items-center md:self-end btn-outlined btn-md" id="filter-btn">Filter<i class="fa-solid fa-filter"></i></button>
+                        <button class="flex gap-1 justify-center items-center md:self-end btn-outlined btn-md" id="filter-btn">Filter<i data-feather="filter" aria-hidden="true"></i></button>
                     </div>
 
                     <div id="memory-overlay" class="flex flex-col gap-4 justify-center items-center py-10">
