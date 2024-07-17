@@ -1,9 +1,9 @@
 import './memory-creation-modal'
-import { memoryApi, storageApi, userApi } from '#api'
+import { memoryApi, storageApi, supabase, userApi } from '#api'
 import { createMapWithMarkers, formatDate, Maybe, q, updateCurrentUserChip } from '#utils'
 import { Location, LocationInfo } from '#utils'
 import { getLocationInfo } from 'src/utils/gmap'
-import { Memory } from '#domain'
+import { Memory, User } from '#domain'
 
 type FilterCriteria = {
     categories: string[]
@@ -77,6 +77,8 @@ userApi
         renderMemories(memories)
 
         renderMapMarks(memories)
+
+        LatestMemoriesByUserId.init(user.id)
     })
     .catch(console.error)
 
@@ -468,4 +470,25 @@ function createLabelOnHomePage(
         }
         filterMemories(memories, filterCriteria)
     })
+}
+
+class LatestMemoriesByUserId {
+    public static init(userId: User['id']): void {
+        const latestMoments = supabase.channel(`moments_by_${userId}`)
+        latestMoments
+            .on<Memory>(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'memories',
+                    filter: `ownerId=eq.${userId}`
+                },
+                payload => {
+                    if (Object.keys(payload.new).length === 0) return
+                    renderMemories([payload.new as Memory])
+                }
+            )
+            .subscribe()
+    }
 }
