@@ -1,4 +1,4 @@
-import { ID, Location, Maybe, Category } from '#utils'
+import { ID, Location, Maybe } from '#utils'
 import { User } from './user'
 
 export type MemoryMessage = {
@@ -19,5 +19,16 @@ export abstract class Memory {
     public abstract ownerId: User['id']
     public abstract cover: Maybe<string>
     public abstract stickerId: Maybe<string>
-    public abstract category: Maybe<Category>
+    public abstract categories: string[]
+}
+
+// FIXME: when we will implement having categories for memories, I will change the type of categories to be an array of numbera(Natsuko)
+export type Category = [category?: string, category?: string, category?: string]
+
+export type FilterCriteria = {
+    categories: string[]
+    startDate: string
+    endDate: string
+    locations: string[]
+    collaborators: string[]
 }

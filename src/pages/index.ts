@@ -1,9 +1,9 @@
 import './memory-creation-modal'
 import { memoryApi, storageApi, userApi } from '#api'
-import { createMapWithMarkers, formatDate, q, SelectedValue, updateCurrentUserChip } from '#utils'
+import { createMapWithMarkers, formatDate, q, updateCurrentUserChip } from '#utils'
 import { Location } from '#utils'
 import { getLocationInfo } from 'src/utils/gmap'
-import { Memory } from '#domain'
+import { Memory, FilterCriteria } from '#domain'
 
 const tabs = {
     ['#home']: document.getElementById('home')!,
@@ -135,7 +135,6 @@ function initFilterDrawer(memories: Memory[]): void {
     let filtersOpen = false
     let el: HTMLDivElement | null = null
 
-    // Open and close the filter drawer
     q('#filter-btn').addEventListener('click', () => {
         if (filtersOpen) return
 
@@ -158,13 +157,13 @@ function initFilterDrawer(memories: Memory[]): void {
 
                 el!.classList.remove('backdrop-blur', 'bg-black', 'bg-opacity-65')
                 setTimeout(() => document.body.removeChild(el!), 300)
-                drawer.setAttribute('aria-selected', 'true')
+                drawer.classList.add('!translate-x-full')
 
                 filtersOpen = false
             })
         })
 
-        drawer.removeAttribute('aria-selected')
+        drawer.classList.remove('!translate-x-full')
 
         filtersOpen = true
     })
@@ -172,19 +171,18 @@ function initFilterDrawer(memories: Memory[]): void {
     renderCategoriesOnFilter(memories)
     renderLocationsOnFilter(memories)
 
-    // When users select a value from dropdown, the label with the value will be displayed and the value gets added the array of selected values.
-    const selectedValues: SelectedValue = {
+    const filterCriteria: FilterCriteria = {
         categories: [],
-        startDate: [],
-        endDate: [],
+        startDate: '',
+        endDate: '',
         locations: [],
         collaborators: []
     }
 
     const selectElements = [
-        { selectElemId: '#input-categories', selectedValues: selectedValues.categories },
-        { selectElemId: '#input-locations', selectedValues: selectedValues.locations },
-        { selectElemId: '#input-collaborators', selectedValues: selectedValues.collaborators }
+        { selectElemId: '#input-categories', filterCriteria: filterCriteria.categories },
+        { selectElemId: '#input-locations', filterCriteria: filterCriteria.locations },
+        { selectElemId: '#input-collaborators', filterCriteria: filterCriteria.collaborators }
     ]
 
     selectElements.forEach(element => {
@@ -193,35 +191,33 @@ function initFilterDrawer(memories: Memory[]): void {
             const selectedOption = selectElem.options[selectElem.selectedIndex]
             const value = selectedOption.value
 
-            if (element.selectedValues.includes(value)) return
-            element.selectedValues.push(value)
-            showLabelOnFilter(selectElem, value, element.selectedValues)
+            if (element.filterCriteria.includes(value)) return
+            element.filterCriteria.push(value)
+            showLabelOnFilter(selectElem, value, element.filterCriteria)
             selectElem.value = ''
         })
     })
 
-    // When users click the "Filter" button, filtering process starts.
     const filterBtn = q('#filter-start-btn')
 
     filterBtn.addEventListener('click', () => {
-        selectedValues.startDate[0] = q<HTMLInputElement>('#filter-start-date').value
-        selectedValues.endDate[0] = q<HTMLInputElement>('#filter-end-date').value
+        filterCriteria.startDate = q<HTMLInputElement>('#filter-start-date').value
+        filterCriteria.endDate = q<HTMLInputElement>('#filter-end-date').value
 
-        filterMemories(memories, selectedValues)
-        showLabelOnHomePage(memories, selectedValues)
+        filterMemories(memories, filterCriteria)
+        showLabelOnHomePage(memories, filterCriteria)
     })
 }
 
-function filterMemories(memories: Memory[], selectedValues: SelectedValue): void {
+function filterMemories(memories: Memory[], filterCriteria: FilterCriteria): void {
     const filteredMemories = memories.filter(memory => {
         return (
-            filterByCategory(memory, selectedValues) &&
-            filterByDate(memory, selectedValues) &&
-            filterByLocation(memory, selectedValues)
+            filterByCategory(memory, filterCriteria) &&
+            filterByDate(memory, filterCriteria) &&
+            filterByLocation(memory, filterCriteria)
         )
     })
 
-    // Clear the previously rendred memories
     const memoryList = document.getElementById('memory-list') as HTMLUListElement
     const memoriesArray = Array.from(memoryList.querySelectorAll('li'))
     memoriesArray.forEach(memory => {
@@ -231,16 +227,16 @@ function filterMemories(memories: Memory[], selectedValues: SelectedValue): void
     renderMemories(filteredMemories)
 }
 
-function filterByCategory(memory: Memory, selectedValues: SelectedValue): boolean {
-    if (selectedValues.categories.length === 0) return true
-    if (!memory.category) return false
-
-    return memory.category.some(memoryCategory => memoryCategory && selectedValues.categories.includes(memoryCategory))
+function filterByCategory(memory: Memory, filterCriteria: FilterCriteria): boolean {
+    if (filterCriteria.categories.length === 0) return true
+    return memory.categories.some(
+        memoryCategory => memoryCategory && filterCriteria.categories.includes(memoryCategory)
+    )
 }
 
-function filterByDate(memory: Memory, selectedValues: SelectedValue): boolean {
-    const startDateLocal = selectedValues.startDate[0] ? new Date(selectedValues.startDate[0]) : null
-    const endDateLocal = selectedValues.endDate[0] ? new Date(selectedValues.endDate[0]) : null
+function filterByDate(memory: Memory, filterCriteria: FilterCriteria): boolean {
+    const startDateLocal = filterCriteria.startDate ? new Date(filterCriteria.startDate) : null
+    const endDateLocal = filterCriteria.endDate ? new Date(filterCriteria.endDate) : null
 
     const startDateUtc = startDateLocal
         ? new Date(startDateLocal.getTime() - startDateLocal.getTimezoneOffset() * 60000)
@@ -262,11 +258,11 @@ function filterByDate(memory: Memory, selectedValues: SelectedValue): boolean {
     return startDateUtc <= memoryDateUtc && memoryDateUtc <= endDateUtc
 }
 
-function filterByLocation(memory: Memory, selectedValues: SelectedValue): boolean {
-    if (selectedValues.locations.length === 0) return true
+function filterByLocation(memory: Memory, filterCriteria: FilterCriteria): boolean {
+    if (filterCriteria.locations.length === 0) return true
 
     const memoryCountry = locationCountryMap.get(JSON.stringify(memory.location))
-    return selectedValues.locations.includes(memoryCountry!)
+    return filterCriteria.locations.includes(memoryCountry!)
 }
 
 function renderCountdowns(memories: Memory[]): void {
@@ -309,12 +305,14 @@ function renderMapMarks(memories: Memory[]): void {
 }
 
 function renderCategoriesOnFilter(memories: Memory[]): void {
-    const categorySet: Set<string> = new Set()
+    if (memories.length === 0) return
 
+    const categorySet: Set<string> = new Set()
     memories.forEach(memory => {
-        memory.category?.forEach(category => {
-            if (!category) return
-            categorySet.add(category)
+        memory.categories.forEach(category => {
+            if (category) {
+                categorySet.add(category)
+            }
         })
     })
 
@@ -358,75 +356,103 @@ function renderDropdownMenu(values: Set<string>, selectElemId: string): void {
     })
 }
 
-function showLabelOnFilter(selectElem: HTMLSelectElement, value: string, selectedValues: string[]): void {
-    const label = document.createElement('button')
+export function showLabelOnFilter(selectElem: HTMLSelectElement, value: string, filterCriteria: string[]): void {
+    const label = document.createElement('div')
     label.classList.add('btn-text', 'btn-md', 'border-2', 'btn-sm', 'border-basketball-500', 'border-solid')
     label.setAttribute('data-label', 'filter-label')
-    label.innerHTML = `${value} <a class='text-lg'>&times;</a> `
+    label.innerHTML = `${value} <button class='text-lg'>&times;</button>`
 
     const space = selectElem.nextElementSibling!
     space.appendChild(label)
 
-    const removeSign = label.querySelector('a')
-    removeSign!.addEventListener('click', () => {
+    const removeButton = label.querySelector('button')
+    removeButton!.addEventListener('click', () => {
         label.remove()
-        selectedValues.splice(selectedValues.indexOf(value), 1)
+        const index = filterCriteria.indexOf(value)
+        if (index > -1) {
+            filterCriteria.splice(index, 1)
+        }
+        selectElem.value = ''
     })
 }
 
-function showLabelOnHomePage(memories: Memory[], selectedValues: SelectedValue): void {
+function showLabelOnHomePage(memories: Memory[], filterCriteria: FilterCriteria): void {
     const displayDiv = q('[data-label="show-after-filter"]')
     displayDiv.innerHTML = ''
 
-    for (const key in selectedValues) {
-        selectedValues[key as keyof SelectedValue].forEach(value => {
-            if (value === selectedValues.startDate[0] && selectedValues.startDate[0] === '') {
-                return
+    for (const key in filterCriteria) {
+        const value = filterCriteria[key as keyof FilterCriteria]
+
+        if (key === 'startDate' || key === 'endDate') {
+            if (value !== '') {
+                createLabelOnHomePage(
+                    value as string,
+                    key as keyof FilterCriteria,
+                    filterCriteria,
+                    memories,
+                    displayDiv
+                )
             }
-            if (value === selectedValues.endDate[0] && selectedValues.endDate[0] === '') {
-                return
-            }
-
-            const label = document.createElement('div')
-            label.classList.add('btn-text', 'btn-md', 'border-2', 'btn-sm', 'border-basketball-500', 'border-solid')
-            if (value === selectedValues.startDate[0]) {
-                label.innerHTML = `from ${value} <a class='text-lg'>&times;</a> `
-            } else if (value === selectedValues.endDate[0]) {
-                label.innerHTML = `to ${value} <a class='text-lg'>&times;</a> `
-            } else {
-                label.innerHTML = `${value} <a class='text-lg'>&times;</a> `
-            }
-            displayDiv.appendChild(label)
-
-            const removeSign = label.querySelector('a')
-            removeSign!.addEventListener('click', () => {
-                // the lable on the home page gets removed
-                label.remove()
-
-                // If the removed label reprensents the start date or end date of the memory, the input field of start date or end date on the filter drawer gets cleared.
-                if (value === selectedValues.startDate[0]) {
-                    q<HTMLInputElement>('#filter-start-date').value = ''
+        } else {
+            ;(value as string[]).forEach(val => {
+                if (val !== '') {
+                    createLabelOnHomePage(val, key as keyof FilterCriteria, filterCriteria, memories, displayDiv)
                 }
-                if (value === selectedValues.endDate[0]) {
-                    q<HTMLInputElement>('#filter-end-date').value = ''
-                }
-
-                // The corresponding lable on the filter drawer gets removed
-                const labelsOnFilter = document.querySelectorAll('[data-label = "filter-label"')
-                labelsOnFilter.forEach(labelOnFilter => {
-                    if (labelOnFilter.textContent!.includes(value)) {
-                        labelOnFilter.remove()
-                    }
-                })
-
-                // The selectedValues gets updated and the memories get filtered.
-                for (const key in selectedValues) {
-                    const index = selectedValues[key as keyof SelectedValue].indexOf(value)
-                    if (index === -1) continue
-                    selectedValues[key as keyof SelectedValue].splice(index, 1)
-                }
-                filterMemories(memories, selectedValues)
             })
-        })
+        }
     }
+}
+
+function createLabelOnHomePage(
+    value: string,
+    key: keyof FilterCriteria,
+    filterCriteria: FilterCriteria,
+    memories: Memory[],
+    displayDiv: HTMLElement
+): void {
+    const closeButton = `<button class='text-lg'>&times;</button>`
+    let labelContent = ''
+
+    if (key === 'startDate' || key === 'endDate') {
+        labelContent = `${key === 'startDate' ? `from ${value}` : `to ${value}`} ${closeButton}`
+    } else {
+        labelContent = `${value} ${closeButton}`
+    }
+
+    const label = document.createElement('div')
+    label.classList.add('btn-text', 'btn-md', 'border-2', 'btn-sm', 'border-basketball-500', 'border-solid')
+    label.innerHTML = labelContent
+    displayDiv.appendChild(label)
+
+    const removeButton = label.querySelector('button')
+    removeButton!.addEventListener('click', () => {
+        label.remove()
+
+        if (key === 'startDate' || key === 'endDate') {
+            const inputFieldId = key === 'startDate' ? '#filter-start-date' : '#filter-end-date'
+            q<HTMLInputElement>(inputFieldId).value = ''
+        } else {
+            const selectElement = q<HTMLSelectElement>(`select[name="${key}"]`)
+            const optionToDeselect = Array.from(selectElement.options).find(option => option.value === value)
+            optionToDeselect!.selected = false
+        }
+
+        const labelsOnFilter = document.querySelectorAll('[data-label="filter-label"]')
+        labelsOnFilter.forEach(labelOnFilter => {
+            if (labelOnFilter.textContent!.includes(value)) {
+                labelOnFilter.remove()
+            }
+        })
+
+        if (key === 'startDate' || key === 'endDate') {
+            filterCriteria[key] = ''
+        } else {
+            const criteria = filterCriteria[key]
+            const index = criteria.indexOf(value)
+            if (index !== -1) {
+                criteria.splice(index, 1)
+            }
+        }
+        filterMemories(memories, filterCriteria)
+    })
 }

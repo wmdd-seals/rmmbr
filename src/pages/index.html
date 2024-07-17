@@ -211,10 +211,9 @@
             </section>
         </main>
 
-        <!-- Filter Drawer -->
         <div
-            class="aria-selected:translate-x-full overflow-y-auto fixed z-30 left-1/2 -translate-x-1/2 w-[90%] top-1/2 -translate-y-1/2 h-[90%] md:left-auto md:right-0 md:h-screen rounded-2xl bg-white md:w-[35%] md:translate-x-0 transition-all duration-300 p-6 flex flex-col gap-6 md:rounded-tr-none md:rounded-br-none"
-            id="filter-drawer" aria-selected="true"
+            class="!translate-x-full overflow-y-auto fixed z-30 left-1/2 -translate-x-1/2 w-[90%] top-1/2 -translate-y-1/2 h-[90%] md:left-auto md:right-0 md:h-screen rounded-2xl bg-white md:w-[35%] md:translate-x-0 transition-all duration-300 p-6 flex flex-col gap-6 md:rounded-tr-none md:rounded-br-none"
+            id="filter-drawer"
         >
             <div class="flex justify-between items-center">
                 <p class="text-xl font-bold">Filters</p>
@@ -246,7 +245,7 @@
             </div>
             <div>
                 <label for="input-collaborators">Filter by collaborator</label>
-                <select name="collaborator" id="input-collaborators" class="input input-sm w-full">
+                <select name="collaborators" id="input-collaborators" class="input input-sm w-full">
                     <option selected disabled>Select a collaborator</option>
                 </select>
                 <div class="flex flex-wrap gap-1"></div>
