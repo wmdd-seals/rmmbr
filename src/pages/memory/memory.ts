@@ -19,6 +19,18 @@ type OnlineCollaborator = {
     avatar: User['avatarSrc']
     name: User['firstName']
 }
+
+const isPastMemory = (memoryDate: Memory['date']): boolean => new Date().getTime() > new Date(memoryDate).getTime()
+
+function toggleOnIfMemoryIsPast(isPast: boolean): void {
+    ;(document.querySelectorAll('[data-past-memory-area]') as NodeList).forEach((e): void =>
+        (e as HTMLElement).setAttribute('aria-hidden', `${isPast ? 'false' : 'true'}`)
+    )
+    ;(document.querySelectorAll('[data-countdown-area]') as NodeList).forEach((e): void => {
+        ;(e as HTMLElement).setAttribute('aria-hidden', `${isPast ? 'true' : 'false'}`)
+    })
+}
+
 async function renderCover(memory: Memory): Promise<void> {
     const memoryLocation = memory.location ? await getLocationInfo(memory.location) : null
     document.querySelectorAll('[data-memory="title"]').forEach(e => (e.innerHTML = memory.title))
@@ -57,7 +69,8 @@ userApi
         OnlineCollaboratorBadges.init(user, memoryId)
 
         void MemoryChat.init(memoryId, memory.ownerId, user)
-        void LatestMemory.init(memoryId)
+
+        LatestMemory.init(memoryId)
 
         await renderCover(memory)
         toggleOnIfMemoryIsPast(isPastMemory(memory.date))
@@ -216,17 +229,6 @@ function renderStickers(): void {
         img.src = `/sticker/${id}.svg`
         img.alt = id
         container.appendChild(img)
-    })
-}
-
-const isPastMemory = (memoryDate: Memory['date']): boolean => new Date().getTime() > new Date(memoryDate).getTime()
-
-function toggleOnIfMemoryIsPast(isPast: boolean): void {
-    ;(document.querySelectorAll('[data-past-memory-area]') as NodeList).forEach((e): void =>
-        (e as HTMLElement).setAttribute('aria-hidden', `${isPast ? 'false' : 'true'}`)
-    )
-    ;(document.querySelectorAll('[data-countdown-area]') as NodeList).forEach((e): void => {
-        ;(e as HTMLElement).setAttribute('aria-hidden', `${isPast ? 'true' : 'false'}`)
     })
 }
 
@@ -393,21 +395,21 @@ class OnlineCollaboratorBadges {
 class LatestMemory {
     public static init(memoryId: Memory['id']): void {
         const latestMemory = supabase.channel(`memory_${memoryId}`)
-        console.log(memoryId)
-        latestMemory.on<Memory>(
-            'postgres_changes',
-            {
-                event: '*',
-                schema: 'public',
-                table: 'memories',
-                filter: `id=eq.${memoryId}`
-            },
-            async payload => {
-                console.log({ payload })
-                if (Object.keys(payload.new).length === 0) return
-                await renderCover(payload.new as Memory)
-            }
-        )
+        latestMemory
+            .on<Memory>(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'memories',
+                    filter: `id=eq.${memoryId}`
+                },
+                async payload => {
+                    if (Object.keys(payload.new).length === 0) return
+                    await renderCover(payload.new as Memory)
+                }
+            )
+            .subscribe()
     }
 }
 
