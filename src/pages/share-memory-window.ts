@@ -1,6 +1,7 @@
 import { memoryApi, userApi } from '#api'
 import { Memory, User } from '#domain'
 import { PromiseMaybe, q } from '#utils'
+import feather from 'feather-icons'
 
 class ShareMemoryWindow extends HTMLElement {
     protected collaborators: User[] = []
@@ -13,11 +14,10 @@ class ShareMemoryWindow extends HTMLElement {
         this.innerHTML = `
            <div class="w-full h-full flex flex-col items-center">
                 <label class="flex w-full relative box-border h-8">
-                    <input data-search-collaborator type="email" placeholder="i.e: abcdefe@mail.com"
-                        class="input-sm  w-full box-border text-black bg-ui-50 rounded-lg border-2 border-slate-400"
-                    >
+                    <input data-search-collaborator type="email" placeholder="i.e: abcdefe@mail.com" class="w-full input input-sm">
                     <i class="fa-solid fa-user-plus ml-auto absolute -translate-y-1/2 top-1/2 right-3 text-basketball-500"></i>
                 </label>
+
                 <ul data-shared-users-list class="relative flex flex-col flex-grow gap-3 w-full overflow-y-scroll py-6">
                     <li data-placeholder-not-shared class="absolute z-0 top-6 w-full flex flex-row justify-between items-center">
                             <p class="w-full flex justify-center text-slate-400 text-base leading-normal">Not shared with anyone</p>
@@ -28,13 +28,10 @@ class ShareMemoryWindow extends HTMLElement {
                     flex flex-col w-full h-fit p-2 bg-slate-50 rounded-lg border border-gray-100 justify-center items-center gap-2
                     sm:flex-row sm:justify-between
                 ">
-                    <p class="text-xs text-gray-600 w-full text-left leading-normal">Private link: <span id="show-link" class="text-gray-700 line-clamp-1">rmmbr/lfdjalskfjlakjflkjaf;lafj</span></p>
-                    <button id="copy-link" type="button" class="
-                        flex text-nowrap w-full h-8 px-4 py-2 bg-rose-100 rounded-3xl border border-red-300 justify-center items-center gap-1.5
-                        sm:w-fit
-                    ">
+                    <p class="text-xs text-gray-600 w-full text-left leading-normal">Private link: <span id="show-link" class="text-gray-700 line-clamp-1"></span></p>
+                    <button id="copy-link" class="btn-outlined btn-md flex items-center whitespace-nowrap w-full gap-1.5 sm:w-fit">
                         Share this link
-                        <i class="fa-solid fa-share-nodes"></i>
+                        <i data-feather="share-2" class="w-4 h-4"></i>
                     </button>
                 </div>
            </div>
@@ -43,6 +40,8 @@ class ShareMemoryWindow extends HTMLElement {
             'blur',
             (ev: FocusEvent) => void this.addNewCollaborator((ev.currentTarget as HTMLInputElement).value)
         )
+
+        feather.replace()
     }
 
     protected async attributeChangedCallback(oldVal: string, newVal: string): Promise<void> {
@@ -63,7 +62,7 @@ class ShareMemoryWindow extends HTMLElement {
             const origin = new URL(import.meta.url).origin
             await navigator.clipboard.writeText(`${origin}/memory/?id=${this.memoryId}`)
         })
-        q<HTMLSpanElement>('#show-link').innerHTML = `/memory/?id=${this.memoryId}`
+        q<HTMLSpanElement>('#show-link').innerHTML = `${location.origin}/memory/?id=${this.memoryId}`
     }
 
     private async getExistingCollaborators(): PromiseMaybe<void> {
@@ -71,7 +70,7 @@ class ShareMemoryWindow extends HTMLElement {
             return
         }
         const collaborators = await memoryApi.getAllCollaborators(this.memoryId)
-        this.collaborators = collaborators
+        this.collaborators = collaborators || []
     }
 
     private async addNewCollaborator(email: User['email']): Promise<void> {

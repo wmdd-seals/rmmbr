@@ -44,18 +44,20 @@ class MemoryCreationModal extends ModalBaseLayer {
         super()
     }
 
-    protected async connectedCallback(): Promise<void> {
+    protected connectedCallback(): void {
         this.renderBaseLayer()
-        await this.renderFirstContent()
-        this.attachValidationListeners()
     }
 
     protected static get observedAttributes(): string[] {
         return ['open']
     }
 
-    protected attributeChangedCallback(): void {
+    protected async attributeChangedCallback(_: string, oldVal: string, newVal: string): Promise<void> {
         q<HTMLDivElement>('[data-modal-base]', this).classList.toggle('hidden')
+        if (!oldVal && newVal) {
+            await this.renderFirstContent()
+            this.attachValidationListeners()
+        }
     }
 
     private async renderFirstContent(): Promise<void> {
@@ -225,7 +227,7 @@ class MemoryCreationModal extends ModalBaseLayer {
                 <button id="modal-close-btn" class="text-basketball-500 text-3xl">
                     &#10005;
                 </button>
-            </headsr>
+            </header>
             <section
                 class="flex flex-col flex-grow align-center overflow-hidden justify-start items-center w-full sm:max-w-[43.75rem] sm:gap-5"
             >
@@ -237,7 +239,7 @@ class MemoryCreationModal extends ModalBaseLayer {
                     <p class="text-lg text-center text-basketball-600">Awesome!<br>Your event is created.<br><span class="text-slate-600">Share the fun with friends!</span></p>
                 </div>
                 <div class="w-full flex flex-col flex-grow items-center justify-start h-[70%]">
-                    <h3 class="h-[1.8rem] w-full text-left text-slate-900 text-sm">Add contributers to your event</h3>
+                    <h3 class="h-[1.8rem] w-full text-left text-slate-900 text-sm">Add contributors to your event</h3>
                     <share-memory-window memory-id new-memory="true" class="w-full h-[calc(100%-1.8rem)]"></share-memory-window>
                 </div>
             </section>

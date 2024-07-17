@@ -47,10 +47,17 @@ export async function codeAddress(address: string): PromiseMaybe<Location> {
         return null
     }
 
-    const { Geocoder } = await loader.importLibrary('geocoding')
-    const { results } = await new Geocoder().geocode({ address: address })
-    const location = results[0].geometry.location
-    return [location.lng(), location.lat()]
+    try {
+        const { Geocoder } = await loader.importLibrary('geocoding')
+        const { results } = await new Geocoder().geocode({ address: address })
+        const location = results[0].geometry.location
+
+        return [location.lng(), location.lat()]
+    } catch (err) {
+        console.warn(err)
+
+        return null
+    }
 }
 
 type LocationInfo = {
@@ -60,33 +67,39 @@ type LocationInfo = {
 
 export async function getLocationInfo(location: Location): PromiseMaybe<LocationInfo> {
     const [lng, lat] = location
-    const { Geocoder } = await loader.importLibrary('geocoding')
-    const { results } = await new Geocoder().geocode({ location: { lng, lat } })
+    try {
+        const { Geocoder } = await loader.importLibrary('geocoding')
+        const { results } = await new Geocoder().geocode({ location: { lng, lat } })
 
-    let city: Maybe<string> = null
-    let country: Maybe<string> = null
+        let city: Maybe<string> = null
+        let country: Maybe<string> = null
 
-    for (const component of results) {
-        if (!city) {
-            if (component.types.includes('locality')) {
-                for (const addressComponent of component.address_components) {
-                    if (addressComponent.types.includes('locality')) {
-                        city = addressComponent.long_name
-                        break
+        for (const component of results) {
+            if (!city) {
+                if (component.types.includes('locality')) {
+                    for (const addressComponent of component.address_components) {
+                        if (addressComponent.types.includes('locality')) {
+                            city = addressComponent.long_name
+                            break
+                        }
                     }
                 }
             }
+
+            if (!country) {
+                const isCountry = component.types.includes('country')
+                if (isCountry) country = component.address_components[0].long_name
+            }
+
+            if (country && city) return { country, city }
         }
 
-        if (!country) {
-            const isCountry = component.types.includes('country')
-            if (isCountry) country = component.address_components[0].long_name
-        }
+        if (!country) return null
 
-        if (country && city) return { country, city }
+        return { country, city }
+    } catch (err) {
+        console.warn(err)
+
+        return null
     }
-
-    if (!country) return null
-
-    return { country, city }
 }

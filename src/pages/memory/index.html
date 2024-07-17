@@ -6,15 +6,14 @@
         <title>rmmbr | Memory</title>
 
         <link rel="stylesheet" href="../app.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
         <script type="module" src="../auth.ts"></script>
         <script type="module" src="../icons.ts"></script>
         <script type="module" src="./memory.ts"></script>
     </head>
 
-    <body>
+    <body class="pb-20 md:pb-36">
         <header
-            class="p-6 flex justify-between sticky z-10 top-0 backdrop-blur bg-gradient-to-tr from-thick-blue-600/45 to-thick-blue-800/80"
+            class="p-6 flex justify-between sticky z-20 top-0 backdrop-blur bg-gradient-to-tr from-thick-blue-600/45 to-thick-blue-800/80"
         >
             <a href="/">
                 <img src="/white-logo.svg" alt="logo" />
@@ -74,7 +73,7 @@
 
         <div
             id="chat"
-            class="fixed w-80 flex flex-col -bottom-96 right-6 bg-white rounded-t-lg text-lg shadow-xl border border-ui-50 transition-all"
+            class="z-20 fixed w-80 flex flex-col -bottom-96 right-6 bg-white rounded-t-lg text-lg shadow-xl border border-ui-50 transition-all"
         >
             <div class="flex items-center justify-between shadow-md px-3">
                 <span data-memory="title" class="font-bold py-3 whitespace-nowrap truncate"></span>
@@ -134,69 +133,149 @@
             </div>
         </div>
 
-        <div class="h-svh overflow-hidden sm:h-[40vh]">
+        <div
+            class="h-[70vh] md:h-[40vh] overflow-hidden sm:h-[40vh] bg-gradient-to-b from-orange-300 to-indigo-500 relative"
+        >
             <img
                 data-cover-image
                 id="memory-cover"
-                src=""
+                src="/illustrations/confetti.svg"
                 alt="Memory cover"
-                class="hidden w-full object-cover aria-hidden:hidden"
+                class="h-full w-full object-cover aria-hidden:hidden md:w-full"
             />
+            <button
+                id="edit-memory"
+                class="absolute flex w-12 aspect-square rounded-full text-white top-8 right-6 bg-thick-blue-500"
+            >
+                <i data-feather="edit" class="m-auto"></i>
+            </button>
+            <a href="../" class="absolute top-8 left-6 text-ui-50 font-semibold">← Back</a>
+
+            <div
+                class="flex flex-col items-center gap-3 justify-end h-4/5 absolute z-10 bottom-0 w-full bg-gradient-to-b from-transparent to-black/30 rounded-lg p-4"
+            >
+                <h2 class="flex justify-center font-bold text-white text-7xl relative">
+                    <span data-memory="title" class="z-2 flex justify-center w-full text-wrap text-center">
+                        <!--* the memory title will be here -->
+                    </span>
+                    <span class="absolute -top-4 -right-7 z-1">
+                        <img data-memory="cover-sticker" src="" alt="" />
+                    </span>
+                </h2>
+                <div class="bg-black/30 p-2 rounded-2xl text-white">
+                    <span data-memory="cover-date" class="">
+                        <!-- * the memory date will be here -->
+                    </span>
+                    <span data-memory="cover-location"></span>
+                </div>
+            </div>
         </div>
 
         <main class="max-w-[1304px] mx-auto px-6">
-            <input type="file" id="file-input" />
+            <div class="group mt-8">
+                <div class="flex justify-between gap-2 flex-col w-full items-start md:flex-row md:justify-between">
+                    <h3 class="font-bold text-2xl">Moments...</h3>
 
-            <button class="btn btn-filled" id="delete-file">delete cover</button>
-            <button class="btn btn-filled" id="edit-memory">Edit memory</button>
-            <div class="flex items-center mb-4">
-                <a href="../">Back</a>
-            </div>
+                    <div class="hidden group-has-[li[data-moment-id]]:flex flex-col w-full gap-4 md:w-fit">
+                        <div id="edit-primary-btns" class="flex justify-between w-full gap-4">
+                            <button
+                                aria-selected="false"
+                                id="edit-moment"
+                                class="btn-text btn-md flex items-center gap-1.5"
+                            >
+                                Edit Moments
+                                <span><i data-feather="edit" class="w-4 h-4"></i></span>
+                            </button>
 
-            <div class="bg-gray-200 rounded-lg p-4 flex flex-col items-center mb-6">
-                <h2 class="font-bold" data-memory="title">Memory title</h2>
-                <div>May 27, 2023</div>
-            </div>
+                            <button id="add-moment" class="btn-outlined btn-md flex items-center gap-1.5">
+                                Add Moments <i data-feather="plus" class="w-4 h-4"></i>
+                            </button>
+                        </div>
 
-            <div>
-                <div class="flex items-center justify-between mb-2">
-                    <h3 class="font-bold">Moments...</h3>
-
-                    <button id="add-moment">Add moments +</button>
+                        <div
+                            id="edit-controllers"
+                            aria-hidden="true"
+                            class="flex justify-between w-full aria-hidden:hidden gap-8 md:justify-end"
+                        >
+                            <button id="delete-moments-btn" class="text-red-600 btn-text btn-md">Delete</button>
+                            <button id="select-all-moments" class="btn-text btn-md flex items-center gap-2">
+                                Select All
+                                <i data-feather="check-circle" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <ul data-moment-list class="grid grid-cols-2 gap-2 md:grid-cols-3">
+                <div id="moments-wrapper" class="flex flex-col items-center justify-center"></div>
+                <div
+                    id="default-moment"
+                    class="mt-4 flex group-has-[li[data-moment-id]]:hidden flex-col items-center justify-center gap-4 border-1 border rounded-xl p-10"
+                >
+                    <img src="/illustrations/reading-book.svg" alt="" />
+                    <p>No moments yet...</p>
+                    <button id="default-add-moment" class="btn-md btn-cta justify-center items-center gap-2 flex">
+                        Add new moments +
+                    </button>
+                </div>
+
+                <ul data-moment-list class="mt-4 grid grid-cols-2 gap-2 md:grid-cols-3">
                     <!-- moments are to be rendered here -->
                 </ul>
             </div>
 
-            <div class="mt-20">
-                <h3 class="font-bold text-3xl mb-8">Time goes fast and have happened</h3>
+            <div class="hidden mt-20" id="time-passed">
+                <h3 class="font-bold font-source text-6xl text-center text-thick-blue-600 mb-14">
+                    Time goes fast and have happened
+                </h3>
 
-                <ul class="grid gap-10">
-                    <li class="flex flex-col h-40 p-6 rounded-lg bg-gray-200">
-                        <span class="mt-auto font-bold text-5xl">2</span><span>Turns around the Sun...</span>
+                <ul class="grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <li
+                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-bl from-indigo-500 text-indigo-900"
+                    >
+                        <img
+                            src="/illustrations/sun-around-earth.svg"
+                            alt="Earth with Sun"
+                            class="w-16 absolute top-5 right-5"
+                        />
+                        <span data-years-count class="mt-auto font-bold font-source text-6xl"></span>
+                        <span>Turns around the Sun...</span>
+                        <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Years</span>
                     </li>
-                    <li class="flex flex-col h-40 p-6 rounded-lg bg-gray-200">
-                        <span class="mt-auto font-bold text-5xl">2</span><span>Turns around the Sun...</span>
+                    <li
+                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-l from-slate-900 to-indigo-800 text-white"
+                    >
+                        <img
+                            src="/illustrations/moon.svg"
+                            alt="Moon"
+                            class="w-[4.5rem] h-[4.5rem] absolute top-5 right-5"
+                        />
+                        <span data-months-count class="mt-auto font-bold font-source text-6xl"></span>
+                        <span>Full Moons since then...</span>
+                        <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Months</span>
                     </li>
-                    <li class="flex flex-col h-40 p-6 rounded-lg bg-gray-200">
-                        <span class="mt-auto font-bold text-5xl">2</span><span>Turns around the Sun...</span>
+                    <li
+                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-l from-indigo-900 to-indigo-500 text-white"
+                    >
+                        <img
+                            src="/illustrations/tent-tree.svg"
+                            alt="Tent and tree"
+                            class="w-16 h-16 absolute top-5 right-5"
+                        />
+                        <span data-weeks-count class="mt-auto font-bold font-source text-6xl"></span>
+                        <span>Crazy weekends...</span>
+                        <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Weeks</span>
                     </li>
-                    <li class="flex flex-col h-40 p-6 rounded-lg bg-gray-200">
-                        <span class="mt-auto font-bold text-5xl">2</span><span>Turns around the Sun...</span>
-                    </li>
-                    <li class="flex flex-col h-40 p-6 rounded-lg bg-gray-200">
-                        <span class="mt-auto font-bold text-5xl">2</span><span>Turns around the Sun...</span>
-                    </li>
-                    <li class="flex flex-col h-40 p-6 rounded-lg bg-gray-200">
-                        <span class="mt-auto font-bold text-5xl">2</span><span>Turns around the Sun...</span>
-                    </li>
-                    <li class="flex flex-col h-40 p-6 rounded-lg bg-gray-200">
-                        <span class="mt-auto font-bold text-5xl">2</span><span>Turns around the Sun...</span>
-                    </li>
-                    <li class="flex flex-col h-40 p-6 rounded-lg bg-gray-200">
-                        <span class="mt-auto font-bold text-5xl">2</span><span>Turns around the Sun...</span>
+                    <li
+                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-bl from-amber-200 to-orange-100 text-indigo-600"
+                    >
+                        <img
+                            src="/illustrations/sun-cloud.svg"
+                            alt="Cloudy sun"
+                            class="w-16 h-16 absolute top-5 right-5"
+                        />
+                        <span data-days-count class="mt-auto font-bold font-source text-6xl"></span>
+                        <span>Unique sunrises</span>
+                        <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Days</span>
                     </li>
                 </ul>
             </div>
@@ -205,9 +284,7 @@
             <div class="rounded-lg hidden">
                 <header class="flex justify-between font-bold w-full text-black">
                     <h2 class="text-2xl">Pick a Sticker</h2>
-                    <button id="modal-close-btn" class="text-lg text-basketball-500 w-7">
-                        <i class="fa-solid fa-x"></i>
-                    </button>
+                    <button id="modal-close-btn" class="text-lg text-basketball-500 w-7">x</button>
                 </header>
                 <section class="grid grid-cols-4 md:grid-cols-11" id="sticker"></section>
                 <footer class="flex gap-3 justify-around w-full sm:justify-end">
@@ -232,22 +309,67 @@
                 </footer>
             </div>
         </main>
+
         <template data-moment-img-item>
-            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden">
-                <img class="object-cover min-h-full max-w-full w-full" src="" />
+            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 relative overflow-hidden">
+                <label
+                    data-select-label
+                    class="peer flex items-center cursor-pointer absolute top-3 right-3 z-10 aria-hidden:hidden"
+                    aria-hidden="true"
+                >
+                    <input data-moment-check="" type="checkbox" class="hidden peer" />
+                    <div
+                        class="w-6 h-6 rounded-full border-ui-50 border-2 peer-checked:bg-blue-600 peer-checked:border-blue-600 flex items-center text-transparent peer-checked:text-white justify-center"
+                    >
+                        <i data-feather="check-circle" class="w-4 h-4"></i>
+                    </div>
+                </label>
+                <div class="peer-has-[:checked]:opacity-70 w-full h-full z-9 relative">
+                    <img class="object-cover min-h-full max-w-full w-full" src />
+                </div>
             </li>
         </template>
         <template data-moment-video-item>
-            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden">
-                <video class="object-cover min-h-full max-w-full w-full" controls src=""></video>
+            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 relativ overflow-hiddene">
+                <label
+                    data-select-label
+                    class="peer flex items-center cursor-pointer absolute top-3 right-3 z-10 aria-hidden:hidden"
+                    aria-hidden="true"
+                >
+                    <input data-moment-check="" type="checkbox" class="hidden peer" />
+                    <div
+                        class="w-6 h-6 rounded-full border-ui-50 border-2 peer-checked:bg-blue-600 peer-checked:border-blue-600 flex items-center text-transparent peer-checked:text-white justify-center"
+                    >
+                        <i data-feather="check-circle" class="w-4 h-4"></i>
+                    </div>
+                </label>
+                <div class="peer-has-[:checked]:opacity-70 w-full h-full z-9 relative">
+                    <video class="object-cover min-h-full max-w-full w-full" controls src></video>
+                </div>
             </li>
         </template>
         <template data-moment-description-item>
             <li
                 data-moment-id=""
-                class="h-64 px-8 py-11 bg-gradient-to-tr from-indigo-800 via-indigo-500 to-indigo-500 rounded-lg border border-indigo-200 justify-center items-center gap-2.5 inline-flex"
+                class="h-64 overflow-hidden px-8 py-11 bg-gradient-to-tr from-indigo-800 via-indigo-500 to-indigo-500 rounded-lg border border-indigo-200 justify-center items-center gap-2.5 inline-flex relative"
             >
-                <p class="text-white text-4xl font-bold font-['Source Serif 4'] line-clamp-3"></p>
+                <label
+                    data-select-label
+                    class="flex items-center peer cursor-pointer absolute top-3 right-3 z-10 aria-hidden:hidden"
+                    aria-hidden="true"
+                >
+                    <input data-moment-check="" type="checkbox" class="hidden peer" />
+                    <div
+                        class="w-6 h-6 rounded-full border-ui-50 border-2 peer-checked:bg-blue-600 peer-checked:border-blue-600 flex items-center text-transparent peer-checked:text-white justify-center"
+                    >
+                        <i data-feather="check-circle" class="w-4 h-4"></i>
+                    </div>
+                </label>
+                <div
+                    class="w-full h-full peer-has-[:checked]:opacity-70 flex justify-center items-center z-10 relative"
+                >
+                    <p class="text-white text-4xl font-bold font-['Source Serif 4'] line-clamp-3"></p>
+                </div>
             </li>
         </template>
         <add-moment-modal></add-moment-modal>
