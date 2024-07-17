@@ -253,9 +253,6 @@ class MemoryCreationModal extends ModalBaseLayer {
         const title = q<HTMLInputElement>('input[name="title"]', this).value
         if (!title.length) return
 
-        const date = q<HTMLInputElement>('input[name="date"]', this).value
-        if (!date.length) return
-
         const currentUser = await userApi.getCurrent()
         if (!currentUser) {
             return
@@ -273,7 +270,7 @@ class MemoryCreationModal extends ModalBaseLayer {
             title,
             location,
             ownerId: currentUser.id,
-            date,
+            date: new Date(q<HTMLInputElement>("input[name='date']").value).toISOString(),
             description: q<HTMLTextAreaElement>('textarea#description', this).value
         })
     }
