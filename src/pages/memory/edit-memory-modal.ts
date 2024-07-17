@@ -15,70 +15,72 @@ class EditMemoryModal extends ModalBaseLayer {
 
     private renderContent(): void {
         q<HTMLDivElement>('[data-modal-content]', this).innerHTML = `
-			<div class="w-full h-full flex flex-col justify-between relative ">
-				<header class="pb-6 gap-6">
-					<div class="flex items-center justify-between">
-						<h3 class="font-bold text-2xl">Edit Memory</h3>
-						<button data-modal-close class="text-basketball-500 text-3xl">
-								&#10005;
-						</button>
-					</div>
-					<div class="w-full flex py-2">
-						<button class="text-thick-blue-600 w-1/2 px-3 py-2 rounded-tl-lg rounded-tr-lg flex-col justify-center items-center gap-1 inline-flex text-lg aria-selected:border-b-2 aria-selected:border-indigo-600 aria-selected:font-bold" id="tab-event" role="tab" aria-controls="edit-memory-1" aria-selected="true" tabindex="0">Event</button>
-						<button class="text-thick-blue-600 w-1/2 px-3 py-2 rounded-tl-lg rounded-tr-lg flex-col justify-center items-center gap-1 inline-flex text-lg aria-selected:border-b-2 aria-selected:border-indigo-600 aria-selected:font-bold" id="tab-sharing" role="tab" aria-controls="edit-memory-2" aria-selected="false" tabindex="-1">Sharing</button>
-					</div>
-				</header>
-				<div id="edit-memory-1" role="tabpanel" aria-hidden="false" tabindex="0" class="flex flex-col flex-grow w-full overflow-x-hidden overflow-y-scroll sm:overflow-y-hidden aria-hidden:hidden">
-					<div class="w-full aspect-[3/2] sm:aspect-[6/1] object-cover h-[30%] relative rounded-lg overflow-hidden bg-gradient-to-b from-orange-300 to-indigo-500">
-						<img data-cover-image aria-hidden id="cover-img" src="" class="object-cover aria-hidden:hidden">
-						<div class="flex justify-between p-4 h-full w-full absolute top-0 right-0 bg-gradient-to-b from-black/25 to-transparent">
-							<p class="text-white">Cover Image</p>
-							<div class="flex gap-3">
-								<input type="file" id="input-cover-img" class="hidden">
-								<button id="delete-cover" class="h-6 aspect-square text-white"><i class="fa-solid fa-trash"></i></button>
-								<label id="upload-cover" for="input-cover-img" class="h-6 aspect-square text-white"><i class="fa-solid fa-pen"></i></label>
-							</div>
-						</div>
-					</div>
-					<div class="w-full flex pt-6 flex-col h-[70%]">
-						<div class="flex items-center justify-start gap-3 h-[15%] relative">
-							<div class="h-full aspect-square overflow-hidden rounded-lg bg-indigo-600">
-								${/* here would be stamp */ ''}
-							</div>
-							<p class="font-bold text-xl">Event Sticker</p>
-							<button class="text-indigo-600"><i class="fa-solid fa-pen-to-square"></i></button>
-						</div>
-						<ul class="flex flex-col w-full gap-x-4 flex-nowrap justify-between pt-6 h-[85%] gap-3 sm:gap-y-0 sm:w-[calc(100%-1rem)] sm:flex-wrap">
-							<li class="flex flex-col gap-2 w-full h-fit sm:w-1/2 max-h-[calc(100%/3)]">
-								<label class="text-slate-700 text-sm" for="memory-name-edit">Name of the event</label>
-								<input type="text" name="event-name" class="input-sm rounded-md text-black border-2 border-slate-400 bg-ui-50">
-							</li>
-							<li class="flex flex-col gap-2 w-full h-fit sm:w-1/2 max-h-[calc(100%/3)]">
-								<label class="text-slate-700 text-sm" for="memory-date-edit">Date</label>
-								<input type="date" name="date" class="input-sm rounded-md text-black border-2 border-slate-400 bg-ui-50">
-							</li>
-							<li class="flex flex-col gap-2 w-full h-fit sm:w-1/2 max-h-[calc(100%/3)]">
-								<label class="text-slate-700 text-sm" for="memory-location-edit">Location</label>
-								<input type="text" name="location" class="input-sm rounded-md text-black border-2 border-slate-400 bg-ui-50">
-							</li>
-							<li class="flex flex-col gap-2 w-full h-fit sm:w-1/2 sm:h-full">
-								<label class="text-slate-700 text-sm">Description or Keynotes</label>
-								<textarea name="description" class="input-sm rounded-md text-black h-56 border-2 border-slate-400 bg-ui-50 grow"></textarea>
-							</li>
-						</ul>
-					</div>
-				</div>
-				<div id="edit-memory-2" role="tabpanel" aria-hidden="true" tabindex="0" class="flex flex-col flex-grow w-full aria-hidden:hidden">
-					<share-memory-window class="h-full flex"></share-memory-window>
-				</div>
-				<footer class="flex  pt-3 flex-col items-center gap-3 sm:pt-6 sm:gap-0 sm:justify-between sm:flex-row">
-					<button class="text-basketball-500 font-bold py-2 px-3" id="delete-memory-btn">Delete Memory</button>
-					<div class="flex w-fit gap-4">
-						<button data-modal-close class="py-2 px-3" id="close-edit-modal">Cancel</button>
-						<button class="bg-orange-600 rounded-3xl justify-center items-center gap-1 inline-flex text-white py-2 px-3" id="save-changes-btn">Save changes</button>
-					</div>
-				</footer>
-			</div>
+            <div class="w-full h-full flex flex-col justify-between relative ">
+                <header class="pb-6 gap-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-2xl">Edit Memory</h3>
+                        <button data-modal-close class="text-basketball-500 text-3xl">
+                                &#10005;
+                        </button>
+                    </div>
+                    <div class="w-full flex py-2">
+                        <button class="text-thick-blue-600 w-1/2 px-3 py-2 rounded-tl-lg rounded-tr-lg flex-col justify-center items-center gap-1 inline-flex text-lg aria-selected:border-b-2 aria-selected:border-indigo-600 aria-selected:font-bold" id="tab-event" role="tab" aria-controls="edit-memory-1" aria-selected="true" tabindex="0">Event</button>
+                        <button class="text-thick-blue-600 w-1/2 px-3 py-2 rounded-tl-lg rounded-tr-lg flex-col justify-center items-center gap-1 inline-flex text-lg aria-selected:border-b-2 aria-selected:border-indigo-600 aria-selected:font-bold" id="tab-sharing" role="tab" aria-controls="edit-memory-2" aria-selected="false" tabindex="-1">Sharing</button>
+                    </div>
+                </header>
+                <div id="edit-memory-1" role="tabpanel" aria-hidden="false" tabindex="0" class="p-1 flex flex-col flex-grow w-full overflow-auto aria-hidden:hidden no-scrollbar">
+                    <div class="w-full aspect-[3/2] sm:aspect-[6/1] object-cover h-[30%] flex-shrink-0 relative rounded-lg overflow-hidden bg-gradient-to-b from-orange-300 to-indigo-500">
+                        <img data-cover-image aria-hidden="true" id="cover-img" src="Memory cover" class="object-cover aria-hidden:hidden">
+                        <div class="flex justify-between p-4 h-full w-full absolute top-0 right-0 bg-gradient-to-b from-black/25 to-transparent">
+                            <p class="text-white">Cover Image</p>
+                            <div class="flex gap-3">
+                                <input type="file" id="input-cover-img" class="hidden">
+                                <button id="delete-cover" class="h-6 aspect-square text-white"><i class="fa-solid fa-trash"></i></button>
+                                <label id="upload-cover" for="input-cover-img" class="h-6 aspect-square text-white"><i class="fa-solid fa-pen"></i></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full flex pt-6 flex-col flex-grow">
+                        <div class="flex items-center justify-start gap-3 flex-shrink-0 relative">
+                            <div class="h-full aspect-square w-12 overflow-hidden rounded-lg bg-indigo-600">
+                                ${/* here would be stamp */ ''}
+                            </div>
+                            <p class="font-bold text-xl">Event sticker</p>
+                            <button class="text-indigo-600"><i data-feather="edit"></i></button>
+                        </div>
+
+                        <ul class="grid w-full md:grid-cols-2 md:grid-rows-3 gap-4 pt-6">
+                            <li class="flex flex-col gap-2 w-full">
+                                <label class="text-slate-700 text-sm" for="memory-name-edit">Name of the event</label>
+                                <input type="text" name="event-name" class="input input-sm">
+                            </li>
+                            <li class="flex flex-col gap-2 w-full">
+                                <label class="text-slate-700 text-sm" for="memory-date-edit">Date</label>
+                                <input type="date" name="date" class="input input-sm">
+                            </li>
+                            <li class="flex flex-col gap-2 w-full">
+                                <label class="text-slate-700 text-sm" for="memory-location-edit">Location</label>
+                                <input type="text" name="location" class="input input-sm">
+                            </li>
+                            <li class="flex flex-col gap-2 w-full md:col-start-2 md:row-span-full">
+                                <label class="text-slate-700 text-sm">Description or Keynotes</label>
+                                <textarea name="description" class="input input-sm h-56 grow resize-none"></textarea>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="edit-memory-2" role="tabpanel" aria-hidden="true" tabindex="0" class="flex flex-col flex-grow w-full aria-hidden:hidden">
+                    <share-memory-window class="h-full flex"></share-memory-window>
+                </div>
+                <footer class="flex pt-3 flex-col items-center gap-3 sm:pt-6 sm:gap-0 sm:justify-between sm:flex-row">
+                    <button class="w-full sm:w-fit btn-text btn-md text-red-600 font-bold" id="delete-memory-btn">Delete Memory</button>
+
+                    <div class="flex w-fit gap-4">
+                        <button data-modal-close class="btn-text btn-md" id="close-edit-modal">Cancel</button>
+                        <button class="btn-filled btn-md" id="save-changes-btn">Save changes</button>
+                    </div>
+                </footer>
+            </div>
       `
     }
 
@@ -138,7 +140,9 @@ class EditMemoryModal extends ModalBaseLayer {
     private setCoverImg(): void {
         const coverImg = q<HTMLImageElement>('[data-cover-image]', this)
         coverImg.src = storageApi.getFileUrl(`memory/${this.memoryId}/cover`) + `?t=${Date.now()}`
-        coverImg.setAttribute('aria-hidden', 'false')
+        coverImg.onload = (): void => {
+            coverImg.setAttribute('aria-hidden', 'false')
+        }
     }
 
     private setAllCoverImg(): void {
@@ -166,15 +170,7 @@ class EditMemoryModal extends ModalBaseLayer {
 
         if (!currentMemory) throw new Error('The memory does not exist or failed fetch the memory data')
 
-        const locationInfo = currentMemory.location
-            ? await getLocationInfo(currentMemory.location).then(
-                  loc => loc,
-                  err => {
-                      console.error(err)
-                      return null
-                  }
-              )
-            : null
+        const locationInfo = currentMemory.location ? await getLocationInfo(currentMemory.location) : null
 
         title.value = currentMemory.title
         date.value = currentMemory.date
@@ -195,13 +191,7 @@ class EditMemoryModal extends ModalBaseLayer {
             await memoryApi.update(this.memoryId as Memory['id'], {
                 title: title.value,
                 date: date.value,
-                location: await codeAddress(location.value).then(
-                    loc => loc,
-                    err => {
-                        console.error(err)
-                        return null
-                    }
-                ),
+                location: await codeAddress(location.value),
                 description: description.value
             })
         })
