@@ -76,7 +76,7 @@ userApi
         if (memories.length === 0) {
             q('#filter-btn').classList.add('hidden')
         }
-  
+
         initFilterDrawer(memories)
 
         renderCountdowns(memories.filter(memory => Date.now() < +new Date(memory.date)))
