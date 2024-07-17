@@ -19,8 +19,6 @@ type OnlineCollaborator = {
     name: User['firstName']
 }
 
-// const moments = await memoryApi.getAllMomentsByMemoryId(memoryId)
-
 userApi
     .getCurrent()
     .then(async user => {
@@ -37,15 +35,7 @@ userApi
 
         void MemoryChat.init(memoryId, memory.ownerId, user)
 
-        const memoryLocation = memory.location
-            ? await getLocationInfo(memory.location).then(
-                  l => l,
-                  err => {
-                      console.error(err)
-                      return null
-                  }
-              )
-            : null
+        const memoryLocation = memory.location ? await getLocationInfo(memory.location) : null
 
         document.querySelectorAll('[data-memory="title"]').forEach(e => (e.innerHTML = memory.title))
         q<HTMLImageElement>('[data-memory="cover-sticker"]').src = memory.stickerId
@@ -137,16 +127,19 @@ userApi
                 })
             })
         }
+
         selectAndDeleteMoments()
 
-        const countDate = new CountTime(memory.date)
-        q<HTMLSpanElement>('[data-yearly-count]').innerHTML = countDate.yearly()
-        q<HTMLSpanElement>('[data-monthly-count]').innerHTML = countDate.monthly()
-        q<HTMLSpanElement>('[data-weekly-count]').innerHTML = countDate.weekly()
-        q<HTMLSpanElement>('[data-daily-count]').innerHTML = countDate.daily()
-        q<HTMLSpanElement>('[data-hourly-count]').innerHTML = countDate.hourly()
-        q<HTMLSpanElement>('[data-minutes-count]').innerHTML = countDate.minutes()
-        q<HTMLSpanElement>('[data-seconds-count]').innerHTML = countDate.seconds()
+        if (Date.now() >= Date.parse(memory.date)) {
+            q('#time-passed').classList.toggle('hidden')
+
+            const countDate = new CountTime(memory.date)
+
+            q<HTMLSpanElement>('[data-years-count]').innerHTML = Math.floor(+countDate.yearly()).toString()
+            q<HTMLSpanElement>('[data-months-count]').innerHTML = countDate.monthly()
+            q<HTMLSpanElement>('[data-weeks-count]').innerHTML = countDate.weekly()
+            q<HTMLSpanElement>('[data-days-count]').innerHTML = countDate.daily()
+        }
     })
     .catch(console.error)
 

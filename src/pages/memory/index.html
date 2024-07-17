@@ -12,9 +12,9 @@
         <script type="module" src="./memory.ts"></script>
     </head>
 
-    <body>
+    <body class="pb-20 md:pb-36">
         <header
-            class="p-6 flex justify-between sticky z-10 top-0 backdrop-blur bg-gradient-to-tr from-thick-blue-600/45 to-thick-blue-800/80"
+            class="p-6 flex justify-between sticky z-20 top-0 backdrop-blur bg-gradient-to-tr from-thick-blue-600/45 to-thick-blue-800/80"
         >
             <a href="/">
                 <img src="/white-logo.svg" alt="logo" />
@@ -74,7 +74,7 @@
 
         <div
             id="chat"
-            class="z-30 fixed w-80 flex flex-col -bottom-96 right-6 bg-white rounded-t-lg text-lg shadow-xl border border-ui-50 transition-all"
+            class="z-20 fixed w-80 flex flex-col -bottom-96 right-6 bg-white rounded-t-lg text-lg shadow-xl border border-ui-50 transition-all"
         >
             <div class="flex items-center justify-between shadow-md px-3">
                 <span data-memory="title" class="font-bold py-3 whitespace-nowrap truncate"></span>
@@ -230,63 +230,59 @@
                 </ul>
             </div>
 
-            <div class="mt-20">
-                <h3 class="font-bold text-3xl mb-8">Time goes fast and have happened</h3>
+            <div class="hidden mt-20" id="time-passed">
+                <h3 class="font-bold font-source text-6xl text-center text-thick-blue-600 mb-14">
+                    Time goes fast and have happened
+                </h3>
 
-                <ul class="grid gap-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                <ul class="grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     <li
                         class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-bl from-indigo-500 text-indigo-900"
                     >
-                        <img src="/illustrations/sun-cloud.svg" alt="" class="w-16 h-16 absolute top-5 right-5" />
-                        <span data-yearly-count class="mt-auto font-bold text-7xl">2</span
-                        ><span>Turns around the Sun...</span>
+                        <img
+                            src="/illustrations/sun-around-earth.svg"
+                            alt="Earth with Sun"
+                            class="w-16 absolute top-5 right-5"
+                        />
+                        <span data-years-count class="mt-auto font-bold font-source text-6xl"></span>
+                        <span>Turns around the Sun...</span>
                         <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Years</span>
                     </li>
                     <li
                         class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-l from-slate-900 to-indigo-800 text-white"
                     >
-                        <img src="/illustrations/moon.svg" alt="" class="w-16 h-16 absolute top-5 right-5" />
-                        <span data-monthly-count class="mt-auto font-bold text-7xl">2</span
-                        ><span>Full Moons since then...</span>
+                        <img
+                            src="/illustrations/moon.svg"
+                            alt="Moon"
+                            class="w-[4.5rem] h-[4.5rem] absolute top-5 right-5"
+                        />
+                        <span data-months-count class="mt-auto font-bold font-source text-6xl"></span>
+                        <span>Full Moons since then...</span>
                         <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Months</span>
                     </li>
                     <li
                         class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-l from-indigo-900 to-indigo-500 text-white"
                     >
-                        <img src="/illustrations/tent-tree.svg" alt="" class="w-16 h-16 absolute top-5 right-5" />
-                        <span data-weekly-count class="mt-auto font-bold text-7xl">2</span
-                        ><span>Crazy weekends...</span>
+                        <img
+                            src="/illustrations/tent-tree.svg"
+                            alt="Tent and tree"
+                            class="w-16 h-16 absolute top-5 right-5"
+                        />
+                        <span data-weeks-count class="mt-auto font-bold font-source text-6xl"></span>
+                        <span>Crazy weekends...</span>
                         <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Weeks</span>
                     </li>
                     <li
                         class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-bl from-amber-200 to-orange-100 text-indigo-600"
                     >
-                        <img src="/illustrations/baby-bottle.svg" alt="" class="w-16 h-16 absolute top-5 right-5" />
-                        <span data-daily-count class="mt-auto font-bold text-7xl">2</span
-                        ><span>Babies have born...</span>
+                        <img
+                            src="/illustrations/sun-cloud.svg"
+                            alt="Cloudy sun"
+                            class="w-16 h-16 absolute top-5 right-5"
+                        />
+                        <span data-days-count class="mt-auto font-bold font-source text-6xl"></span>
+                        <span>Unique sunrises</span>
                         <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Days</span>
-                    </li>
-                    <li
-                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-l from-indigo-500 to-indigo-900 text-white"
-                    >
-                        <img src="/illustrations/music-disk.svg" alt="" class="w-16 h-16 absolute top-5 right-5" />
-                        <span data-hourly-count class="mt-auto font-bold text-7xl">2</span><span>Written songs...</span>
-                        <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Hours</span>
-                    </li>
-                    <li
-                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-bl from-amber-200 to-orange-100 text-indigo-600"
-                    >
-                        <img src="/illustrations/blood-cells.svg" alt="" class="w-16 h-16 absolute top-5 right-5" />
-                        <span data-minutes-count class="mt-auto font-bold text-7xl">2</span
-                        ><span>New red blood cells in you... </span>
-                        <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Minutes</span>
-                    </li>
-                    <li
-                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg relative bg-gradient-to-bl from-amber-200 to-orange-100 text-indigo-600"
-                    >
-                        <img src="/illustrations/sun-cloud.svg" alt="" class="w-16 h-16 absolute top-5 right-5" />
-                        <span data-seconds-count class="mt-auto font-bold text-7xl">2</span><span>Unique sunrises</span>
-                        <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Years</span>
                     </li>
                 </ul>
             </div>
@@ -322,8 +318,9 @@
                 </footer>
             </div>
         </main>
+
         <template data-moment-img-item>
-            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden relative">
+            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 relative">
                 <label
                     data-select-label
                     class="peer flex items-center cursor-pointer absolute top-3 right-3 z-10 aria-hidden:hidden"
@@ -342,7 +339,7 @@
             </li>
         </template>
         <template data-moment-video-item>
-            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 overflow-hidden relative">
+            <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 relative">
                 <label
                     data-select-label
                     class="peer flex items-center cursor-pointer absolute top-3 right-3 z-10 aria-hidden:hidden"
