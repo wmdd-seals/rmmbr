@@ -1,7 +1,19 @@
 import { getLocationInfo } from 'src/utils/gmap'
 import { memoryApi, supabase, userApi, storageApi } from '#api'
 import { Memory, MemoryMessage, User } from '#domain'
-import { daysFrom, Maybe, monthsFrom, q, updateCurrentUserChip, weeksFrom, yearsFrom, hoursUntil } from '#utils'
+import {
+    daysFrom,
+    Maybe,
+    monthsFrom,
+    q,
+    updateCurrentUserChip,
+    weeksFrom,
+    yearsFrom,
+    hoursUntil,
+    daysUntil,
+    weeksUntil,
+    monthsUntil
+} from '#utils'
 import { Moment } from '#domain'
 import './edit-memory-modal'
 import './add-moment-modal'
@@ -22,13 +34,16 @@ type OnlineCollaborator = {
 
 const isPastMemory = (memoryDate: Memory['date']): boolean => new Date().getTime() > new Date(memoryDate).getTime()
 
-function toggleOnIfMemoryIsPast(isPast: boolean): void {
+function toggleOnIfMemoryIsPast(isPast: boolean, memory: Memory): void {
     ;(document.querySelectorAll('[data-past-memory-area]') as NodeList).forEach((e): void =>
         (e as HTMLElement).setAttribute('aria-hidden', `${isPast ? 'false' : 'true'}`)
     )
     ;(document.querySelectorAll('[data-countdown-area]') as NodeList).forEach((e): void => {
         ;(e as HTMLElement).setAttribute('aria-hidden', `${isPast ? 'true' : 'false'}`)
     })
+
+    if (isPast) return
+    q<HTMLHeadingElement>('[date-countdown-counts]').innerHTML = `${daysUntil(memory.date)} days`
 }
 
 async function renderCover(memory: Memory): Promise<void> {
@@ -46,12 +61,8 @@ async function renderCover(memory: Memory): Promise<void> {
 
     const coverSrc = storageApi.getFileUrl(`memory/${memory.id}/cover`) + `?t=${Date.now()}`
     await checkIfImageExists(coverSrc)
-        .then(res => {
-            img.src = res
-        })
-        .catch(err => {
-            console.error(err)
-        })
+        .then(res => (img.src = res))
+        .catch(console.error)
 }
 
 userApi
@@ -72,26 +83,8 @@ userApi
 
         LatestMemory.init(memoryId)
 
-        await renderCover(memory)
-        toggleOnIfMemoryIsPast(isPastMemory(memory.date))
-
-        const memoryLocation = memory.location ? await getLocationInfo(memory.location) : null
-
-        document.querySelectorAll('[data-memory="title"]').forEach(e => (e.innerHTML = memory.title))
-        q<HTMLImageElement>('[data-memory="cover-sticker"]').src = memory.stickerId
-            ? `/illustrations/${memory.stickerId}`
-            : ''
-        q<HTMLSpanElement>('[data-memory="cover-date"]').innerHTML = memory.date
-        q<HTMLSpanElement>('[data-memory="cover-location"]').innerHTML = memoryLocation
-            ? `, ${memoryLocation.city}, ${memoryLocation.country}`
-            : ''
-
-        const img = q<HTMLImageElement>('#memory-cover')
-
-        const coverSrc = storageApi.getFileUrl(`memory/${memoryId}/cover`) + `?t=${Date.now()}`
-        await checkIfImageExists(coverSrc)
-            .then(res => (img.src = res))
-            .catch(console.error)
+        void renderCover(memory)
+        toggleOnIfMemoryIsPast(isPastMemory(memory.date), memory)
 
         renderStickers()
 
@@ -180,14 +173,23 @@ userApi
             q<HTMLSpanElement>('[data-days-count]').innerHTML = daysFrom(memory.date).toString()
         } else {
             q<HTMLSpanElement>('[data-countdown-num="hours"]').innerHTML = hoursUntil(memory.date).toString()
-            // q<HTMLSpanElement>('[data-countdown-num="days"]').innerHTML = daysFrom(memory.date).toString()
-            // q<HTMLSpanElement>('[data-countdown-num="weeks"]').innerHTML = countDate.weekly()
-            // q<HTMLSpanElement>('[data-countdown-num="months"]').innerHTML = countDate.monthly()
+            q<HTMLSpanElement>('[data-countdown-num="days"]').innerHTML = daysUntil(memory.date).toString()
+            q<HTMLSpanElement>('[data-countdown-num="weeks"]').innerHTML = weeksUntil(memory.date).toString()
+            q<HTMLSpanElement>('[data-countdown-num="months"]').innerHTML = monthsUntil(memory.date).toString()
 
-            // q<HTMLSpanElement>('[data-countdown-special-count="songs"]').innerHTML = countDate.songs()
-            // q<HTMLSpanElement>('[data-countdown-special-count="miles"]').innerHTML = countDate.miles()
-            // q<HTMLSpanElement>('[data-countdown-special-count="tv-series"]').innerHTML = countDate.tvSeries()
-            // q<HTMLSpanElement>('[data-countdown-special-count="books"]').innerHTML = countDate.books()
+            q<HTMLSpanElement>('[data-countdown-special-count="songs"]').innerHTML = (
+                (hoursUntil(memory.date) * 60) /
+                3
+            ).toString()
+            q<HTMLSpanElement>('[data-countdown-special-count="miles"]').innerHTML = (
+                daysUntil(memory.date) * 20
+            ).toString()
+            q<HTMLSpanElement>('[data-countdown-special-count="tv-series"]').innerHTML = (
+                weeksUntil(memory.date) / 10
+            ).toString()
+            q<HTMLSpanElement>('[data-countdown-special-count="books"]').innerHTML = (
+                daysUntil(memory.date) / 5
+            ).toString()
         }
     })
     .catch(console.error)
@@ -404,9 +406,9 @@ class LatestMemory {
                     table: 'memories',
                     filter: `id=eq.${memoryId}`
                 },
-                async payload => {
+                payload => {
                     if (Object.keys(payload.new).length === 0) return
-                    await renderCover(payload.new as Memory)
+                    void renderCover(payload.new as Memory)
                 }
             )
             .subscribe()
