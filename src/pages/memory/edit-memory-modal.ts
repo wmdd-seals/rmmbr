@@ -35,8 +35,8 @@ class EditMemoryModal extends ModalBaseLayer {
                             <p class="text-white">Cover Image</p>
                             <div class="flex gap-3">
                                 <input type="file" id="input-cover-img" class="hidden">
-                                <button id="delete-cover" class="h-6 aspect-square text-white"><i class="fa-solid fa-trash"></i></button>
-                                <label id="upload-cover" for="input-cover-img" class="h-6 aspect-square text-white"><i class="fa-solid fa-pen"></i></label>
+                                <button id="delete-cover" class="h-6 aspect-square text-white"><i data-feather="trash-2" class=""></i></button>
+                                <label id="upload-cover" for="input-cover-img" class="h-6 aspect-square text-white"><i data-feather="edit" class=""></i></label>
                             </div>
                         </div>
                     </div>
