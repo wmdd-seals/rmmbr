@@ -47,10 +47,17 @@ export async function codeAddress(address: string): PromiseMaybe<Location> {
         return null
     }
 
-    const { Geocoder } = await loader.importLibrary('geocoding')
-    const { results } = await new Geocoder().geocode({ address: address })
-    const location = results[0].geometry.location
-    return [location.lng(), location.lat()]
+    try {
+        const { Geocoder } = await loader.importLibrary('geocoding')
+        const { results } = await new Geocoder().geocode({ address: address })
+        const location = results[0].geometry.location
+
+        return [location.lng(), location.lat()]
+    } catch (err) {
+        console.warn(err)
+
+        return null
+    }
 }
 
 type LocationInfo = {
