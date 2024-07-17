@@ -188,11 +188,11 @@ function initFilterDrawer(memories: Memory[]): void {
 
         drawer.classList.remove('!translate-x-full')
 
+        renderCategoriesOnFilter(memories)
+        renderLocationsOnFilter()
+
         filtersOpen = true
     })
-
-    renderCategoriesOnFilter(memories)
-    renderLocationsOnFilter()
 
     const filterCriteria: FilterCriteria = {
         categories: [],
@@ -357,10 +357,14 @@ function renderLocationsOnFilter(): void {
 
 function renderDropdownMenu(values: Set<string>, selectElemId: string): void {
     const dropdown = document.getElementById(selectElemId) as HTMLSelectElement
+    // clear every entry except the default placeholder
+    dropdown.querySelectorAll('option:not([disabled])').forEach(el => el.remove())
+
     values.forEach(value => {
         const option = document.createElement('option')
         option.value = value
         option.text = value
+
         dropdown.appendChild(option)
     })
 }
