@@ -1,5 +1,5 @@
 export * from './types'
-export { createMapWithMarkers, codeAddress, initAutoComplete, getLocationInfo } from './gmap'
+export { createMapWithMarkers, codeAddress, initAutoComplete, getLocationInfo, type LocationInfo } from './gmap'
 export { PagePath } from './page-path'
 export { q } from './query'
 export { updateCurrentUserChip } from './update-current-user-chip'

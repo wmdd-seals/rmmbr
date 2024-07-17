@@ -60,7 +60,7 @@ export async function codeAddress(address: string): PromiseMaybe<Location> {
     }
 }
 
-type LocationInfo = {
+export type LocationInfo = {
     country: string
     city: Maybe<string>
 }
