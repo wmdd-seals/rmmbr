@@ -22,11 +22,11 @@ class AddMomentModal extends ModalBaseLayer {
             <div class="w-full h-full flex flex-col justify-between relative">
                 <header class="pb-6 gap-6">
                     <div class="flex items-center justify-between">
-						<h3 class="font-bold text-2xl">Add new moments</h3>
-						<button data-modal-close class="text-basketball-500 text-3xl">
-								&#10005;
-						</button>
-					</div>
+                        <h3 class="font-bold text-2xl">Add new moments</h3>
+                        <button data-modal-close class="text-basketball-500 text-3xl">
+                            &#10005;
+                        </button>
+                    </div>
 
                     <div class="w-full flex py-2">
                         <button
@@ -45,8 +45,9 @@ class AddMomentModal extends ModalBaseLayer {
                             tabindex="-1">Note, Reflection</button>
                     </div>
                 </header>
+
                 <div id="add-moment-1" role="tabpanel" aria-hidden="false" tabindex="0" class="flex flex-col flex-grow w-full overflow-x-hidden overflow-y-scroll sm:overflow-y-hidden aria-hidden:hidden">
-                    <div class="w-full h-full flex flex-col items-center justify-center">
+                    <div class="w-full h-full flex flex-col md:flex-row md:justify-around gap-4 items-center justify-center">
                         <input type="file" id="media-input" class="hidden" multiple>
                         <div data-media-preview class="peer h-full hidden has-[[data-preview-item]]:flex justify-center items-start sm:justify-start gap-4 flex-wrap w-full content-start overflow-y-scroll">
                         </div>
@@ -56,30 +57,32 @@ class AddMomentModal extends ModalBaseLayer {
                         <label
                             id="pick-media"
                             for="media-input"
-                            class="peer-has-[[data-preview-item]]:hidden mt-4 px-6 py-2 bg-indigo-700 rounded-3xl border border-indigo-300 justify-center items-center gap-2 flex text-white shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)]">Pick from your gallery <i class="fa-solid fa-arrow-up-from-bracket"></i></label>
+                            class="btn-md btn-cta cursor-pointer peer-has-[[data-preview-item]]:hidden justify-center items-center gap-2 flex whitespace-nowrap">Pick from your gallery <i class="fa-solid fa-arrow-up-from-bracket"></i></label>
                     </div>
                 </div>
+
                 <div id="add-moment-2" role="tabpanel" aria-hidden="true" tabindex="0" class="flex flex-col items-center justify-center flex-grow w-full overflow-x-hidden overflow-y-scroll sm:overflow-y-hidden aria-hidden:hidden">
-                    <div class="flex flex-col h-full w-full items-center justify-center gap-6 sm:flex-row">
-                        <img src="/illustrations/calming-girl.svg" class="w-1/2 sm:w-2/5">
-                        <div class="flex flex-col h-1/2 w-full items-start gap-2">
+                    <div class="grid lg:grid-cols-2 h-full w-full items-center gap-6 p-1">
+                        <img src="/illustrations/calming-girl.svg" class="self-end lg:self-center w-full">
+
+                        <div class="self-start lg:self-center flex flex-col w-full items-start gap-2">
                             <label for="description-input" class="text-slate-700">Note, or Reflection</label>
-                            <Textarea id="description-input" class="w-full border-ui-300 border-2 p-3 rounded-md h-full"></Textarea>
+                            <textarea id="description-input" class="w-full input input-md min-h-52 max-h-full"></textarea>
                         </div>
                     </div>
                 </div>
 				<footer class="flex w-full pt-3 flex-col items-center gap-3 sm:pt-6 sm:gap-0 sm:justify-between sm:flex-row">
 					<div class="flex w-fit gap-4">
-						<button data-modal-close class="py-2 px-3" id="close-edit-modal">Cancel</button>
+						<button data-modal-close class="btn-text btn-md" id="close-edit-modal">Cancel</button>
 						<button
-                            class="bg-orange-600 rounded-3xl justify-center items-center gap-1 inline-flex text-white py-2 px-3"
+                            class="btn-filled btn-md"
                             id="save-changes-btn">Save changes</button>
 					</div>
                 </footer>
             </div>
             <template id="preview-item-template">
                 <div data-preview-item class="flex h-32 relative">
-                    <span data-file-modifier class="absolute -top-1 -right-1 w-6 h-6 text-sm flex justify-center items-center rounded-full bg-white font-bold text-indigo-700">&#10005;</span>
+                    <span data-file-modifier class="cursor-pointer absolute -top-1 -right-1 w-6 h-6 text-sm flex justify-center items-center rounded-full bg-white font-bold text-indigo-700">&#10005;</span>
 
                 </div>
             </template>
