@@ -281,24 +281,22 @@ function filterByDate(memory: Memory, filterCriteria: FilterCriteria): boolean {
     const startDateLocal = filterCriteria.startDate ? new Date(filterCriteria.startDate) : null
     const endDateLocal = filterCriteria.endDate ? new Date(filterCriteria.endDate) : null
 
-    const startDateUtc = startDateLocal
-        ? new Date(startDateLocal.getTime() - startDateLocal.getTimezoneOffset() * 60000)
-        : null
-    const endDateUtc = endDateLocal ? new Date(endDateLocal.getTime() - endDateLocal.getTimezoneOffset() * 60000) : null
+    const startDate = startDateLocal ? new Date(startDateLocal.getTime()) : null
+    const endDate = endDateLocal ? new Date(endDateLocal.getTime()) : null
 
-    const memoryDateUtc = new Date(memory.date)
+    const memoryDate = new Date(memory.date)
 
-    if (!startDateUtc) {
-        if (!endDateUtc) return true
+    if (!startDate) {
+        if (!endDate) return true
 
-        return memoryDateUtc <= endDateUtc
+        return memoryDate <= endDate
     }
 
-    if (!endDateUtc) {
-        return startDateUtc <= memoryDateUtc
+    if (!endDate) {
+        return startDate <= memoryDate
     }
 
-    return startDateUtc <= memoryDateUtc && memoryDateUtc <= endDateUtc
+    return startDate <= memoryDate && memoryDate <= endDate
 }
 
 function filterByLocation(memory: Memory, filterCriteria: FilterCriteria): boolean {

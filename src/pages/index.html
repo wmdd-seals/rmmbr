@@ -39,20 +39,31 @@
             </div>
         </header>
 
-        <main class="relative px-6 pb-14 md:pb-16 bg-no-repeat bg-top" style="background-image: url(/sign-bg.jpg); background-size: 100% 40%; ">
-            
-            <div class=" max-w-[1304px] mx-auto flex flex-col gap-10" >
+        <main
+            class="relative px-6 pb-14 md:pb-16 bg-no-repeat bg-top"
+            style="background-image: url(/sign-bg.jpg); background-size: 100% 40%"
+        >
+            <div class="max-w-[1304px] mx-auto flex flex-col gap-10">
                 <div class="flex justify-center items-center pt-36 pb-40 md:pt-16 md:pb-0">
                     <div
                         class="flex flex-col gap-8 md:grow md:flex-row md:justify-between md:items-end lg:row-start-1 lg:col-span-2 items-center"
                     >
                         <span class="flex flex-col items-center md:items-start md:text-xl lg:text-2xl">
                             <span class="text-xl text-white font-bold">Hello,</span>
-                            <span class="text-5xl text-white leading-tight font-bold font-source" data-user="name"></span>
-                            <span class="text-lg text-white font-medium">You have <span data-memory="count"></span> saved!</span>
+                            <span
+                                class="text-5xl text-white leading-tight font-bold font-source"
+                                data-user="name"
+                            ></span>
+                            <span class="text-lg text-white font-medium"
+                                >You have <span data-memory="count"></span> saved!</span
+                            >
                         </span>
 
-                        <button class="btn-cta btn-md flex gap-2 items-center p-3" id="create-memory-btn" data-memory="create">
+                        <button
+                            class="btn-cta btn-md flex gap-2 items-center p-3"
+                            id="create-memory-btn"
+                            data-memory="create"
+                        >
                             Create New<i data-feather="plus-circle" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -65,7 +76,9 @@
                             class="grow py-2 flex justify-center items-center text-indigo-700 border-b border-indigo-700"
                             >Home</a
                         >
-                        <a href="#memory" class="grow py-2 flex justify-center items-center text-indigo-700">Memories</a>
+                        <a href="#memory" class="grow py-2 flex justify-center items-center text-indigo-700"
+                            >Memories</a
+                        >
                     </section>
 
                     <section id="home" class="flex flex-col gap-9 overflow-hidden grow md:flex lg:flex-row">
@@ -80,6 +93,7 @@
                                     id="countdown-list"
                                     class="grow rounded-xl bg-gradient-to-b from-white/20 to-white/50 backdrop-blur snap-mandatory snap-x flex overflow-auto min-h-80 no-scrollbar"
                                 >
+                                    <div data-label="show-after-filter" class="flex flex-wrap gap-1 py-2"></div>
                                     <div
                                         id="countdown-overlay"
                                         class="flex flex-col gap-3 items-center justify-center p-5 w-full"
@@ -89,12 +103,12 @@
                                             <p class="text-center">You don't have any upcoming events yet.</p>
                                             <p class="font-bold text-center">Add one to start counting down!</p>
                                         </div>
-                                        <button data-memory="create" class="flex gap-2 ">
+                                        <button data-memory="create" class="flex gap-2">
                                             Create New
                                             <i data-feather="plus-circle" aria-hidden="true"></i>
                                         </button>
                                     </div>
-                                     
+
                                     <template id="countdown-thumbnail">
                                         <li class="w-full snap-center shrink-0">
                                             <div class="py-14 px-10 flex flex-col gap-2 items-center">
@@ -160,7 +174,7 @@
                                 Your locations
                                 <span class="text-type-200 text-base font-normal" data-user="locations-count"></span>
                             </h2>
-    
+
                             <div
                                 class="relative grow flex flex-col rounded-xl overflow-hidden md:shadow-2xl min-h-[400px]"
                             >
@@ -180,12 +194,15 @@
 
                 <section id="memory" class="hidden md:block">
                     <div class="flex flex-col gap-4 md:flex-row md:justify-between pb-4">
-                        <h2
-                            class="font-bold text-xl flex gap-5 justify-between items-center md:justify-start"
-                        >
+                        <h2 class="font-bold text-xl flex gap-5 justify-between items-center md:justify-start">
                             Your memories<span class="font-normal"><span data-memory="count"></span></span>
                         </h2>
-                        <button class="flex gap-1 justify-center items-center md:self-end btn-outlined btn-md" id="filter-btn">Filter<i data-feather="filter" aria-hidden="true"></i></button>
+                        <button
+                            class="flex gap-1 justify-center items-center md:self-end btn-outlined btn-md"
+                            id="filter-btn"
+                        >
+                            Filter<i data-feather="filter" aria-hidden="true"></i>
+                        </button>
                     </div>
 
                     <div id="memory-overlay" class="flex flex-col gap-4 justify-center items-center py-10">
@@ -274,7 +291,6 @@
                     <option selected disabled>Select a collaborator</option>
                 </select>
                 <div class="flex flex-wrap gap-1"></div>
-
             </div>
             <button class="btn-filled btn-md" id="filter-start-btn">Filter</button>
         </div>
