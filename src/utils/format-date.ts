@@ -14,10 +14,8 @@ const months = [
 ]
 
 export function formatDate(dateString: string): string {
-    const offset = new Date().getTimezoneOffset()
-    const date = new Date(dateString).getTime() + offset * 60 * 1000
-    const convertedDate = new Date(date)
-    const month = months[convertedDate.getMonth()]
+    const [year, month, day] = dateString.split('-')
+    const monthString = months[Number(month) - 1]
 
-    return `${month} ${convertedDate.getDate()}, ${convertedDate.getFullYear()}`
+    return `${monthString} ${day}, ${year}`
 }

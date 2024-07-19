@@ -1,5 +1,5 @@
 import { Memory } from '#domain'
-import { PromiseMaybe, initAutoComplete, codeAddress, q, dateConverterForDb } from '#utils'
+import { PromiseMaybe, initAutoComplete, codeAddress, q } from '#utils'
 import { memoryApi } from 'src/api/memory'
 import { userApi } from '#api'
 import { ModalBaseLayer } from '../components/modal-base-layer'
@@ -272,7 +272,7 @@ class MemoryCreationModal extends ModalBaseLayer {
             title,
             location,
             ownerId: currentUser.id,
-            date: dateConverterForDb(q<HTMLInputElement>("input[name='date']").value),
+            date: q<HTMLInputElement>("input[name='date']").value,
             description: q<HTMLTextAreaElement>('textarea#description', this).value
         })
     }

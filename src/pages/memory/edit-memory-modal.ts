@@ -1,4 +1,4 @@
-import { codeAddress, dateConverterForDb, initAutoComplete, q } from '#utils'
+import { codeAddress, initAutoComplete, q } from '#utils'
 import { ModalBaseLayer } from 'src/components/modal-base-layer'
 import '../share-memory-window'
 import { memoryApi, storageApi } from '#api'
@@ -183,7 +183,7 @@ class EditMemoryModal extends ModalBaseLayer {
         q<HTMLButtonElement>('#save-changes-btn', this).addEventListener('click', async () => {
             await memoryApi.update(this.memoryId as Memory['id'], {
                 title: title.value,
-                date: dateConverterForDb(date.value),
+                date: date.value,
                 location: await codeAddress(location.value),
                 description: description.value
             })
