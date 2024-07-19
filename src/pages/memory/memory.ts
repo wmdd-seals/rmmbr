@@ -54,7 +54,7 @@ async function renderCover(memory: Memory): Promise<void> {
         : ''
     q<HTMLSpanElement>('[data-memory="cover-date"]').innerHTML = memory.date
     q<HTMLSpanElement>('[data-memory="cover-location"]').innerHTML = memoryLocation
-        ? `, ${memoryLocation.city}, ${memoryLocation.country}`
+        ? `, ${memoryLocation.city ? `${memoryLocation.city}, ` : ''}${memoryLocation.country}`
         : ''
 
     const img = q<HTMLImageElement>('#memory-cover')
