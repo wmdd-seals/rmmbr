@@ -525,6 +525,24 @@ class MemoryChat {
 
             document.querySelector('#no-messages')?.remove()
 
+            if (document.visibilityState === 'hidden' || !this.isOpen) {
+                void Notification.requestPermission().then(access => {
+                    if (access !== 'granted') {
+                        return
+                    }
+
+                    const notification = new Notification(`rmmbr: New Message`, {
+                        body: message.message,
+                        tag: memoryId
+                    })
+
+                    notification.addEventListener('click', () => {
+                        window.focus()
+                        MemoryChat.openChat()
+                    })
+                }, console.error)
+            }
+
             if (this.isOpen) {
                 this.scrollToEnd()
             }
