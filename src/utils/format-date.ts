@@ -14,9 +14,8 @@ const months = [
 ]
 
 export function formatDate(dateString: string): string {
-    const date = new Date(dateString)
+    const [year, month, day] = dateString.split('-')
+    const monthString = months[Number(month) - 1]
 
-    const month = months[date.getMonth()]
-
-    return `${month} ${date.getDate()}, ${date.getFullYear()}`
+    return `${monthString} ${day}, ${year}`
 }

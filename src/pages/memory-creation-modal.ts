@@ -272,7 +272,7 @@ class MemoryCreationModal extends ModalBaseLayer {
             title,
             location,
             ownerId: currentUser.id,
-            date: new Date(q<HTMLInputElement>("input[name='date']").value).toISOString(),
+            date: q<HTMLInputElement>("input[name='date']").value,
             description: q<HTMLTextAreaElement>('textarea#description', this).value
         })
     }

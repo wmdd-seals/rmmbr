@@ -183,7 +183,7 @@ class EditMemoryModal extends ModalBaseLayer {
         q<HTMLButtonElement>('#save-changes-btn', this).addEventListener('click', async () => {
             await memoryApi.update(this.memoryId as Memory['id'], {
                 title: title.value,
-                date: new Date(date.value).toISOString(),
+                date: date.value,
                 location: await codeAddress(location.value),
                 description: description.value
             })
