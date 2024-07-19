@@ -29,8 +29,8 @@ class EditMemoryModal extends ModalBaseLayer {
                     </div>
                 </header>
                 <div id="edit-memory-1" role="tabpanel" aria-hidden="false" tabindex="0" class="p-1 flex flex-col flex-grow w-full overflow-auto aria-hidden:hidden no-scrollbar">
-                    <div class="w-full aspect-[3/2] sm:aspect-[6/1] object-cover h-[30%] flex-shrink-0 relative rounded-lg overflow-hidden bg-gradient-to-b from-orange-300 to-indigo-500">
-                        <img data-cover-image aria-hidden="true" id="cover-img" src="Memory cover" class="object-cover aria-hidden:hidden">
+                    <div class="flex w-full aspect-[3/2] sm:aspect-[6/1] object-cover h-[30%] flex-shrink-0 relative rounded-lg overflow-hidden bg-gradient-to-b from-orange-300 to-indigo-500">
+                        <img data-cover-image aria-hidden="true" id="cover-img" src="Memory cover" class="object-cover flex-grow aria-hidden:hidden">
                         <div class="flex justify-between p-4 h-full w-full absolute top-0 right-0 bg-gradient-to-b from-black/25 to-transparent">
                             <p class="text-white">Cover Image</p>
                             <div class="flex gap-3">
