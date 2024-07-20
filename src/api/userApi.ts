@@ -31,7 +31,9 @@ class UserApi {
                 data: {
                     firstName: userCredential.firstName,
                     lastName: userCredential.lastName
-                }
+                },
+                // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+                emailRedirectTo: location.origin + `/${import.meta.env.VITE_APP_URL_PREFIX || ''}`
             }
         }
         return supabase.auth.signUp(loginCred)
