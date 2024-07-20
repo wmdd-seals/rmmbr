@@ -25,6 +25,7 @@ env:
   VITE_PUBLIC_SUPABASE_URL: ${{ secrets.VITE_PUBLIC_SUPABASE_URL }}
   VITE_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.VITE_PUBLIC_SUPABASE_ANON_KEY }}
   VITE_PUBLIC_GOOGLE_MAP_API_KEY: ${{ secrets.VITE_PUBLIC_GOOGLE_MAP_API_KEY }}
+  VITE_APP_URL_PREFIX: ${{ secrets.VITE_APP_URL_PREFIX }}
 
 jobs:
   # Single deploy job since we're just deploying
