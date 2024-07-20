@@ -1,6 +1,6 @@
 import './memory-creation-modal'
 import { memoryApi, storageApi, supabase, userApi } from '#api'
-import { createMapWithMarkers, formatDate, Maybe, q, updateCurrentUserChip } from '#utils'
+import { createMapWithMarkers, formatDate, Maybe, prefixPath, q, updateCurrentUserChip } from '#utils'
 import { Location, LocationInfo } from '#utils'
 import { getLocationInfo } from 'src/utils/gmap'
 import { Memory, User } from '#domain'
@@ -112,7 +112,7 @@ function renderMemories(memories: Memory[]): void {
 
             q('[data-memory="title"]', node).innerHTML = memory.title
             q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
-            q<HTMLAnchorElement>('[data-memory="link"]', node).href = `/memory/?id=${memory.id}`
+            q<HTMLAnchorElement>('[data-memory="link"]', node).href = prefixPath(`/memory/?id=${memory.id}`)
             q<HTMLImageElement>('[data-memory="cover"]', node).src =
                 storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
 
@@ -166,7 +166,7 @@ function renderFlashbacks(memories: Memory[]): void {
 
             q('[data-memory=title]', node).innerHTML = memory.title
             q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
-            q<HTMLAnchorElement>('[data-memory=link]', node).href = `/memory/?id=${memory.id}`
+            q<HTMLAnchorElement>('[data-memory=link]', node).href = prefixPath(`/memory/?id=${memory.id}`)
             q<HTMLImageElement>('[data-memory=cover]', node).src =
                 storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
 
