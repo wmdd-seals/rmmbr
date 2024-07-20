@@ -325,6 +325,8 @@ function renderCountdowns(memories: Memory[]): void {
         q('[data-memory=title]', node).innerHTML = title
         q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
         q('[data-memory="countdown"]', node).innerHTML = `${daysUntil(memory.date)} days`
+        q<HTMLImageElement>('[data-cover-image]', node).src =
+            storageApi.getFileUrl(`memory/${memory.id}/cover`) + `?t=${Date.now()}`
 
         countdownList.appendChild(node)
     })
