@@ -7,7 +7,7 @@
     "display": "minimal-ui",
     "icons": [
         {
-            "src": "/icon.svg",
+            "src": "/favicon.svg",
             "sizes": "any",
             "type": "image/svg+xml",
             "purpose": "any"
@@ -15,46 +15,46 @@
     ],
     "screenshots": [
         {
-            "src": "/screenshots/01_MainScreen - Desktop 00.png",
+            "src": "/screenshots/01-main-screen-desktop.png",
             "sizes": "1300x732",
             "type": "image/png",
             "label": "MainScreen - Desktop00",
             "form_factor": "wide"
         },
         {
-            "src": "/screenshots/02_MainScreen - Desktop 01.png",
+            "src": "/screenshots/02-main-screen-desktop.png",
             "sizes": "1013x1800",
             "type": "image/png",
             "label": "MainScreen - Desktop01"
         },
         {
-            "src": "/screenshots/03_MainScreen - Desktop 02.png",
+            "src": "/screenshots/03-main-screen-desktop.png",
             "sizes": "1300x732",
             "type": "image/png",
             "label": "MainScreen - Desktop02",
             "form_factor": "wide"
         },
         {
-            "src": "/screenshots/04_Memory Chat - Desktop.png",
+            "src": "/screenshots/04-memory-chat-desktop.png",
             "sizes": "1013x1800",
             "type": "image/png",
             "label": "Memory Chat - Desktop"
         },
         {
-            "src": "/screenshots/05_Memory Desktop 02.png",
+            "src": "/screenshots/05-memory-desktop.png",
             "sizes": "1300x732",
             "type": "image/png",
             "label": "Memory Desktop02",
             "form_factor": "wide"
         },
         {
-            "src": "/screenshots/06_Memory Desktop.png",
+            "src": "/screenshots/06-memory-desktop.png",
             "sizes": "1013x1800",
             "type": "image/png",
             "label": "Memory Desktop"
         },
         {
-            "src": "/screenshots/07_Memory Edit Desktop.png",
+            "src": "/screenshots/07-memory-edit-desktop.png",
             "sizes": "1300x732",
             "type": "image/png",
             "label": "Memory Edit Desktop",
