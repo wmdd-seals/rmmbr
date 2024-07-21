@@ -1,0 +1,64 @@
+{
+    "name": "rmmbr",
+    "short_name": "rmmbr",
+    "start_url": "/index.html",
+    "background_color": "#ffffff",
+    "description": "Rmmbr is an app that allows you to upload, edit, and share your special moments with loved ones by preserving memories and looking forward to future events. Whether it’s a special trip, a happy celebration, or everyday moments, rmmbr lets you store your photos and videos securely and organized.",
+    "display": "minimal-ui",
+    "icons": [
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/screenshots/01-main-screen-desktop.png",
+            "sizes": "1300x732",
+            "type": "image/png",
+            "label": "MainScreen - Desktop00",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/screenshots/02-main-screen-desktop.png",
+            "sizes": "1013x1800",
+            "type": "image/png",
+            "label": "MainScreen - Desktop01"
+        },
+        {
+            "src": "/screenshots/03-main-screen-desktop.png",
+            "sizes": "1300x732",
+            "type": "image/png",
+            "label": "MainScreen - Desktop02",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/screenshots/04-memory-chat-desktop.png",
+            "sizes": "1013x1800",
+            "type": "image/png",
+            "label": "Memory Chat - Desktop"
+        },
+        {
+            "src": "/screenshots/05-memory-desktop.png",
+            "sizes": "1300x732",
+            "type": "image/png",
+            "label": "Memory Desktop02",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/screenshots/06-memory-desktop.png",
+            "sizes": "1013x1800",
+            "type": "image/png",
+            "label": "Memory Desktop"
+        },
+        {
+            "src": "/screenshots/07-memory-edit-desktop.png",
+            "sizes": "1300x732",
+            "type": "image/png",
+            "label": "Memory Edit Desktop",
+            "form_factor": "wide"
+        }
+    ]
+}
