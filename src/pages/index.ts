@@ -5,6 +5,24 @@ import { Location, LocationInfo } from '#utils'
 import { getLocationInfo } from 'src/utils/gmap'
 import { Memory, User } from '#domain'
 
+if (!navigator.onLine) {
+    q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'true')
+}
+
+window.addEventListener('offline', () => {
+    q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'true')
+})
+window.addEventListener('online', () => {
+    q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'false')
+    window.location.reload()
+})
+
 type FilterCriteria = {
     categories: string[]
     startDate: string

@@ -20,6 +20,14 @@
             </a>
 
             <div class="flex items-center gap-4">
+                <p
+                    id="offline-label"
+                    aria-hidden="true"
+                    class="aria-hidden:hidden mr-3 text-slate-100 text-base font-medium font-dm bg-white/35 rounded-3xl py-2 px-5 flex gap-3 items-center justify-between"
+                >
+                    <i data-feather="wifi-off"></i>
+                    No Internet Connection
+                </p>
                 <div
                     id="online-collaborators"
                     class="items-center gap-4 border-r-2 border-r-thick-blue-400 px-8"
@@ -73,7 +81,8 @@
 
         <div
             id="chat"
-            class="z-20 fixed w-80 flex flex-col -bottom-96 right-6 bg-white rounded-t-lg text-lg shadow-xl border border-ui-50 transition-all"
+            aria-hidden="false"
+            class="aria-hidden:hidden z-20 fixed w-80 flex flex-col -bottom-96 right-6 bg-white rounded-t-lg text-lg shadow-xl border border-ui-50 transition-all"
         >
             <div class="flex items-center justify-between shadow-md px-3">
                 <span data-memory="title" class="font-bold py-3 whitespace-nowrap truncate"></span>
@@ -134,7 +143,9 @@
         </div>
 
         <div
-            class="h-[70vh] md:h-[40vh] overflow-hidden sm:h-[40vh] bg-gradient-to-b from-orange-300 to-indigo-500 relative"
+            id="cover-section"
+            aria-hidden="false"
+            class="aria-hidden:hidden h-[70vh] md:h-[40vh] overflow-hidden sm:h-[40vh] bg-gradient-to-b from-orange-300 to-indigo-500 relative"
         >
             <img
                 data-cover-image
@@ -184,101 +195,115 @@
             </div>
         </div>
 
-        <div
-            data-countdown-area
-            aria-hidden="true"
-            class="aria-hidden:hidden flex flex-col gap-4 max-w-[1400px] mt-8 mx-auto px-6"
-        >
-            <h3 class="font-bold text-2xl">Until your event</h3>
-            <ul class="flex gap-5 flex-wrap justify-between">
-                <li
-                    class="text-slate-100 basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-l from-slate-900 to-indigo-800 rounded-lg border border-indigo-200 flex-col justify-start items-start gap-3 inline-flex box-border"
-                >
-                    <div class="flex w-full justify-between">
-                        <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
-                            <span data-countdown-num="hours"></span>
-                            hours
-                        </p>
-                        <img src="/illustrations/music-note.svg" alt="" />
-                    </div>
-                    <div>
-                        <p>You can listen to</p>
-                        <p
-                            class="text-5xl font-bold font-['Source Serif 4'] leading-[57.60px]"
-                            data-countdown-special-count="songs"
-                        >
-                            9000
-                        </p>
-                        <p>of 3 minutes songs</p>
-                    </div>
-                </li>
-                <li
-                    class="text-black basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-bl from-amber-200 to-orange-100 rounded-lg border border-red-300 flex-col justify-start items-start gap-3 inline-flex box-border"
-                >
-                    <div class="flex w-full justify-between">
-                        <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
-                            <span data-countdown-num="days"></span>
-                            days
-                        </p>
-                        <img src="/illustrations/location.svg" alt="" />
-                    </div>
-                    <div>
-                        <p>You can walk</p>
-                        <p
-                            class="text-yellow-900 text-5xl font-bold font-['Source Serif 4'] leading-[57.60px]"
-                            data-countdown-special-count="miles"
-                        >
-                            9000
-                        </p>
-                        <p>miles, 20 miles per day.</p>
-                    </div>
-                </li>
-                <li
-                    class="text-slate-100 basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-l from-slate-900 to-indigo-800 rounded-lg border border-indigo-200 flex-col justify-start items-start gap-3 inline-flex box-border"
-                >
-                    <div class="flex w-full justify-between">
-                        <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
-                            <span data-countdown-num="weeks"></span>
-                            weeks
-                        </p>
-                        <img src="/illustrations/tv.svg" alt="" />
-                    </div>
-                    <div>
-                        <p>You can watch</p>
-                        <p
-                            class="text-5xl font-bold font-['Source Serif 4'] leading-[57.60px]"
-                            data-countdown-special-count="tv-series"
-                        >
-                            9000
-                        </p>
-                        <p>complete TV series seasons</p>
-                    </div>
-                </li>
-                <li
-                    class="text-black basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-bl from-amber-200 to-orange-100 rounded-lg border border-red-300 flex-col justify-start items-start gap-3 inline-flex box-border"
-                >
-                    <div class="flex w-full justify-between">
-                        <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
-                            <span data-countdown-num="months"></span>
-                            months
-                        </p>
-                        <img src="/illustrations/book.svg" alt="" />
-                    </div>
-                    <div>
-                        <p>You can read</p>
-                        <p
-                            class="text-yellow-900 text-5xl font-bold font-['Source Serif 4'] leading-[57.60px]"
-                            data-countdown-special-count="books"
-                        >
-                            9000
-                        </p>
-                        <p>books, one book every 5 days</p>
-                    </div>
-                </li>
-            </ul>
-        </div>
         <main class="max-w-[1400px] mx-auto px-6 pb-6">
-            <div class="group mt-8">
+            <div
+                aria-hidden="true"
+                data-offline-screen
+                class="aria-hidden:hidden flex flex-col max-w-[1300px] mx-auto items-center justify-center p-8 bg-white rounded-xl"
+            >
+                <img src="/illustrations/offline.svg" alt="offline-illustration" />
+                <h3 class="text-3xl font-dm text-slate-600 pt-6 pb-3">Oops!</h3>
+                <p class="text-center">
+                    It looks like you're offline <br />
+                    <span class="text-base font-bold font-dm text-slate-600">
+                        Please check your connection and try again <br />to revisit your memories.
+                    </span>
+                </p>
+            </div>
+            <div data-main-content aria-hidden="false" class="aria-hidden:hidden group mt-8">
+                <div
+                    data-countdown-area
+                    aria-hidden="true"
+                    class="aria-hidden:hidden flex flex-col gap-4 w-full mt-8 mb-8"
+                >
+                    <h3 class="font-bold text-2xl">Until your event</h3>
+                    <ul class="flex gap-5 flex-wrap justify-between">
+                        <li
+                            class="text-slate-100 basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-l from-slate-900 to-indigo-800 rounded-lg border border-indigo-200 flex-col justify-start items-start gap-3 inline-flex box-border"
+                        >
+                            <div class="flex w-full justify-between">
+                                <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
+                                    <span data-countdown-num="hours"></span>
+                                    hours
+                                </p>
+                                <img src="/illustrations/music-note.svg" alt="" />
+                            </div>
+                            <div>
+                                <p>You can listen to</p>
+                                <p
+                                    class="text-5xl font-bold font-['Source Serif 4'] leading-[57.60px]"
+                                    data-countdown-special-count="songs"
+                                >
+                                    9000
+                                </p>
+                                <p>of 3 minutes songs</p>
+                            </div>
+                        </li>
+                        <li
+                            class="text-black basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-bl from-amber-200 to-orange-100 rounded-lg border border-red-300 flex-col justify-start items-start gap-3 inline-flex box-border"
+                        >
+                            <div class="flex w-full justify-between">
+                                <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
+                                    <span data-countdown-num="days"></span>
+                                    days
+                                </p>
+                                <img src="/illustrations/location.svg" alt="" />
+                            </div>
+                            <div>
+                                <p>You can walk</p>
+                                <p
+                                    class="text-yellow-900 text-5xl font-bold font-['Source Serif 4'] leading-[57.60px]"
+                                    data-countdown-special-count="miles"
+                                >
+                                    9000
+                                </p>
+                                <p>miles, 20 miles per day.</p>
+                            </div>
+                        </li>
+                        <li
+                            class="text-slate-100 basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-l from-slate-900 to-indigo-800 rounded-lg border border-indigo-200 flex-col justify-start items-start gap-3 inline-flex box-border"
+                        >
+                            <div class="flex w-full justify-between">
+                                <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
+                                    <span data-countdown-num="weeks"></span>
+                                    weeks
+                                </p>
+                                <img src="/illustrations/tv.svg" alt="" />
+                            </div>
+                            <div>
+                                <p>You can watch</p>
+                                <p
+                                    class="text-5xl font-bold font-['Source Serif 4'] leading-[57.60px]"
+                                    data-countdown-special-count="tv-series"
+                                >
+                                    9000
+                                </p>
+                                <p>complete TV series seasons</p>
+                            </div>
+                        </li>
+                        <li
+                            class="text-black basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-bl from-amber-200 to-orange-100 rounded-lg border border-red-300 flex-col justify-start items-start gap-3 inline-flex box-border"
+                        >
+                            <div class="flex w-full justify-between">
+                                <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
+                                    <span data-countdown-num="months"></span>
+                                    months
+                                </p>
+                                <img src="/illustrations/book.svg" alt="" />
+                            </div>
+                            <div>
+                                <p>You can read</p>
+                                <p
+                                    class="text-yellow-900 text-5xl font-bold font-['Source Serif 4'] leading-[57.60px]"
+                                    data-countdown-special-count="books"
+                                >
+                                    9000
+                                </p>
+                                <p>books, one book every 5 days</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
                 <div class="flex justify-between gap-2 flex-col w-full items-start md:flex-row md:justify-between">
                     <h3 class="font-bold text-2xl">Moments...</h3>
 

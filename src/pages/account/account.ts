@@ -1,5 +1,26 @@
 import { userApi } from '#api'
-import { updateCurrentUserChip } from '#utils'
+import { updateCurrentUserChip, q } from '#utils'
+import feather from 'feather-icons'
+feather.replace()
+
+if (!navigator.onLine) {
+    q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'true')
+    throw new Error('There is no internet connection')
+}
+
+window.addEventListener('offline', () => {
+    q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'true')
+})
+window.addEventListener('online', () => {
+    q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'false')
+    window.location.reload()
+})
 
 userApi.getCurrent().then(user => {
     if (!user) return
