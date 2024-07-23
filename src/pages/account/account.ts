@@ -3,11 +3,14 @@ import { updateCurrentUserChip, q } from '#utils'
 import feather from 'feather-icons'
 feather.replace()
 
+if ('serviceWorker' in navigator) {
+    void navigator.serviceWorker.register('../service-worker.js', { scope: '../' }).catch(console.error)
+}
+
 if (!navigator.onLine) {
     q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'false')
     q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'false')
     q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'true')
-    throw new Error('There is no internet connection')
 }
 
 window.addEventListener('offline', () => {

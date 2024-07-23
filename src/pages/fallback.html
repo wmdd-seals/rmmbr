@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>rmmbr | Account</title>
+        <link rel="icon" href="/favicon.svg" type="image/svg" />
+        <link rel="stylesheet" href="./app.css" />
+    </head>
+
+    <body class="min-h-screen flex flex-col bg-[url('/sign-bg.jpg')] bg-cover bg-no-repeat">
+        <header
+            class="p-6 flex justify-between sticky z-10 top-0 backdrop-blur bg-gradient-to-tr from-thick-blue-600/45 to-thick-blue-800/45"
+        >
+            <a href="/">
+                <img src="/white-logo.svg" alt="logo" />
+            </a>
+
+            <div class="flex gap-4">
+                <p
+                    id="offline-label"
+                    class="hidden sm:flex mr-3 text-slate-100 text-base font-medium font-dm bg-white/35 rounded-3xl py-2 px-5 gap-3 items-center justify-between"
+                >
+                    <img src="/wifi-off.svg" class="h-6 aspect-square" />
+                    No Internet Connection
+                </p>
+            </div>
+        </header>
+
+        <main class="w-full pt-12 flex-grow flex flex-col gap-5 max-w-80 mx-auto lg:max-w-4xl pb-10 px-3">
+            <div
+                data-offline-screen
+                class="flex flex-col w-full max-w-[1300px] mx-auto items-center justify-center p-8 bg-white rounded-xl"
+            >
+                <img src="/illustrations/offline.svg" alt="offline-illustration" crossorigin="anonymous" />
+                <h3 class="text-3xl font-dm text-slate-600 pt-6 pb-3">Oops!</h3>
+                <p class="text-center">
+                    It looks like you're offline <br />
+                    <span class="text-base font-bold font-dm text-slate-600">
+                        Please check your connection and try again <br />to revisit your memories.
+                    </span>
+                </p>
+            </div>
+        </main>
+    </body>
+</html>
