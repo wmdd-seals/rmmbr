@@ -4,6 +4,7 @@ import { createMapWithMarkers, formatDate, Maybe, prefixPath, q, updateCurrentUs
 import { Location, LocationInfo } from '#utils'
 import { getLocationInfo } from 'src/utils/gmap'
 import { Memory, User } from '#domain'
+import { daysUntil } from '#utils'
 
 type FilterCriteria = {
     categories: string[]
@@ -323,6 +324,7 @@ function renderCountdowns(memories: Memory[]): void {
 
         q('[data-memory=title]', node).innerHTML = title
         q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
+        q('[data-memory="countdown"]', node).innerHTML = `${daysUntil(memory.date)} days`
 
         countdownList.appendChild(node)
     })

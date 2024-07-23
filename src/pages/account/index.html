@@ -6,58 +6,67 @@
         <title>rmmbr | Account</title>
         <link rel="stylesheet" href="../app.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-        <link rel="icon" href="/favicon.svg" type="image/svg">
+        <link rel="icon" href="/favicon.svg" type="image/svg" />
     </head>
 
-    <body class="min-h-screen flex flex-col">
-        <header
-            class="p-6 flex justify-between sticky z-10 top-0 backdrop-blur bg-gradient-to-tr from-thick-blue-600/45 to-thick-blue-800/45"
-        >
-            <a href="%BASE_URL%">
-                <img src="/white-logo.svg" alt="logo" />
-            </a>
-
-            <div class="flex gap-4">
-                <a
-                    id="current-user-chip"
-                    href="%BASE_URL%account/"
-                    class="relative flex rounded-full aspect-square overflow-hidden w-10 bg-ui-50"
-                >
-                    <span
-                        data-user="initials"
-                        class="font-bold font-source text-xl flex items-center justify-center flex-grow"
-                    ></span>
-
-                    <img
-                        data-user="avatar"
-                        src=""
-                        alt="User avatar"
-                        class="object-cover hidden absolute h-full w-full"
-                    />
-                </a>
-            </div>
-        </header>
-
-        <hr />
-
-        <main class="w-full pt-12 flex-grow flex flex-col gap-5 max-w-80 mx-auto lg:max-w-4xl pb-10 px-3">
-            <form
-                class="flex-grow md:flex-grow-0 flex flex-col w-full lg:max-w-2xl lg:m-auto lg:mt-10 lg:mb-20 lg:bg-gray-100 lg:p-10 lg:rounded-lg lg:gap-8"
-                id="form"
+    <body class="relative bg-[url('/sign-bg.jpg')] bg-[length:100%_100%] min-h-screen flex flex-col">
+        <div class="absolute inset-0 z-0 bg-white bg-opacity-50"></div>
+        <div class="relative z-10 flex flex-col flex-grow min-h-screen">
+            <header
+                class="p-6 flex justify-between sticky z-10 top-0 backdrop-blur bg-gradient-to-tr from-thick-blue-600/45 to-thick-blue-800/45"
             >
-                <div class="flex flex-col gap-2 mb-4">
-                    <label for="first-name">First Name</label>
-                    <input type="text" id="first-name" class="input input-md" />
-                    <label for="last-name">Last Name</label>
-                    <input type="text" id="last-name" class="input input-md" />
-                    <label for="type">Email</label>
-                    <input type="email" id="email" placeholder="" disabled class="input input-md" />
-                    <label for="avatar">Upload Avatar</label>
-                    <input type="file" id="avatar" accept="image/*" />
+                <a href="%BASE_URL%">
+                    <img src="/white-logo.svg" alt="logo" />
+                </a>
+
+                <div class="flex gap-4">
+                    <a
+                        id="current-user-chip"
+                        href="%BASE_URL%account/"
+                        class="relative flex rounded-full aspect-square overflow-hidden w-10 bg-ui-50"
+                    >
+                        <span
+                            data-user="initials"
+                            class="font-bold font-source text-xl flex items-center justify-center flex-grow"
+                        ></span>
+
+                        <img
+                            data-user="avatar"
+                            src=""
+                            alt="User avatar"
+                            class="object-cover hidden absolute h-full w-full"
+                        />
+                    </a>
                 </div>
-                <button type="button" class="btn-filled btn-md mt-auto lg:mt-0" id="save-btn">Save changes</button>
-            </form>
-        </main>
+            </header>
+
+            <hr />
+
+            <main class="w-full pt-12 flex-grow flex flex-col gap-5 max-w-80 mx-auto lg:max-w-4xl px-3">
+                <form
+                    class="flex-grow md:flex-grow-0 flex flex-col w-full lg:max-w-2xl lg:m-auto lg:mt-10 lg:mb-20 lg:bg-gray-100 lg:p-10 lg:rounded-lg lg:gap-8"
+                    id="form"
+                >
+                    <div class="flex flex-col gap-2 mb-4">
+                        <label for="first-name">First Name</label>
+                        <input type="text" id="first-name" class="input input-md" />
+                        <label for="last-name">Last Name</label>
+                        <input type="text" id="last-name" class="input input-md" />
+                        <label for="type">Email</label>
+                        <input type="email" id="email" placeholder="" disabled class="input input-md" />
+                        <label for="avatar">Upload Avatar</label>
+                        <input type="file" id="avatar" accept="image/*" />
+                    </div>
+                    <button type="button" class="btn-filled btn-md mt-auto lg:mt-0" id="save-btn">Save changes</button>
+                </form>
+            </main>
+
+            <footer class="flex flex-col gap-5 items-center pt-20 pb-6">
+                <img src="/logo.svg" alt="logo" class="w-[123px]" />
+                <div class="text-gray-500 text-sm">&copy; 2024 rmmbr. All rights reserved.</div>
+            </footer>
+        </div>
+
         <script type="module" src="./account.ts"></script>
     </body>
 </html>

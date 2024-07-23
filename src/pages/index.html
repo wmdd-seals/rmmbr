@@ -12,9 +12,12 @@
         <script defer type="module" src="./icons.ts"></script>
     </head>
 
-    <body class="bg-ui-50 bg-no-repeat">
+    <body class="relative z-0 bg-ui-50 bg-no-repeat">
+        <div
+            class="absolute z-1 top-0 inset-x-0 h-[620px] md:h-[800px] bg-[url('/sign-bg.jpg')] bg-[length:100%_100%]"
+        ></div>
         <header
-            class="p-6 flex justify-between sticky z-10 top-0 backdrop-blur bg-gradient-to-tr from-thick-blue-600/45 to-thick-blue-800/45"
+            class="px-4 pt-14 pb-6 md:p-6 flex justify-between sticky z-10 top-0 backdrop-blur bg-gradient-to-tr from-thick-blue-600/45 to-thick-blue-800/45"
         >
             <a href="%BASE_URL%">
                 <img src="/white-logo.svg" alt="logo" />
@@ -41,11 +44,8 @@
             </div>
         </header>
 
-        <main
-            class="relative px-6 pb-14 md:pb-16 bg-no-repeat bg-top"
-            style="background-image: url(/sign-bg.jpg); background-size: 100% 40%"
-        >
-            <div class="max-w-[1304px] mx-auto flex flex-col gap-10">
+        <main class="relative px-6 bg-no-repeat bg-top">
+            <div class="max-w-[1304px] mx-auto flex flex-col gap-6 md:gap-10">
                 <div class="flex justify-center items-center pt-36 pb-40 md:pt-16 md:pb-0">
                     <div
                         class="flex flex-col gap-8 md:grow md:flex-row md:justify-between md:items-end lg:row-start-1 lg:col-span-2 items-center"
@@ -71,7 +71,7 @@
                     </div>
                 </div>
 
-                <div class="lg:flex lg:gap-10 mb-12">
+                <div class="flex flex-col gap-6 lg:flex lg:gap-10">
                     <section id="nav-btn" class="p-2 flex gap-2 md:hidden">
                         <a
                             href="#home"
@@ -84,8 +84,8 @@
                     </section>
 
                     <section id="home" class="flex flex-col gap-9 overflow-hidden grow md:flex lg:flex-row">
-                        <div class="grow shrink flex flex-col gap-9 lg:w-2/3">
-                            <div class="grow flex flex-col gap-2">
+                        <div class="grow shrink flex flex-col gap-12 lg:w-2/3">
+                            <div class="grow flex flex-col gap-4 md:gap-2">
                                 <h2 class="font-bold text-xl flex justify-between items-center">
                                     Upcoming adventures
                                     <span class="text-base font-normal text-type-200" data-user="countdowns"></span>
@@ -112,7 +112,7 @@
                                     </div>
 
                                     <template id="countdown-thumbnail">
-                                        <li class="w-full snap-center shrink-0">
+                                        <li class="w-full snap-center shrink-0 flex justify-center items-center">
                                             <div class="py-14 px-10 flex flex-col gap-2 items-center">
                                                 <div
                                                     class="flex flex-col text-center px-10 border-b border-dashed border-neutral-900 pb-2"
@@ -124,22 +124,22 @@
                                                     ></span>
                                                 </div>
                                                 <span class="font-source text-5xl text-type-50" data-memory="countdown"
-                                                    >Not far away...</span
+                                                    ></span
                                                 >
                                             </div>
                                         </li>
                                     </template>
                                 </ul>
                             </div>
-                            <div class="grow flex-col gap-2 hidden" id="flashback">
-                                <h2 class="font-bold text-xl mt-8 mb-4">Remember this?</h2>
+                            <div class="grow flex-col gap-4 hidden md:gap-2" id="flashback">
+                                <h2 class="font-bold text-xl">Remember this?</h2>
 
                                 <ul class="flex gap-3 overflow-x-auto no-scrollbar w-full" id="flashback-list">
                                     <template id="memory-flashback-thumbnail">
                                         <li>
                                             <a
                                                 href="#"
-                                                class="aspect-[4/5] h-64 flex flex-col bg-ui-100 rounded-2xl relative overflow-hidden"
+                                                class="aspect-[4/5] h-80 md:h-64 flex flex-col bg-ui-100 rounded-2xl relative overflow-hidden"
                                                 data-memory="link"
                                             >
                                                 <img
@@ -170,16 +170,16 @@
                                 </ul>
                             </div>
                         </div>
-                        <div id="location" class="grow shrink gap-2 flex flex-col md:justify-stretch lg:w-1/3">
+                        <div id="location" class="grow shrink flex flex-col gap-4 md:gap-2 md:justify-stretch lg:w-1/3">
                             <h2 class="font-bold text-xl flex justify-between items-center">
                                 Your locations
                                 <span class="text-type-200 text-base font-normal" data-user="locations-count"></span>
                             </h2>
 
                             <div
-                                class="relative grow flex flex-col rounded-xl overflow-hidden md:shadow-2xl min-h-[400px]"
+                                class="relative grow flex flex-col rounded-xl overflow-hidden md:shadow-2xl min-h-[320px]"
                             >
-                                <div id="locations-map" class="flex-grow bg-gray-200"></div>
+                                <div id="locations-map" class="grow bg-gray-200"></div>
                                 <div
                                     id="map-overlay"
                                     class="backdrop-blur absolute inset-0 p-8 flex flex-col gap-1 items-center justify-center text-center"
@@ -194,65 +194,74 @@
                 </div>
 
                 <section id="memory" class="hidden md:block">
-                    <div class="flex flex-col gap-4 md:flex-row md:justify-between pb-4">
-                        <h2 class="font-bold text-xl flex gap-5 justify-between items-center md:justify-start">
-                            Your memories<span class="font-normal"><span data-memory="count"></span></span>
-                        </h2>
-                        <button
-                            class="flex gap-1 justify-center items-center md:self-end btn-outlined btn-md"
-                            id="filter-btn"
-                        >
-                            Filter<i data-feather="filter" aria-hidden="true"></i>
-                        </button>
-                    </div>
-                    <div data-label="show-after-filter" class="flex flex-wrap gap-1 py-2"></div>
-                    <div id="memory-overlay" class="flex flex-col gap-4 justify-center items-center py-10">
-                        <img src="/illustrations/girl.svg" alt="default photo" />
-                        <div>
-                            <p class="text-center">This is where your published memories will appear.</p>
-                            <p class="font-bold text-center">Capture a special moment and share it with the world!</p>
+                    <div class="flex flex-col gap-4 md:gap-2">
+                        <div class="flex flex-col gap-4 md:flex-row md:justify-between">
+                            <h2 class="font-bold text-xl flex gap-5 justify-between items-center md:justify-start">
+                                Your memories<span class="font-normal"><span data-memory="count" class="text-type-200 text-base font-normal"></span></span>
+                            </h2>
+                            <button
+                                class="flex gap-1 justify-center items-center md:self-end btn-outlined btn-md"
+                                id="filter-btn"
+                            >
+                                Filter<i data-feather="filter" aria-hidden="true"></i>
+                            </button>
                         </div>
-                        <p data-memory="create">Create New <i class="fa-solid fa-plus" aria-hidden="true"></i></p>
-                    </div>
+                        <div data-label="show-after-filter" class="flex flex-wrap gap-1"></div>
+                        <div id="memory-overlay" class="flex flex-col gap-4 justify-center items-center py-10">
+                            <img src="/illustrations/girl.svg" alt="default photo" />
+                            <div>
+                                <p class="text-center">This is where your published memories will appear.</p>
+                                <p class="font-bold text-center">
+                                    Capture a special moment and share it with the world!
+                                </p>
+                            </div>
+                            <p data-memory="create" class="flex gap-1">Create New <i data-feather="plus-circle" aria-hidden="true"></i></p>
+                        </div>
 
-                    <ul class="grid gap-6 md:grid-cols-3 lg:grid-cols-4" id="memory-list">
-                        <template id="memory-thumbnail">
-                            <li class="bg-white rounded-lg overflow-hidden">
-                                <a data-memory="link" href="" class="block">
-                                    <div class="aspect-[5/3] bg-gray-200 relative flex">
-                                        <img
-                                            src=""
-                                            alt="Memory cover"
-                                            class="object-cover w-full"
-                                            data-memory="cover"
-                                        />
-                                        <div
-                                            class="absolute inset-0"
-                                            aria-hidden="true"
-                                            style="
-                                                background-image: linear-gradient(
-                                                    to bottom,
-                                                    transparent 62%,
-                                                    rgb(0 0 0 / 0.8) 100%
-                                                );
-                                            "
-                                        ></div>
-                                        <div
-                                            class="text-xs text-white absolute right-2 bottom-3"
-                                            data-memory="date"
-                                        ></div>
-                                    </div>
-                                    <div class="py-2 px-3">
-                                        <h3 data-memory="title">title</h3>
-                                        <p data-memory="location" class="text-xs">Somewhere on Earth</p>
-                                    </div>
-                                </a>
-                            </li>
-                        </template>
-                    </ul>
+                        <ul class="grid gap-y-6 gap-x-4 md:grid-cols-3 lg:grid-cols-4" id="memory-list">
+                            <template id="memory-thumbnail">
+                                <li class="bg-white rounded-lg overflow-hidden">
+                                    <a data-memory="link" href="" class="block">
+                                        <div class="aspect-[5/3] bg-gray-200 relative flex">
+                                            <img
+                                                src=""
+                                                alt="Memory cover"
+                                                class="object-cover w-full"
+                                                data-memory="cover"
+                                            />
+                                            <div
+                                                class="absolute inset-0"
+                                                aria-hidden="true"
+                                                style="
+                                                    background-image: linear-gradient(
+                                                        to bottom,
+                                                        transparent 62%,
+                                                        rgb(0 0 0 / 0.8) 100%
+                                                    );
+                                                "
+                                            ></div>
+                                            <div
+                                                class="text-xs text-white absolute right-2 bottom-3"
+                                                data-memory="date"
+                                            ></div>
+                                        </div>
+                                        <div class="py-2 px-3">
+                                            <h3 data-memory="title">title</h3>
+                                            <p data-memory="location" class="text-xs">Somewhere on Earth</p>
+                                        </div>
+                                    </a>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
                 </section>
             </div>
         </main>
+
+        <footer class="flex flex-col gap-5 items-center pt-20 pb-6">
+            <img src="/logo.svg" alt="logo" class="w-[123px]" />
+            <div class="text-gray-500 text-sm">&copy; 2024 rmmbr. All rights reserved.</div>
+        </footer>
 
         <div
             class="!translate-x-full overflow-y-auto fixed z-30 left-1/2 -translate-x-1/2 w-[90%] top-1/2 -translate-y-1/2 h-[90%] md:left-auto md:right-0 md:h-screen rounded-2xl bg-white md:w-[35%] md:translate-x-0 transition-all duration-300 p-6 flex flex-col gap-6 md:rounded-tr-none md:rounded-br-none"
