@@ -6,7 +6,6 @@ import { getLocationInfo } from 'src/utils/gmap'
 import { Memory, User } from '#domain'
 
 type FilterCriteria = {
-    categories: string[]
     startDate: string
     endDate: string
     locations: string[]
@@ -208,14 +207,12 @@ function initFilterDrawer(memories: Memory[]): void {
 
         drawer.classList.remove('!translate-x-full')
 
-        renderCategoriesOnFilter(memories)
         renderLocationsOnFilter()
 
         filtersOpen = true
     })
 
     const filterCriteria: FilterCriteria = {
-        categories: [],
         startDate: '',
         endDate: '',
         locations: [],
@@ -223,7 +220,6 @@ function initFilterDrawer(memories: Memory[]): void {
     }
 
     const selectElements = [
-        { selectElemId: '#input-categories', filterCriteria: filterCriteria.categories },
         { selectElemId: '#input-locations', filterCriteria: filterCriteria.locations },
         { selectElemId: '#input-collaborators', filterCriteria: filterCriteria.collaborators }
     ]
@@ -254,11 +250,7 @@ function initFilterDrawer(memories: Memory[]): void {
 
 function filterMemories(memories: Memory[], filterCriteria: FilterCriteria): void {
     const filteredMemories = memories.filter(memory => {
-        return (
-            filterByCategory(memory, filterCriteria) &&
-            filterByDate(memory, filterCriteria) &&
-            filterByLocation(memory, filterCriteria)
-        )
+        return filterByDate(memory, filterCriteria) && filterByLocation(memory, filterCriteria)
     })
 
     const memoryList = document.getElementById('memory-list') as HTMLUListElement
@@ -268,13 +260,6 @@ function filterMemories(memories: Memory[], filterCriteria: FilterCriteria): voi
     })
 
     renderMemories(filteredMemories)
-}
-
-function filterByCategory(memory: Memory, filterCriteria: FilterCriteria): boolean {
-    if (filterCriteria.categories.length === 0) return true
-    return memory.categories.some(
-        memoryCategory => memoryCategory && filterCriteria.categories.includes(memoryCategory)
-    )
 }
 
 function filterByDate(memory: Memory, filterCriteria: FilterCriteria): boolean {
@@ -355,21 +340,6 @@ function renderMapMarks(memories: Memory[]): void {
             void createMapWithMarkers(map, { markers: locations })
         }
     )
-}
-
-function renderCategoriesOnFilter(memories: Memory[]): void {
-    if (memories.length === 0) return
-
-    const categorySet: Set<string> = new Set()
-    memories.forEach(memory => {
-        memory.categories.forEach(category => {
-            if (category) {
-                categorySet.add(category)
-            }
-        })
-    })
-
-    renderDropdownMenu(categorySet, 'input-categories')
 }
 
 const memoryLocations = new Map<Memory['id'], Maybe<LocationInfo>>()
