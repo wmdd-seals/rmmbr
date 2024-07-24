@@ -19,6 +19,34 @@ import './edit-memory-modal'
 import './add-moment-modal'
 import feather from 'feather-icons'
 
+if ('serviceWorker' in navigator) {
+    void navigator.serviceWorker.register('../service-worker.js', { scope: '../' }).catch(console.error)
+}
+
+if (!navigator.onLine) {
+    q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('#chat').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('#cover-section').setAttribute('aria-hidden', 'true')
+}
+
+window.addEventListener('offline', () => {
+    q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('#chat').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('#cover-section').setAttribute('aria-hidden', 'true')
+})
+window.addEventListener('online', () => {
+    q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('#chat').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('#cover-section').setAttribute('aria-hidden', 'false')
+    window.location.reload()
+})
+
 const urlParams = new URLSearchParams(location.search)
 const memoryId = <Maybe<Memory['id']>>urlParams.get('id')
 
@@ -50,7 +78,7 @@ async function renderCover(memory: Memory): Promise<void> {
     const memoryLocation = memory.location ? await getLocationInfo(memory.location) : null
     document.querySelectorAll('[data-memory="title"]').forEach(e => (e.innerHTML = memory.title))
     q<HTMLImageElement>('[data-memory="cover-sticker"]').src = memory.stickerId
-        ? `/illustrations/${memory.stickerId}`
+        ? `/sticker/${memory.stickerId}.svg`
         : ''
     q<HTMLSpanElement>('[data-memory="cover-date"]').innerHTML = memory.date
     q<HTMLSpanElement>('[data-memory="cover-location"]').innerHTML = memoryLocation
@@ -85,22 +113,6 @@ userApi
 
         void renderCover(memory)
         toggleOnIfMemoryIsPast(isPastMemory(memory.date), memory)
-
-        renderStickers()
-
-        let clickedStickerId: Maybe<string>
-        const stickerSection = q('#sticker')
-        stickerSection.addEventListener('click', (event: MouseEvent) => {
-            const elem = event.target as HTMLElement
-            if (elem.id === 'sticker') return
-            clickedStickerId = elem.id
-        })
-
-        const saveStickerButton = q('#save-sticker-btn')
-        saveStickerButton.addEventListener('click', () => memoryApi.update(memoryId, { stickerId: clickedStickerId }))
-
-        const deleteStickerButton = q('#delete-sticker-btn')
-        deleteStickerButton.addEventListener('click', () => memoryApi.update(memory.id, { stickerId: null }))
 
         renderMoments(moments)
 
@@ -193,46 +205,6 @@ userApi
         }
     })
     .catch(console.error)
-
-const stickers = [
-    'airplane',
-    'beach-ball',
-    'camera',
-    'coconut-palm-tree',
-    'glasses',
-    'globe',
-    'heart-heart',
-    'heart',
-    'i-love-you',
-    'juice',
-    'leaf',
-    'love-love-love-love',
-    'love',
-    'parasol',
-    'pencil',
-    'present',
-    'shell',
-    'ship',
-    'sparkle',
-    'starfish',
-    'straw-hat',
-    'suitcase',
-    'sun',
-    'sunglasses',
-    'tropical-juice',
-    'yacht'
-]
-
-function renderStickers(): void {
-    const container = q('#sticker')
-    stickers.forEach(id => {
-        const img = document.createElement('img')
-        img.id = id
-        img.src = `/sticker/${id}.svg`
-        img.alt = id
-        container.appendChild(img)
-    })
-}
 
 function renderMoments(moments: Maybe<Moment[]>): void {
     if (!moments) return

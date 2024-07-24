@@ -25,7 +25,14 @@ export default defineConfig({
                 memory: resolve(__dirname, 'src/pages/memory/index.html'),
                 signIn: resolve(__dirname, 'src/pages/sign-in/index.html'),
                 signUp: resolve(__dirname, 'src/pages/sign-up/index.html'),
-                account: resolve(__dirname, 'src/pages/account/index.html')
+                account: resolve(__dirname, 'src/pages/account/index.html'),
+                fallback: resolve(__dirname, 'src/pages/fallback.html'),
+                'service-worker': resolve(__dirname, 'src/pages/service-worker.ts')
+            },
+            output: {
+                entryFileNames: assetInfo => {
+                    return assetInfo.name === 'service-worker' ? '[name].js' : 'assets/[name]-[hash].js'
+                }
             }
         }
     },

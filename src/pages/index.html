@@ -6,10 +6,11 @@
         <title>rmmbr</title>
         <link rel="stylesheet" href="./app.css" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/favicon.svg" type="image/svg">
+        <link rel="icon" href="/favicon.svg" type="image/svg" />
         <script type="module" src="./auth.ts"></script>
         <script defer type="module" src="./index.ts"></script>
         <script defer type="module" src="./icons.ts"></script>
+        <link rel="manifest" href="/manifest.json" />
     </head>
 
     <body class="relative z-0 bg-ui-50 bg-no-repeat">
@@ -24,6 +25,14 @@
             </a>
 
             <div class="flex gap-4">
+                <p
+                    id="offline-label"
+                    aria-hidden="true"
+                    class="aria-hidden:hidden mr-3 text-slate-100 text-base font-medium font-dm bg-white/35 rounded-3xl py-2 px-5 flex gap-3 items-center justify-between"
+                >
+                    <i data-feather="wifi-off"></i>
+                    No Internet Connection
+                </p>
                 <a
                     id="current-user-chip"
                     href="%BASE_URL%account/"
@@ -45,7 +54,22 @@
         </header>
 
         <main class="relative px-6 bg-no-repeat bg-top">
-            <div class="max-w-[82rem] mx-auto flex flex-col gap-6 md:gap-10">
+            <div
+                aria-hidden="true"
+                data-offline-screen
+                class="aria-hidden:hidden flex flex-col max-w-[1300px] mx-auto items-center justify-center p-8 mt-12 bg-white rounded-xl"
+            >
+                <img src="/illustrations/offline.svg" alt="offline-illustration" />
+                <h3 class="text-3xl font-dm text-slate-600 pt-6 pb-3">Oops!</h3>
+                <p class="text-center">
+                    It looks like you're offline <br />
+                    <span class="text-base font-bold font-dm text-slate-600">
+                        Please check your connection and try again <br />to revisit your memories.
+                    </span>
+                </p>
+            </div>
+            <div data-main-content aria-hidden class="aria-hidden:hidden max-w-[1304px] mx-auto flex flex-col gap-6 md:gap-10">
+ 
                 <div class="flex justify-center items-center pt-36 pb-40 md:pt-16 md:pb-0">
                     <div
                         class="flex flex-col gap-8 md:grow md:flex-row md:justify-between md:items-end lg:row-start-1 lg:col-span-2 items-center"
@@ -95,7 +119,6 @@
                                     id="countdown-list"
                                     class="grow rounded-xl bg-gradient-to-b from-white/20 to-white/50 backdrop-blur snap-mandatory snap-x flex overflow-auto min-h-80 no-scrollbar"
                                 >
-                                    <div data-label="show-after-filter" class="flex flex-wrap gap-1 py-2"></div>
                                     <div
                                         id="countdown-overlay"
                                         class="flex flex-col gap-3 items-center justify-center p-5 w-full"
@@ -269,13 +292,6 @@
             <div class="flex justify-between items-center">
                 <p class="text-xl font-bold">Filters</p>
                 <button class="text-basketball-500 text-4xl" id="close-drawer-btn">&times;</button>
-            </div>
-            <div class="flex flex-col gap-2">
-                <label for="input-categories">Filter by categories</label>
-                <select name="categories" id="input-categories" class="input input-sm">
-                    <option selected="true" disabled>Select a category</option>
-                </select>
-                <div class="flex flex-wrap gap-1"></div>
             </div>
             <div class="flex gap-2">
                 <div class="grow flex flex-col gap-2 min-w-0">
