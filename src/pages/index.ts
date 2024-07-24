@@ -47,6 +47,10 @@ const anchors = {
 
 const isTab = (hash: string): hash is keyof typeof tabs => hash === '#home' || hash === '#memory'
 
+function timeSort(a: number, b: number): number {
+    return a > b ? 1 : -1
+}
+
 let currentTabId: keyof typeof tabs = '#home'
 
 function changeTab(): void {
@@ -94,6 +98,7 @@ userApi
         q('[data-user=name]').innerHTML = user.firstName
 
         const memories = await memoryApi.getAll(user.id)
+        memories.sort((a, b) => +new Date(b.date) - +new Date(a.date))
 
         if (memories.length === 0) {
             q('#filter-btn').classList.add('hidden')
@@ -126,49 +131,47 @@ function renderMemories(memories: Memory[]): void {
         q('#memory-overlay').style.display = 'none'
     }
 
-    ;[...memories]
-        .sort((a, b) => +new Date(b.date) - +new Date(a.date))
-        .forEach(memory => {
-            const node = thumbnail.content.cloneNode(true) as HTMLLIElement
-            const liElem = node.firstElementChild
+    ;[...memories].forEach(memory => {
+        const node = thumbnail.content.cloneNode(true) as HTMLLIElement
+        const liElem = node.firstElementChild
 
-            q('[data-memory="title"]', node).innerHTML = memory.title
-            q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
-            q<HTMLAnchorElement>('[data-memory="link"]', node).href = prefixPath(`/memory/?id=${memory.id}`)
+        q('[data-memory="title"]', node).innerHTML = memory.title
+        q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
+        q<HTMLAnchorElement>('[data-memory="link"]', node).href = prefixPath(`/memory/?id=${memory.id}`)
 
-            const coverImg = q<HTMLImageElement>('[data-memory="cover"]', node)
-            coverImg.src = storageApi.getFileUrl(`memory/${memory.id}/cover`) + `?t=${Date.now()}` || ''
-            coverImg.onload = (): void => {
-                coverImg.setAttribute('aria-hidden', 'false')
+        const coverImg = q<HTMLImageElement>('[data-memory="cover"]', node)
+        coverImg.src = storageApi.getFileUrl(`memory/${memory.id}/cover`) + `?t=${Date.now()}` || ''
+        coverImg.onload = (): void => {
+            coverImg.setAttribute('aria-hidden', 'false')
+        }
+
+        if (memory.location) {
+            const hasLocationInfo = memoryLocations.has(memory.id)
+
+            function setLocationInfo(location: LocationInfo): void {
+                const { country, city } = location
+                q('[data-memory="location"]', <HTMLLIElement>liElem).innerHTML = city
+                    ? `in ${city}, ${country}`
+                    : `in ${country}`
             }
 
-            if (memory.location) {
-                const hasLocationInfo = memoryLocations.has(memory.id)
+            if (hasLocationInfo) {
+                const location = memoryLocations.get(memory.id)
 
-                function setLocationInfo(location: LocationInfo): void {
-                    const { country, city } = location
-                    q('[data-memory="location"]', <HTMLLIElement>liElem).innerHTML = city
-                        ? `in ${city}, ${country}`
-                        : `in ${country}`
-                }
-
-                if (hasLocationInfo) {
-                    const location = memoryLocations.get(memory.id)
+                if (!location) return
+                setLocationInfo(location)
+            } else {
+                getLocationInfo(memory.location).then(location => {
+                    memoryLocations.set(memory.id, location)
 
                     if (!location) return
                     setLocationInfo(location)
-                } else {
-                    getLocationInfo(memory.location).then(location => {
-                        memoryLocations.set(memory.id, location)
-
-                        if (!location) return
-                        setLocationInfo(location)
-                    }, console.error)
-                }
+                }, console.error)
             }
+        }
 
-            memoryList.appendChild(node)
-        })
+        memoryList.appendChild(node)
+    })
 
     const count = memories.length
     document.querySelectorAll('[data-memory="count"]').forEach(el => {
@@ -286,7 +289,7 @@ function filterMemories(memories: Memory[], filterCriteria: FilterCriteria): voi
         memoryList.removeChild(memory)
     })
 
-    renderMemories(filteredMemories)
+    renderMemories(filteredMemories.sort((a, b) => timeSort(new Date(a.date).getTime(), new Date(b.date).getTime())))
 }
 
 function filterByDate(memory: Memory, filterCriteria: FilterCriteria): boolean {
