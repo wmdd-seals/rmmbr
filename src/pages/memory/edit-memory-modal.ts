@@ -51,7 +51,7 @@ class EditMemoryModal extends ModalBaseLayer {
                         <button id="open-sticker-list" class="text-indigo-600"><i data-feather="edit"></i></button>
                     </div>
                     <div id="sticker-selection-area" aria-hidden="true" class="flex flex-col gap-1 aria-hidden:hidden">
-                        <section class="flex justify-center overflow-x-auto " id="sticker"></section>
+                        <section class="flex justify-center overflow-x-auto no-scrollbar" id="sticker"></section>
                         <div class="flex gap-1 justify-end">
                             <button id="close-sticker-list" class="btn-text btn-md">Cansel</button>
                             <button id="save-sticker-btn" class="btn-filled btn-md">Save</button>                            
@@ -271,7 +271,12 @@ class EditMemoryModal extends ModalBaseLayer {
         stickerSection.addEventListener('click', (event: MouseEvent) => {
             const elem = event.target as HTMLElement
             if (elem.id === 'sticker') return
+
+            const previousElem = stickerSection.querySelector('.bg-indigo-200')
+            previousElem?.classList.remove('bg-indigo-200')
+
             clickedStickerId = elem.id
+            elem.classList.add('bg-indigo-200')
         })
 
         const saveStickerButton = q('#save-sticker-btn')
@@ -287,6 +292,9 @@ class EditMemoryModal extends ModalBaseLayer {
         deleteStickerButton.addEventListener('click', async () => {
             await memoryApi.update(this.memoryId as Memory['id'], { stickerId: null })
             q<HTMLImageElement>('[data-memory="sticker"]').src = ''
+
+            const currentElem = stickerSection.querySelector('.bg-indigo-200')
+            currentElem?.classList.remove('bg-indigo-200')
 
             q('#sticker-default-area').setAttribute('aria-hidden', 'false')
             q('#sticker-selection-area').setAttribute('aria-hidden', 'true')
