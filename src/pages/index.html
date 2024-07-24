@@ -225,26 +225,22 @@
                             <template id="memory-thumbnail">
                                 <li class="bg-white rounded-lg overflow-hidden">
                                     <a data-memory="link" href="" class="block">
-                                        <div class="aspect-[5/3] bg-gray-200 relative flex">
+                                        <div class="aspect-[5/3] relative flex">
                                             <img
                                                 src=""
                                                 alt="Memory cover"
-                                                class="object-cover w-full"
-                                                data-memory="cover"
+                                                class="object-cover w-full z-10 aria-hidden:hidden"
+                                                data-memory="cover" aria-hidden="true"
                                             />
                                             <div
-                                                class="absolute inset-0"
+                                                class="absolute inset-0 
+                                                
+                                                bg-gradient-to-b from-orange-300 to-indigo-500 z-0"
                                                 aria-hidden="true"
-                                                style="
-                                                    background-image: linear-gradient(
-                                                        to bottom,
-                                                        transparent 62%,
-                                                        rgb(0 0 0 / 0.8) 100%
-                                                    );
-                                                "
+                                    
                                             ></div>
                                             <div
-                                                class="text-xs text-white absolute right-2 bottom-3"
+                                                class="text-xs text-white absolute right-2 bottom-3 z-10"
                                                 data-memory="date"
                                             ></div>
                                         </div>

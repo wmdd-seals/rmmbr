@@ -114,8 +114,12 @@ function renderMemories(memories: Memory[]): void {
             q('[data-memory="title"]', node).innerHTML = memory.title
             q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
             q<HTMLAnchorElement>('[data-memory="link"]', node).href = prefixPath(`/memory/?id=${memory.id}`)
-            q<HTMLImageElement>('[data-memory="cover"]', node).src =
-                storageApi.getFileUrl(`memory/${memory.id}/cover`) || ''
+
+            const coverImg = q<HTMLImageElement>('[data-memory="cover"]', node)
+            coverImg.src = storageApi.getFileUrl(`memory/${memory.id}/cover`) + `?t=${Date.now()}` || ''
+            coverImg.onload = (): void => {
+                coverImg.setAttribute('aria-hidden', 'false')
+            }
 
             if (memory.location) {
                 const hasLocationInfo = memoryLocations.has(memory.id)
