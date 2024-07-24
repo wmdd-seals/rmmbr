@@ -27,7 +27,7 @@ export default defineConfig({
                 signUp: resolve(__dirname, 'src/pages/sign-up/index.html'),
                 account: resolve(__dirname, 'src/pages/account/index.html'),
                 fallback: resolve(__dirname, 'src/pages/fallback.html'),
-                'service-worker': resolve(__dirname, '/src/pages/service-worker.ts')
+                'service-worker': resolve(__dirname, 'src/pages/service-worker.ts')
             },
             output: {
                 entryFileNames: assetInfo => {
