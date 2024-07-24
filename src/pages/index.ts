@@ -46,6 +46,12 @@ const anchors = {
 
 const isTab = (hash: string): hash is keyof typeof tabs => hash === '#home' || hash === '#memory'
 
+const allMemories: Memory[] = []
+
+function timeSort(a: number, b: number): number {
+    return a < b ? 1 : -1
+}
+
 let currentTabId: keyof typeof tabs = '#home'
 
 function changeTab(): void {
@@ -93,14 +99,15 @@ userApi
         q('[data-user=name]').innerHTML = user.firstName
 
         const memories = await memoryApi.getAll(user.id)
-
-        if (memories.length === 0) {
+        memories.sort((a, b) => timeSort(new Date(a.date).getTime(), new Date(b.date).getTime()))
+        memories.forEach(m => allMemories.push(m))
+        if (allMemories.length === 0) {
             q('#filter-btn').classList.add('hidden')
         }
 
-        initFilterDrawer(memories)
+        initFilterDrawer(allMemories)
 
-        renderCountdowns(memories.filter(memory => Date.now() < +new Date(memory.date)))
+        renderCountdowns(allMemories.filter(memory => Date.now() < +new Date(memory.date)))
 
         const flashbacks = memories.filter(memory => Date.now() - +new Date(memory.date) > 1000 * 60 * 60 * 24 * 365)
 
@@ -109,9 +116,9 @@ userApi
             renderFlashbacks(flashbacks.sort(() => 0.5 - Math.random()).slice(0, 6))
         }
 
-        renderMemories(memories)
+        renderMemories(allMemories)
 
-        renderMapMarks(memories)
+        renderMapMarks(allMemories)
 
         LatestMemoriesByUserId.init(user.id)
     })
@@ -130,6 +137,7 @@ function renderMemories(memories: Memory[]): void {
         .forEach(memory => {
             const node = thumbnail.content.cloneNode(true) as HTMLLIElement
             const liElem = node.firstElementChild
+            liElem?.setAttribute('data-memory-item', '')
 
             q('[data-memory="title"]', node).innerHTML = memory.title
             q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
@@ -504,7 +512,10 @@ class LatestMemoriesByUserId {
                 },
                 payload => {
                     if (Object.keys(payload.new).length === 0) return
-                    renderMemories([payload.new as Memory])
+                    allMemories.push(payload.new as Memory)
+                    allMemories.sort((a, b) => timeSort(new Date(a.date).getTime(), new Date(b.date).getTime()))
+                    document.querySelectorAll('[data-memory-item]').forEach(e => e.remove())
+                    renderMemories(allMemories)
                 }
             )
             .subscribe()
