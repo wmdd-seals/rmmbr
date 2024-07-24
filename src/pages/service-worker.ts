@@ -55,14 +55,6 @@ self.addEventListener('fetch', event => {
 
                 const networkResponse = await fetch(event.request)
 
-                if (
-                    networkResponse.status === 200 &&
-                    networkResponse.type === 'basic' &&
-                    event.request.destination === 'style'
-                ) {
-                    cache.put(event.request, networkResponse.clone()).catch(console.error)
-                }
-
                 return networkResponse
             } catch {
                 const cache = await caches.open(CACHE_NAME)
