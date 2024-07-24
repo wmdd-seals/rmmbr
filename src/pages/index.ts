@@ -47,10 +47,6 @@ const anchors = {
 
 const isTab = (hash: string): hash is keyof typeof tabs => hash === '#home' || hash === '#memory'
 
-function timeSort(a: number, b: number): number {
-    return a > b ? 1 : -1
-}
-
 let currentTabId: keyof typeof tabs = '#home'
 
 function changeTab(): void {
@@ -289,7 +285,7 @@ function filterMemories(memories: Memory[], filterCriteria: FilterCriteria): voi
         memoryList.removeChild(memory)
     })
 
-    renderMemories(filteredMemories.sort((a, b) => timeSort(new Date(a.date).getTime(), new Date(b.date).getTime())))
+    renderMemories(filteredMemories.sort((a, b) => +new Date(a.date) - +new Date(b.date)))
 }
 
 function filterByDate(memory: Memory, filterCriteria: FilterCriteria): boolean {
