@@ -6,7 +6,7 @@
         <title>rmmbr | Account</title>
         <link rel="stylesheet" href="../app.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-        <link rel="icon" href="/favicon.svg" type="image/svg">
+        <link rel="icon" href="/favicon.svg" type="image/svg" />
     </head>
 
     <body class="min-h-screen flex flex-col">
@@ -18,6 +18,14 @@
             </a>
 
             <div class="flex gap-4">
+                <p
+                    aria-hidden="true"
+                    id="offline-label"
+                    class="aria-hidden:hidden mr-3 text-slate-100 text-base font-medium font-dm bg-white/35 rounded-3xl py-2 px-5 flex gap-3 items-center justify-between"
+                >
+                    <i data-feather="wifi-off"></i>
+                    No Internet Connection
+                </p>
                 <a
                     id="current-user-chip"
                     href="%BASE_URL%account/"
@@ -41,22 +49,38 @@
         <hr />
 
         <main class="w-full pt-12 flex-grow flex flex-col gap-5 max-w-80 mx-auto lg:max-w-4xl pb-10 px-3">
-            <form
-                class="flex-grow md:flex-grow-0 flex flex-col w-full lg:max-w-2xl lg:m-auto lg:mt-10 lg:mb-20 lg:bg-gray-100 lg:p-10 lg:rounded-lg lg:gap-8"
-                id="form"
+            <div
+                aria-hidden="true"
+                data-offline-screen
+                class="aria-hidden:hidden flex flex-col max-w-[1300px] mx-auto items-center justify-center mt-12 p-8 bg-white rounded-xl"
             >
-                <div class="flex flex-col gap-2 mb-4">
-                    <label for="first-name">First Name</label>
-                    <input type="text" id="first-name" class="input input-md" />
-                    <label for="last-name">Last Name</label>
-                    <input type="text" id="last-name" class="input input-md" />
-                    <label for="type">Email</label>
-                    <input type="email" id="email" placeholder="" disabled class="input input-md" />
-                    <label for="avatar">Upload Avatar</label>
-                    <input type="file" id="avatar" accept="image/*" />
-                </div>
-                <button type="button" class="btn-filled btn-md mt-auto lg:mt-0" id="save-btn">Save changes</button>
-            </form>
+                <img src="/illustrations/offline.svg" alt="offline-illustration" />
+                <h3 class="text-3xl font-dm text-slate-600 pt-6 pb-3">Oops!</h3>
+                <p class="text-center">
+                    It looks like you're offline <br />
+                    <span class="text-base font-bold font-dm text-slate-600">
+                        Please check your connection and try again <br />to revisit your memories.
+                    </span>
+                </p>
+            </div>
+            <div data-main-content aria-hidden="false" class="aria-hidden:hidden">
+                <form
+                    class="flex-grow md:flex-grow-0 flex flex-col w-full lg:max-w-2xl lg:m-auto lg:mt-10 lg:mb-20 lg:bg-gray-100 lg:p-10 lg:rounded-lg lg:gap-8"
+                    id="form"
+                >
+                    <div class="flex flex-col gap-2 mb-4">
+                        <label for="first-name">First Name</label>
+                        <input type="text" id="first-name" class="input input-md" />
+                        <label for="last-name">Last Name</label>
+                        <input type="text" id="last-name" class="input input-md" />
+                        <label for="type">Email</label>
+                        <input type="email" id="email" placeholder="" disabled class="input input-md" />
+                        <label for="avatar">Upload Avatar</label>
+                        <input type="file" id="avatar" accept="image/*" />
+                    </div>
+                    <button type="button" class="btn-filled btn-md mt-auto lg:mt-0" id="save-btn">Save changes</button>
+                </form>
+            </div>
         </main>
         <script type="module" src="./account.ts"></script>
     </body>

@@ -19,6 +19,34 @@ import './edit-memory-modal'
 import './add-moment-modal'
 import feather from 'feather-icons'
 
+if ('serviceWorker' in navigator) {
+    void navigator.serviceWorker.register('../service-worker.js', { scope: '../' }).catch(console.error)
+}
+
+if (!navigator.onLine) {
+    q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('#chat').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('#cover-section').setAttribute('aria-hidden', 'true')
+}
+
+window.addEventListener('offline', () => {
+    q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('#chat').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('#cover-section').setAttribute('aria-hidden', 'true')
+})
+window.addEventListener('online', () => {
+    q<HTMLParagraphElement>('#offline-label').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('[data-offline-screen]').setAttribute('aria-hidden', 'true')
+    q<HTMLDivElement>('[data-main-content]').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('#chat').setAttribute('aria-hidden', 'false')
+    q<HTMLDivElement>('#cover-section').setAttribute('aria-hidden', 'false')
+    window.location.reload()
+})
+
 const urlParams = new URLSearchParams(location.search)
 const memoryId = <Maybe<Memory['id']>>urlParams.get('id')
 
