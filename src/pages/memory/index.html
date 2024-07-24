@@ -11,7 +11,7 @@
         <script type="module" src="./memory.ts"></script>
     </head>
 
-    <body class="pb-20 md:pb-36">
+    <body class="pb-14 md:pb-6">
         <header
             class="p-6 flex justify-between sticky z-20 top-0 backdrop-blur bg-gradient-to-tr from-thick-blue-600/45 to-thick-blue-800/80"
         >
@@ -186,7 +186,7 @@
                         class="flex font-source justify-center font-bold text-white text-5xl md:text-7xl relative"
                     ></h2>
                 </div>
-                <div class="bg-black/30 p-2 rounded-2xl text-white">
+                <div class="bg-black/30 px-4 py-2 rounded-full text-white">
                     <span data-memory="cover-date" class="">
                         <!-- * the memory date will be here -->
                     </span>
@@ -284,6 +284,7 @@
                         <li
                             class="text-black basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-bl from-amber-200 to-orange-100 rounded-lg border border-red-300 flex-col justify-start items-start gap-3 inline-flex box-border"
                         >
+
                             <div class="flex w-full justify-between">
                                 <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
                                     <span data-countdown-num="months"></span>
@@ -411,6 +412,11 @@
                 </ul>
             </div>
         </main>
+
+        <footer class="flex flex-col gap-4 items-center pt-20">
+            <img src="/logo.svg" alt="logo" class="w-32" />
+            <div class="text-gray-500 text-sm">&copy; 2024 rmmbr. All rights reserved.</div>
+        </footer>
 
         <template data-moment-img-item>
             <li data-moment-id="" class="bg-gray-200 rounded-lg h-64 relative overflow-hidden">
