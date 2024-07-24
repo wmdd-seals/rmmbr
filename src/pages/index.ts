@@ -350,7 +350,7 @@ function renderMapMarks(memories: Memory[]): void {
         return
     }
 
-    const locations = memories.filter(memory => !!memory.location).map(memory => memory.location!)
+    const locations = allMemories.filter(memory => !!memory.location).map(memory => memory.location!)
 
     const map = q('#locations-map')
 
