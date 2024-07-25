@@ -1,6 +1,6 @@
 import { memoryApi } from '#api'
 import { Memory, Moment } from '#domain'
-import { Maybe, PromiseMaybe, q } from '#utils'
+import { Maybe, prefixPath, PromiseMaybe, q } from '#utils'
 import { ModalBaseLayer } from 'src/components/modal-base-layer'
 
 class AddMomentModal extends ModalBaseLayer {
@@ -52,7 +52,7 @@ class AddMomentModal extends ModalBaseLayer {
                         <div data-media-preview class="peer h-full hidden has-[[data-preview-item]]:flex justify-center items-start sm:justify-start gap-4 flex-wrap w-full content-start overflow-y-scroll">
                         </div>
                         <label for="media-input" class="peer-has-[[data-preview-item]]:hidden">
-                            <img src="/illustrations/taking-pic.svg">
+                            <img src="${prefixPath('/illustrations/taking-pic.svg')}">
                         </label>
                         <label
                             id="pick-media"
@@ -63,7 +63,7 @@ class AddMomentModal extends ModalBaseLayer {
 
                 <div id="add-moment-2" role="tabpanel" aria-hidden="true" tabindex="0" class="flex flex-col items-center justify-center flex-grow w-full overflow-x-hidden overflow-y-scroll sm:overflow-y-hidden aria-hidden:hidden">
                     <div class="grid lg:grid-cols-2 h-full w-full items-center gap-6 p-1">
-                        <img src="/illustrations/calming-girl.svg" class="self-end lg:self-center w-full">
+                        <img src="${prefixPath('/illustrations/calming-girl.svg')}" class="self-end lg:self-center w-full">
 
                         <div class="self-start lg:self-center flex flex-col w-full items-start gap-2">
                             <label for="description-input" class="text-slate-700">Note, or Reflection</label>

@@ -1,4 +1,4 @@
-import { codeAddress, initAutoComplete, q } from '#utils'
+import { codeAddress, initAutoComplete, prefixPath, q } from '#utils'
 import { ModalBaseLayer } from 'src/components/modal-base-layer'
 import '../share-memory-window'
 import { memoryApi, storageApi } from '#api'
@@ -247,7 +247,7 @@ class EditMemoryModal extends ModalBaseLayer {
         stickers.forEach(id => {
             const img = document.createElement('img')
             img.id = id
-            img.src = `/sticker/${id}.svg`
+            img.src = prefixPath(`/sticker/${id}.svg`)
             img.alt = id
             container.appendChild(img)
         })
@@ -277,7 +277,7 @@ class EditMemoryModal extends ModalBaseLayer {
         const saveStickerButton = q('#save-sticker-btn')
         saveStickerButton.addEventListener('click', async () => {
             await memoryApi.update(this.memoryId as Memory['id'], { stickerId: clickedStickerId })
-            q<HTMLImageElement>('[data-memory="sticker"]').src = `/sticker/${clickedStickerId}.svg`
+            q<HTMLImageElement>('[data-memory="sticker"]').src = prefixPath(`/sticker/${clickedStickerId}.svg`)
 
             q('#sticker-default-area').setAttribute('aria-hidden', 'false')
             q('#sticker-selection-area').setAttribute('aria-hidden', 'true')

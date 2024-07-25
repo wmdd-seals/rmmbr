@@ -1,4 +1,3 @@
-import { getLocationInfo } from 'src/utils/gmap'
 import { memoryApi, supabase, userApi, storageApi } from '#api'
 import { Memory, MemoryMessage, User } from '#domain'
 import {
@@ -9,10 +8,12 @@ import {
     updateCurrentUserChip,
     weeksFrom,
     yearsFrom,
+    getLocationInfo,
     hoursUntil,
     daysUntil,
     weeksUntil,
-    monthsUntil
+    monthsUntil,
+    prefixPath
 } from '#utils'
 import { Moment } from '#domain'
 import './edit-memory-modal'
@@ -78,7 +79,7 @@ async function renderCover(memory: Memory): Promise<void> {
     const memoryLocation = memory.location ? await getLocationInfo(memory.location) : null
     document.querySelectorAll('[data-memory="title"]').forEach(e => (e.innerHTML = memory.title))
     q<HTMLImageElement>('[data-memory="cover-sticker"]').src = memory.stickerId
-        ? `/sticker/${memory.stickerId}.svg`
+        ? prefixPath(`/sticker/${memory.stickerId}.svg`)
         : ''
     q<HTMLSpanElement>('[data-memory="cover-date"]').innerHTML = memory.date
     q<HTMLSpanElement>('[data-memory="cover-location"]').innerHTML = memoryLocation
