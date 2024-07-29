@@ -51,10 +51,10 @@ class EditMemoryModal extends ModalBaseLayer {
                         <button id="open-sticker-list" class="text-indigo-600"><i data-feather="edit"></i></button>
                     </div>
                     <div id="sticker-selection-area" aria-hidden="true" class="flex flex-col gap-1 aria-hidden:hidden">
-                        <section class="flex justify-center overflow-x-auto " id="sticker"></section>
+                        <section class="flex justify-start overflow-x-auto no-scrollbar" id="sticker"></section>
                         <div class="flex gap-1 justify-end">
-                            <button id="close-sticker-list" class="btn-text btn-md">Cansel</button>
-                            <button id="save-sticker-btn" class="btn-filled btn-md">Save</button>                            
+                            <button id="close-sticker-list" class="btn-text btn-md">Cancel</button>
+                            <button id="save-sticker-btn" class="btn-filled btn-md">Save</button>
                         </div>
                     </div>
 
@@ -167,6 +167,7 @@ class EditMemoryModal extends ModalBaseLayer {
         const date = q<HTMLInputElement>('input[name="date"]', this)
         const location = q<HTMLInputElement>('input[name="location"]', this)
         const description = q<HTMLTextAreaElement>('textarea[name="description"]', this)
+        const sticker = q<HTMLImageElement>('[data-memory="sticker"]', this)
         await initAutoComplete(q<HTMLInputElement>('input[name="location"]'))
 
         this.currentMemory = await memoryApi.get(this.memoryId as Memory['id'], this.userId as User['id'])
@@ -175,6 +176,7 @@ class EditMemoryModal extends ModalBaseLayer {
 
         const locationInfo = this.currentMemory.location ? await getLocationInfo(this.currentMemory.location) : null
 
+        sticker.src = this.currentMemory.stickerId ? `/sticker/${this.currentMemory.stickerId}.svg` : ''
         title.value = this.currentMemory.title
         date.value = this.currentMemory.date
         location.value = locationInfo ? `${locationInfo.city}, ${locationInfo.country}` : ''
@@ -199,6 +201,7 @@ class EditMemoryModal extends ModalBaseLayer {
                 description: description.value
             })
             this.close()
+            this.closeStickerList()
         })
         q<HTMLButtonElement>('#delete-memory-btn').addEventListener('click', async () => {
             await memoryApi.delete(this.memoryId as Memory['id'], this.userId as User['id']).then(res => {
@@ -209,11 +212,23 @@ class EditMemoryModal extends ModalBaseLayer {
         this.querySelectorAll('[data-modal-close]').forEach(e => e.addEventListener('click', () => this.close()))
         this.tab()
 
-        this.openOrCloseStickerList()
-        this.selectOrRemoveSticker()
+        this.renderStickerList()
+
+        q('#open-sticker-list').addEventListener('click', () => {
+            this.openStickerList()
+        })
+
+        q('#close-sticker-list').addEventListener('click', () => {
+            this.closeStickerList()
+        })
+
+        this.saveSticker()
+        this.deleteSticker()
+        // this.realTimeUpdateMemory()
     }
 
-    private openOrCloseStickerList(): void {
+    private renderStickerList(): void {
+        if (!this.currentMemory) throw new Error('The memory does not exist or failed fetch the memory data')
         const stickers = [
             'airplane',
             'beach-ball',
@@ -245,44 +260,50 @@ class EditMemoryModal extends ModalBaseLayer {
 
         const container = q('#sticker')
         stickers.forEach(id => {
-            const img = document.createElement('img')
-            img.id = id
-            img.src = prefixPath(`/sticker/${id}.svg`)
-            img.alt = id
-            container.appendChild(img)
-        })
+            const [stickerLabel, stickerRadio, stickerImg] = [
+                document.createElement('label'),
+                document.createElement('input'),
+                document.createElement('img')
+            ]
+            stickerLabel.setAttribute('for', id)
+            stickerRadio.setAttribute('id', id)
+            stickerRadio.value = id
+            stickerRadio.classList.add('hidden')
+            stickerRadio.setAttribute('name', 'sticker-option')
+            stickerRadio.type = 'radio'
+            stickerRadio.name = 'sticker-ids'
+            stickerLabel.appendChild(stickerRadio)
+            stickerLabel.classList.add('has-[input:checked]:bg-indigo-200', 'h-14', 'aspect-square')
 
-        q('#open-sticker-list').addEventListener('click', () => {
-            q('#sticker-default-area').setAttribute('aria-hidden', 'true')
-            q('#sticker-selection-area').setAttribute('aria-hidden', 'false')
-        })
-
-        q('#close-sticker-list').addEventListener('click', () => {
-            q('#sticker-default-area').setAttribute('aria-hidden', 'false')
-            q('#sticker-selection-area').setAttribute('aria-hidden', 'true')
+            stickerImg.src = prefixPath(`/sticker/${id}.svg`)
+            stickerImg.alt = id
+            stickerLabel.appendChild(stickerImg)
+            container.appendChild(stickerLabel)
         })
     }
 
-    private selectOrRemoveSticker(): void {
-        if (!this.currentMemory) throw new Error('The memory does not exist or failed fetch the memory data')
+    private openStickerList(): void {
+        if (this.currentMemory?.stickerId)
+            q<HTMLInputElement>(`input#${this.currentMemory.stickerId}`, this).checked = true
+        q('#sticker-default-area').setAttribute('aria-hidden', 'true')
+        q('#sticker-selection-area').setAttribute('aria-hidden', 'false')
+    }
 
-        let clickedStickerId: Maybe<string>
-        const stickerSection = q('#sticker')
-        stickerSection.addEventListener('click', (event: MouseEvent) => {
-            const elem = event.target as HTMLElement
-            if (elem.id === 'sticker') return
-            clickedStickerId = elem.id
-        })
-
-        const saveStickerButton = q('#save-sticker-btn')
+    private saveSticker(): void {
+        const saveStickerButton = q('#save-sticker-btn', this)
         saveStickerButton.addEventListener('click', async () => {
-            await memoryApi.update(this.memoryId as Memory['id'], { stickerId: clickedStickerId })
-            q<HTMLImageElement>('[data-memory="sticker"]').src = prefixPath(`/sticker/${clickedStickerId}.svg`)
-
-            q('#sticker-default-area').setAttribute('aria-hidden', 'false')
-            q('#sticker-selection-area').setAttribute('aria-hidden', 'true')
+            const stickerSelected = q<HTMLInputElement>('input[name="sticker-ids"]:checked', this)
+            await memoryApi.update(this.memoryId as Memory['id'], { stickerId: stickerSelected.value })
+            this.currentMemory!.stickerId = stickerSelected.value
+            q<HTMLImageElement>('[data-memory="sticker"]', this).src = prefixPath(
+                `/sticker/${stickerSelected.value}.svg`
+            )
+            q('#sticker-default-area', this).setAttribute('aria-hidden', 'false')
+            q('#sticker-selection-area', this).setAttribute('aria-hidden', 'true')
         })
+    }
 
+    private deleteSticker(): void {
         const deleteStickerButton = q('#delete-sticker-btn')
         deleteStickerButton.addEventListener('click', async () => {
             await memoryApi.update(this.memoryId as Memory['id'], { stickerId: null })
@@ -293,7 +314,13 @@ class EditMemoryModal extends ModalBaseLayer {
         })
     }
 
+    private closeStickerList(): void {
+        q('#sticker-default-area').setAttribute('aria-hidden', 'false')
+        q('#sticker-selection-area').setAttribute('aria-hidden', 'true')
+    }
+
     private close(): void {
+        this.closeStickerList()
         this.open = null
     }
 
