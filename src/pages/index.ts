@@ -127,7 +127,7 @@ function renderMemories(memories: Memory[]): void {
         q('#memory-overlay').style.display = 'none'
     }
 
-    ;[...memories].forEach(memory => {
+    memories.forEach(memory => {
         const node = thumbnail.content.cloneNode(true) as HTMLLIElement
         const liElem = node.firstElementChild
 
