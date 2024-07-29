@@ -1,12 +1,10 @@
 import { userApi } from '#api'
-import { updateCurrentUserChip, q, prefixPath } from '#utils'
+import { updateCurrentUserChip, q } from '#utils'
 import feather from 'feather-icons'
 feather.replace()
 
 if ('serviceWorker' in navigator) {
-    void navigator.serviceWorker
-        .register(prefixPath('/service-worker.js'), { scope: prefixPath('/') })
-        .catch(console.error)
+    void navigator.serviceWorker.register('../service-worker.js', { scope: '../' }).catch(console.error)
 }
 
 if (!navigator.onLine) {

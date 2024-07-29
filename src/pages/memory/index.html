@@ -284,7 +284,6 @@
                         <li
                             class="text-black basis-[100%] sm:basis-[30%] lg:basis-[23%] p-4 bg-gradient-to-bl from-amber-200 to-orange-100 rounded-lg border border-red-300 flex-col justify-start items-start gap-3 inline-flex box-border"
                         >
-
                             <div class="flex w-full justify-between">
                                 <p class="h-fit px-2 py-1 bg-white/50 rounded-full justify-end items-center gap-1 flex">
                                     <span data-countdown-num="months"></span>
@@ -353,63 +352,71 @@
                 <ul data-moment-list class="mt-4 grid grid-cols-2 gap-2 md:grid-cols-3">
                     <!-- moments are to be rendered here -->
                 </ul>
-            </div>
 
-            <div class="hidden mt-20" id="time-passed">
-                <h3 class="font-bold font-source text-6xl text-center text-thick-blue-600 mb-14">
-                    Time goes fast and have happened
-                </h3>
+                <div class="hidden mt-20" id="time-passed">
+                    <h3 class="font-bold font-source text-6xl text-center text-thick-blue-600 mb-14">
+                        Time goes fast and have happened
+                    </h3>
 
-                <ul class="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-                    <li
-                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg overflow-hidden relative bg-gradient-to-bl from-indigo-500 text-indigo-900"
-                    >
-                        <img
-                            src="/illustrations/sun-around-earth.svg"
-                            alt="Earth with Sun"
-                            class="w-16 absolute top-5 right-5"
-                        />
-                        <span data-years-count class="mt-auto font-bold font-source text-6xl"></span>
-                        <span>Turns around the Sun...</span>
-                        <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Years</span>
-                    </li>
-                    <li
-                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg overflow-hidden relative bg-gradient-to-l from-slate-900 to-indigo-800 text-white"
-                    >
-                        <img
-                            src="/illustrations/moon.svg"
-                            alt="Moon"
-                            class="w-[4.5rem] h-[4.5rem] absolute top-5 right-5"
-                        />
-                        <span data-months-count class="mt-auto font-bold font-source text-6xl"></span>
-                        <span>Full Moons since then...</span>
-                        <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Months</span>
-                    </li>
-                    <li
-                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg overflow-hidden relative bg-gradient-to-l from-indigo-900 to-indigo-500 text-white"
-                    >
-                        <img
-                            src="/illustrations/tent-tree.svg"
-                            alt="Tent and tree"
-                            class="w-16 h-16 absolute top-5 right-5"
-                        />
-                        <span data-weeks-count class="mt-auto font-bold font-source text-6xl"></span>
-                        <span>Crazy weekends...</span>
-                        <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Weeks</span>
-                    </li>
-                    <li
-                        class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg overflow-hidden relative bg-gradient-to-bl from-amber-200 to-orange-100 text-indigo-600"
-                    >
-                        <img
-                            src="/illustrations/sun-cloud.svg"
-                            alt="Cloudy sun"
-                            class="w-16 h-16 absolute top-5 right-5"
-                        />
-                        <span data-days-count class="mt-auto font-bold font-source text-6xl"></span>
-                        <span>Unique sunrises</span>
-                        <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs">Days</span>
-                    </li>
-                </ul>
+                    <ul class="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                        <li
+                            class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg overflow-hidden relative bg-gradient-to-bl from-indigo-500 text-indigo-900"
+                        >
+                            <img
+                                src="/illustrations/sun-around-earth.svg"
+                                alt="Earth with Sun"
+                                class="w-16 absolute top-5 right-5"
+                            />
+                            <span data-years-count class="mt-auto font-bold font-source text-6xl"></span>
+                            <span>Turns around the Sun...</span>
+                            <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs"
+                                >Years</span
+                            >
+                        </li>
+                        <li
+                            class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg overflow-hidden relative bg-gradient-to-l from-slate-900 to-indigo-800 text-white"
+                        >
+                            <img
+                                src="/illustrations/moon.svg"
+                                alt="Moon"
+                                class="w-[4.5rem] h-[4.5rem] absolute top-5 right-5"
+                            />
+                            <span data-months-count class="mt-auto font-bold font-source text-6xl"></span>
+                            <span>Full Moons since then...</span>
+                            <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs"
+                                >Months</span
+                            >
+                        </li>
+                        <li
+                            class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg overflow-hidden relative bg-gradient-to-l from-indigo-900 to-indigo-500 text-white"
+                        >
+                            <img
+                                src="/illustrations/tent-tree.svg"
+                                alt="Tent and tree"
+                                class="w-16 h-16 absolute top-5 right-5"
+                            />
+                            <span data-weeks-count class="mt-auto font-bold font-source text-6xl"></span>
+                            <span>Crazy weekends...</span>
+                            <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs"
+                                >Weeks</span
+                            >
+                        </li>
+                        <li
+                            class="flex flex-col h-40 px-6 pt-6 pb-8 rounded-lg overflow-hidden relative bg-gradient-to-bl from-amber-200 to-orange-100 text-indigo-600"
+                        >
+                            <img
+                                src="/illustrations/sun-cloud.svg"
+                                alt="Cloudy sun"
+                                class="w-16 h-16 absolute top-5 right-5"
+                            />
+                            <span data-days-count class="mt-auto font-bold font-source text-6xl"></span>
+                            <span>Unique sunrises</span>
+                            <span class="absolute bottom-2 right-1 bg-white/40 px-2 py-1 rounded-2xl text-xs"
+                                >Days</span
+                            >
+                        </li>
+                    </ul>
+                </div>
             </div>
         </main>
 

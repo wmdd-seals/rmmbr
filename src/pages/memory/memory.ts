@@ -21,9 +21,7 @@ import './add-moment-modal'
 import feather from 'feather-icons'
 
 if ('serviceWorker' in navigator) {
-    void navigator.serviceWorker
-        .register(prefixPath('/service-worker.js'), { scope: prefixPath('/') })
-        .catch(console.error)
+    void navigator.serviceWorker.register('../service-worker.js', { scope: '../' }).catch(console.error)
 }
 
 if (!navigator.onLine) {
