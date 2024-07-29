@@ -9,6 +9,8 @@ class EditMemoryModal extends ModalBaseLayer {
     private existing: boolean = false
     private readonly falsyValue: Set<string> = new Set(['false', 'null', '0', ''])
     private currentMemory: Maybe<Memory>
+    private clickedStickerId: Maybe<string>
+    private isStickerListOpen: boolean = false
 
     public constructor() {
         super()
@@ -53,8 +55,8 @@ class EditMemoryModal extends ModalBaseLayer {
                     <div id="sticker-selection-area" aria-hidden="true" class="flex flex-col gap-1 aria-hidden:hidden">
                         <section class="flex justify-center overflow-x-auto no-scrollbar" id="sticker"></section>
                         <div class="flex gap-1 justify-end">
-                            <button id="close-sticker-list" class="btn-text btn-md">Cansel</button>
-                            <button id="save-sticker-btn" class="btn-filled btn-md">Save</button>                            
+                            <button id="close-sticker-list" class="btn-text btn-md">Cancel</button>
+                            <button id="save-sticker-btn" class="btn-filled btn-md">Save</button>
                         </div>
                     </div>
 
@@ -175,6 +177,10 @@ class EditMemoryModal extends ModalBaseLayer {
 
         const locationInfo = this.currentMemory.location ? await getLocationInfo(this.currentMemory.location) : null
 
+        if (this.currentMemory.stickerId) {
+            q<HTMLImageElement>('[data-memory="sticker"]').src = `/sticker/${this.currentMemory.stickerId}.svg`
+        }
+
         title.value = this.currentMemory.title
         date.value = this.currentMemory.date
         location.value = locationInfo ? `${locationInfo.city}, ${locationInfo.country}` : ''
@@ -199,6 +205,7 @@ class EditMemoryModal extends ModalBaseLayer {
                 description: description.value
             })
             this.close()
+            this.closeStickerList()
         })
         q<HTMLButtonElement>('#delete-memory-btn').addEventListener('click', async () => {
             await memoryApi.delete(this.memoryId as Memory['id'], this.userId as User['id']).then(res => {
@@ -209,11 +216,19 @@ class EditMemoryModal extends ModalBaseLayer {
         this.querySelectorAll('[data-modal-close]').forEach(e => e.addEventListener('click', () => this.close()))
         this.tab()
 
-        this.openOrCloseStickerList()
+        q('#open-sticker-list').addEventListener('click', async () => {
+            await this.openStickerList()
+        })
+
         this.selectOrRemoveSticker()
+
+        q('#close-sticker-list').addEventListener('click', () => {
+            this.closeStickerList()
+        })
     }
 
-    private openOrCloseStickerList(): void {
+    private async openStickerList(): Promise<void> {
+        if (!this.currentMemory) throw new Error('The memory does not exist or failed fetch the memory data')
         const stickers = [
             'airplane',
             'beach-ball',
@@ -252,21 +267,22 @@ class EditMemoryModal extends ModalBaseLayer {
             container.appendChild(img)
         })
 
-        q('#open-sticker-list').addEventListener('click', () => {
-            q('#sticker-default-area').setAttribute('aria-hidden', 'true')
-            q('#sticker-selection-area').setAttribute('aria-hidden', 'false')
-        })
+        q('#sticker-default-area').setAttribute('aria-hidden', 'true')
+        q('#sticker-selection-area').setAttribute('aria-hidden', 'false')
 
-        q('#close-sticker-list').addEventListener('click', () => {
-            q('#sticker-default-area').setAttribute('aria-hidden', 'false')
-            q('#sticker-selection-area').setAttribute('aria-hidden', 'true')
-        })
+        this.currentMemory = await memoryApi.get(this.memoryId as Memory['id'], this.userId as User['id'])
+        if (this.currentMemory?.stickerId) {
+            const currentElem = q<HTMLImageElement>(`#${this.currentMemory.stickerId}`)
+            currentElem.classList.add('bg-indigo-200')
+        }
+
+        this.isStickerListOpen = true
     }
 
     private selectOrRemoveSticker(): void {
+        this.clickedStickerId = this.currentMemory?.stickerId || null
         if (!this.currentMemory) throw new Error('The memory does not exist or failed fetch the memory data')
 
-        let clickedStickerId: Maybe<string>
         const stickerSection = q('#sticker')
         stickerSection.addEventListener('click', (event: MouseEvent) => {
             const elem = event.target as HTMLElement
@@ -275,15 +291,14 @@ class EditMemoryModal extends ModalBaseLayer {
             const previousElem = stickerSection.querySelector('.bg-indigo-200')
             previousElem?.classList.remove('bg-indigo-200')
 
-            clickedStickerId = elem.id
+            this.clickedStickerId = elem.id
             elem.classList.add('bg-indigo-200')
         })
 
         const saveStickerButton = q('#save-sticker-btn')
         saveStickerButton.addEventListener('click', async () => {
-            await memoryApi.update(this.memoryId as Memory['id'], { stickerId: clickedStickerId })
-            q<HTMLImageElement>('[data-memory="sticker"]').src = prefixPath(`/sticker/${clickedStickerId}.svg`)
-
+            await memoryApi.update(this.memoryId as Memory['id'], { stickerId: this.clickedStickerId })
+            q<HTMLImageElement>('[data-memory="sticker"]').src = prefixPath(`/sticker/${this.clickedStickerId}.svg`)
             q('#sticker-default-area').setAttribute('aria-hidden', 'false')
             q('#sticker-selection-area').setAttribute('aria-hidden', 'true')
         })
@@ -301,7 +316,22 @@ class EditMemoryModal extends ModalBaseLayer {
         })
     }
 
+    private closeStickerList(): void {
+        if (this.clickedStickerId) {
+            const currentElem = q<HTMLImageElement>(`#${this.clickedStickerId}`)
+            currentElem.classList.remove('bg-indigo-200')
+        }
+
+        this.isStickerListOpen = false
+
+        q('#sticker-default-area').setAttribute('aria-hidden', 'false')
+        q('#sticker-selection-area').setAttribute('aria-hidden', 'true')
+    }
+
     private close(): void {
+        if (this.isStickerListOpen) {
+            this.closeStickerList()
+        }
         this.open = null
     }
 
