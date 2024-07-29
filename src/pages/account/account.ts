@@ -5,7 +5,7 @@ feather.replace()
 
 if ('serviceWorker' in navigator) {
     void navigator.serviceWorker
-        .register(prefixPath('../service-worker.js'), { scope: prefixPath('../') })
+        .register(prefixPath('/service-worker.js'), { scope: prefixPath('/') })
         .catch(console.error)
 }
 
