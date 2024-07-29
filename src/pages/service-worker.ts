@@ -1,7 +1,7 @@
 /// <reference lib="WebWorker"/>
 
 const CACHE_NAME = 'offline'
-const offlineURL = '/fallback.html'
+const offlineURL = './fallback.html'
 
 export type {}
 declare const self: ServiceWorkerGlobalScope
@@ -12,11 +12,12 @@ self.addEventListener('install', event => {
             const cache = await caches.open(CACHE_NAME)
             await cache.addAll([
                 new Request(offlineURL, { cache: 'reload' }),
-                new Request('/illustrations/offline.svg', { cache: 'reload' }),
-                new Request('/wifi-off.svg', { cache: 'reload' }),
-                new Request('/white-logo.svg', { cache: 'reload' }),
-                new Request('/sign-bg.jpg', { cache: 'reload' }),
-                new Request('/favicon.svg', { cache: 'reload' })
+                new Request('./illustrations/offline.svg', { cache: 'reload' }),
+                new Request('./wifi-off.svg', { cache: 'reload' }),
+                new Request('./white-logo.svg', { cache: 'reload' }),
+                new Request('./sign-bg.jpg', { cache: 'reload' }),
+                new Request('./favicon.svg', { cache: 'reload' }),
+                new Request('./logo.svg', { cache: 'reload' })
             ])
         })()
     )
