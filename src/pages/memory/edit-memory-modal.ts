@@ -1,7 +1,7 @@
 import { codeAddress, initAutoComplete, prefixPath, q } from '#utils'
 import { ModalBaseLayer } from 'src/components/modal-base-layer'
 import '../share-memory-window'
-import { memoryApi, storageApi, supabase } from '#api'
+import { memoryApi, storageApi } from '#api'
 import { Memory, User } from '#domain'
 import { getLocationInfo, Maybe } from '#utils'
 
@@ -167,6 +167,7 @@ class EditMemoryModal extends ModalBaseLayer {
         const date = q<HTMLInputElement>('input[name="date"]', this)
         const location = q<HTMLInputElement>('input[name="location"]', this)
         const description = q<HTMLTextAreaElement>('textarea[name="description"]', this)
+        const sticker = q<HTMLImageElement>('[data-memory="sticker"]', this)
         await initAutoComplete(q<HTMLInputElement>('input[name="location"]'))
 
         this.currentMemory = await memoryApi.get(this.memoryId as Memory['id'], this.userId as User['id'])
@@ -175,10 +176,7 @@ class EditMemoryModal extends ModalBaseLayer {
 
         const locationInfo = this.currentMemory.location ? await getLocationInfo(this.currentMemory.location) : null
 
-        if (this.currentMemory.stickerId) {
-            q<HTMLImageElement>('[data-memory="sticker"]').src = `/sticker/${this.currentMemory.stickerId}.svg`
-        }
-
+        sticker.src = this.currentMemory.stickerId ? `/sticker/${this.currentMemory.stickerId}.svg` : ''
         title.value = this.currentMemory.title
         date.value = this.currentMemory.date
         location.value = locationInfo ? `${locationInfo.city}, ${locationInfo.country}` : ''
@@ -226,7 +224,7 @@ class EditMemoryModal extends ModalBaseLayer {
 
         this.saveSticker()
         this.deleteSticker()
-        this.realTimeUpdateMemory()
+        // this.realTimeUpdateMemory()
     }
 
     private renderStickerList(): void {
@@ -296,6 +294,7 @@ class EditMemoryModal extends ModalBaseLayer {
         saveStickerButton.addEventListener('click', async () => {
             const stickerSelected = q<HTMLInputElement>('input[name="sticker-ids"]:checked', this)
             await memoryApi.update(this.memoryId as Memory['id'], { stickerId: stickerSelected.value })
+            this.currentMemory!.stickerId = stickerSelected.value
             q<HTMLImageElement>('[data-memory="sticker"]', this).src = prefixPath(
                 `/sticker/${stickerSelected.value}.svg`
             )
@@ -318,25 +317,6 @@ class EditMemoryModal extends ModalBaseLayer {
     private closeStickerList(): void {
         q('#sticker-default-area').setAttribute('aria-hidden', 'false')
         q('#sticker-selection-area').setAttribute('aria-hidden', 'true')
-    }
-
-    private realTimeUpdateMemory(): void {
-        const latestMoments = supabase.channel(`memory_${this.memoryId}_in_modal`)
-        latestMoments
-            .on<Memory>(
-                'postgres_changes',
-                {
-                    event: '*',
-                    schema: 'public',
-                    table: 'memories',
-                    filter: `id=eq.${this.memoryId}`
-                },
-                payload => {
-                    if (Object.keys(payload.new).length === 0) return
-                    this.currentMemory = payload.new as Memory
-                }
-            )
-            .subscribe()
     }
 
     private close(): void {
