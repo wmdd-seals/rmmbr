@@ -15,7 +15,7 @@ export async function createMapWithMarkers(
 
     const mapOptions = {
         center: center ? { lng: center[0], lat: center[1] } : null,
-        zoom: 15,
+        zoom: 7,
         mapId: 'rmmbr_map'
     }
 
