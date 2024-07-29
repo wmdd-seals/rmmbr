@@ -9,8 +9,6 @@ class EditMemoryModal extends ModalBaseLayer {
     private existing: boolean = false
     private readonly falsyValue: Set<string> = new Set(['false', 'null', '0', ''])
     private currentMemory: Maybe<Memory>
-    private clickedStickerId: Maybe<string>
-    private isStickerListOpen: boolean = false
 
     public constructor() {
         super()
@@ -222,12 +220,12 @@ class EditMemoryModal extends ModalBaseLayer {
             this.openStickerList()
         })
 
-        this.selectOrRemoveSticker()
-
         q('#close-sticker-list').addEventListener('click', () => {
             this.closeStickerList()
         })
 
+        this.saveSticker()
+        this.deleteSticker()
         this.realTimeUpdateMemory()
     }
 
@@ -271,11 +269,14 @@ class EditMemoryModal extends ModalBaseLayer {
             ]
             stickerLabel.setAttribute('for', id)
             stickerRadio.setAttribute('id', id)
+            stickerRadio.value = id
             stickerRadio.classList.add('hidden')
             stickerRadio.setAttribute('name', 'sticker-option')
+            stickerRadio.type = 'radio'
+            stickerRadio.name = 'sticker-ids'
             stickerLabel.appendChild(stickerRadio)
+            stickerLabel.classList.add('has-[input:checked]:bg-indigo-200')
 
-            stickerImg.id = id
             stickerImg.src = prefixPath(`/sticker/${id}.svg`)
             stickerImg.alt = id
             stickerLabel.appendChild(stickerImg)
@@ -284,24 +285,26 @@ class EditMemoryModal extends ModalBaseLayer {
     }
 
     private openStickerList(): void {
+        if (this.currentMemory?.stickerId)
+            q<HTMLInputElement>(`input#${this.currentMemory.stickerId}`, this).checked = true
         q('#sticker-default-area').setAttribute('aria-hidden', 'true')
         q('#sticker-selection-area').setAttribute('aria-hidden', 'false')
-
-        this.isStickerListOpen = true
     }
 
-    private selectOrRemoveSticker(): void {
-        this.clickedStickerId = this.currentMemory?.stickerId || null
-        if (!this.currentMemory) throw new Error('The memory does not exist or failed fetch the memory data')
-
-        const saveStickerButton = q('#save-sticker-btn')
+    private saveSticker(): void {
+        const saveStickerButton = q('#save-sticker-btn', this)
         saveStickerButton.addEventListener('click', async () => {
-            await memoryApi.update(this.memoryId as Memory['id'], { stickerId: this.clickedStickerId })
-            q<HTMLImageElement>('[data-memory="sticker"]').src = prefixPath(`/sticker/${this.clickedStickerId}.svg`)
-            q('#sticker-default-area').setAttribute('aria-hidden', 'false')
-            q('#sticker-selection-area').setAttribute('aria-hidden', 'true')
+            const stickerSelected = q<HTMLInputElement>('input[name="sticker-ids"]:checked', this)
+            await memoryApi.update(this.memoryId as Memory['id'], { stickerId: stickerSelected.value })
+            q<HTMLImageElement>('[data-memory="sticker"]', this).src = prefixPath(
+                `/sticker/${stickerSelected.value}.svg`
+            )
+            q('#sticker-default-area', this).setAttribute('aria-hidden', 'false')
+            q('#sticker-selection-area', this).setAttribute('aria-hidden', 'true')
         })
+    }
 
+    private deleteSticker(): void {
         const deleteStickerButton = q('#delete-sticker-btn')
         deleteStickerButton.addEventListener('click', async () => {
             await memoryApi.update(this.memoryId as Memory['id'], { stickerId: null })
@@ -313,19 +316,12 @@ class EditMemoryModal extends ModalBaseLayer {
     }
 
     private closeStickerList(): void {
-        if (this.clickedStickerId) {
-            const currentElem = q<HTMLImageElement>(`#${this.clickedStickerId}`)
-            currentElem.classList.remove('bg-indigo-200')
-        }
-
-        this.isStickerListOpen = false
-
         q('#sticker-default-area').setAttribute('aria-hidden', 'false')
         q('#sticker-selection-area').setAttribute('aria-hidden', 'true')
     }
 
     private realTimeUpdateMemory(): void {
-        const latestMoments = supabase.channel(`memory_${this.memoryId}`)
+        const latestMoments = supabase.channel(`memory_${this.memoryId}_in_modal`)
         latestMoments
             .on<Memory>(
                 'postgres_changes',
@@ -344,9 +340,7 @@ class EditMemoryModal extends ModalBaseLayer {
     }
 
     private close(): void {
-        if (this.isStickerListOpen) {
-            this.closeStickerList()
-        }
+        this.closeStickerList()
         this.open = null
     }
 
