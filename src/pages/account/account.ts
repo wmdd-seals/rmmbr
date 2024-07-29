@@ -4,7 +4,7 @@ import feather from 'feather-icons'
 feather.replace()
 
 if ('serviceWorker' in navigator) {
-    void navigator.serviceWorker.register('../service-worker.js', { scope: '../' }).catch(console.error)
+    void navigator.serviceWorker.register('../service-worker.ts', { scope: '../' }).catch(console.error)
 }
 
 if (!navigator.onLine) {
