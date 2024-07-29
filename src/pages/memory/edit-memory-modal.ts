@@ -51,7 +51,7 @@ class EditMemoryModal extends ModalBaseLayer {
                         <button id="open-sticker-list" class="text-indigo-600"><i data-feather="edit"></i></button>
                     </div>
                     <div id="sticker-selection-area" aria-hidden="true" class="flex flex-col gap-1 aria-hidden:hidden">
-                        <section class="flex justify-center overflow-x-auto no-scrollbar" id="sticker"></section>
+                        <section class="flex justify-start overflow-x-auto no-scrollbar" id="sticker"></section>
                         <div class="flex gap-1 justify-end">
                             <button id="close-sticker-list" class="btn-text btn-md">Cancel</button>
                             <button id="save-sticker-btn" class="btn-filled btn-md">Save</button>
@@ -275,7 +275,7 @@ class EditMemoryModal extends ModalBaseLayer {
             stickerRadio.type = 'radio'
             stickerRadio.name = 'sticker-ids'
             stickerLabel.appendChild(stickerRadio)
-            stickerLabel.classList.add('has-[input:checked]:bg-indigo-200')
+            stickerLabel.classList.add('has-[input:checked]:bg-indigo-200', 'h-14', 'aspect-square')
 
             stickerImg.src = prefixPath(`/sticker/${id}.svg`)
             stickerImg.alt = id
