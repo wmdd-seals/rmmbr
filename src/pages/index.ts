@@ -336,6 +336,7 @@ function renderCountdowns(memories: Memory[]): void {
 
         const node = thumbnail.content.cloneNode(true) as HTMLLIElement
 
+        q<HTMLAnchorElement>('#countdown-eyecatch-banner', node).href = prefixPath(`/memory/?id=${memory.id}`)
         q('[data-memory=title]', node).innerHTML = title
         q('[data-memory="date"]', node).innerHTML = formatDate(memory.date)
         q('[data-memory="countdown"]', node).innerHTML = `${daysUntil(memory.date)} days`
