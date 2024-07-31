@@ -206,7 +206,7 @@ class EditMemoryModal extends ModalBaseLayer {
         q<HTMLButtonElement>('#delete-memory-btn').addEventListener('click', async () => {
             await memoryApi.delete(this.memoryId as Memory['id'], this.userId as User['id']).then(res => {
                 if (res) return
-                window.location.href = '/'
+                window.location.href = prefixPath('/')
             })
         })
         this.querySelectorAll('[data-modal-close]').forEach(e => e.addEventListener('click', () => this.close()))
