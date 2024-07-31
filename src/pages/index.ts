@@ -533,7 +533,7 @@ class LatestMemoriesByUserId {
                     allMemories.push(newMemory)
                     renderMemories(allMemories.sort((a, b) => +new Date(b.date) - +new Date(a.date)))
 
-                    if (+new Date(newMemory.date) - Date.now()) renderCountdowns([newMemory])
+                    if (+new Date(newMemory.date) > +Date.now()) renderCountdowns([newMemory])
 
                     if (Date.now() - +new Date(newMemory.date) > 1000 * 60 * 60 * 24 * 365)
                         renderFlashbacks([newMemory])
