@@ -141,6 +141,13 @@ function renderMemories(memories: Memory[]): void {
             coverImg.setAttribute('aria-hidden', 'false')
         }
 
+        if (memory.stickerId) {
+            console.log(memory)
+            const sticker = q<HTMLImageElement>('[data-memory=sticker]', node)
+            sticker.src = prefixPath(`/sticker/${memory.stickerId}.svg`)
+            sticker.classList.toggle('hidden')
+        }
+
         if (memory.location) {
             const hasLocationInfo = memoryLocations.has(memory.id)
 
