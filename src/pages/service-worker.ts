@@ -12,6 +12,7 @@ self.addEventListener('install', event => {
             const cache = await caches.open(CACHE_NAME)
             await cache.addAll([
                 new Request(offlineURL, { cache: 'reload' }),
+                new Request('./offline-fallback.js', { cache: 'reload' }),
                 new Request('./illustrations/offline.svg', { cache: 'reload' }),
                 new Request('./wifi-off.svg', { cache: 'reload' }),
                 new Request('./white-logo.svg', { cache: 'reload' }),
