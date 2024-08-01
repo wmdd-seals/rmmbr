@@ -45,7 +45,10 @@ const anchors = {
     ['#memory']: document.querySelector('a[href="#memory"]')!
 }
 
-let allMemories: Memory[] = []
+const allMemories: { [key: string]: Memory[] } = {
+    memories: [],
+    flashbacks: []
+}
 
 const isTab = (hash: string): hash is keyof typeof tabs => hash === '#home' || hash === '#memory'
 
@@ -96,23 +99,25 @@ userApi
         q('[data-user=name]').innerHTML = user.firstName
 
         const memories = await memoryApi.getAll(user.id)
-        allMemories = memories.sort((a, b) => +new Date(b.date) - +new Date(a.date))
-        if (allMemories.length === 0) {
+        allMemories.memories = memories.sort((a, b) => +new Date(b.date) - +new Date(a.date))
+        if (allMemories.memories.length === 0) {
             q('#filter-btn').classList.add('hidden')
         }
 
-        initFilterDrawer(allMemories)
+        initFilterDrawer(allMemories.memories)
 
-        renderCountdowns(allMemories.filter(memory => Date.now() < +new Date(memory.date)))
+        renderCountdowns(allMemories.memories.filter(memory => Date.now() < +new Date(memory.date)))
 
-        const flashbacks = allMemories.filter(memory => Date.now() - +new Date(memory.date) > 1000 * 60 * 60 * 24 * 365)
+        allMemories.flashbacks = allMemories.memories.filter(
+            memory => Date.now() - +new Date(memory.date) > 1000 * 60 * 60 * 24 * 365
+        )
 
         // select up to 6 random memories
-        renderFlashbacks(flashbacks.sort(() => 0.5 - Math.random()).slice(0, 6))
+        renderFlashbacks(allMemories.flashbacks.sort(() => 0.5 - Math.random()).slice(0, 6))
 
-        renderMemories(allMemories)
+        renderMemories(allMemories.memories)
 
-        renderMapMarks(allMemories)
+        renderMapMarks(allMemories.memories)
 
         LatestMemoriesByUserId.init(user.id)
     })
@@ -530,10 +535,11 @@ class LatestMemoriesByUserId {
                 payload => {
                     if (Object.keys(payload.new).length === 0) return
                     const newMemory = payload.new as Memory
-                    allMemories.push(newMemory)
-                    renderMemories(allMemories.sort((a, b) => +new Date(b.date) - +new Date(a.date)))
+                    allMemories.memories.push(newMemory)
+                    renderMemories(allMemories.memories.sort((a, b) => +new Date(b.date) - +new Date(a.date)))
 
-                    if (+new Date(newMemory.date) > +Date.now()) renderCountdowns([newMemory])
+                    if (+new Date(newMemory.date) > +Date.now())
+                        renderCountdowns(allMemories.memories.filter(memory => Date.now() < +new Date(memory.date)))
 
                     if (Date.now() - +new Date(newMemory.date) > 1000 * 60 * 60 * 24 * 365)
                         renderFlashbacks([newMemory])
