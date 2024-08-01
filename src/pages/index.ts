@@ -111,9 +111,10 @@ userApi
         allMemories.flashbacks = allMemories.memories.filter(
             memory => Date.now() - +new Date(memory.date) > 1000 * 60 * 60 * 24 * 365
         )
-
-        // select up to 6 random memories
-        renderFlashbacks(allMemories.flashbacks.sort(() => 0.5 - Math.random()).slice(0, 6))
+        if (allMemories.flashbacks.length >= 4) {
+            // select up to 6 random memories
+            renderFlashbacks(allMemories.flashbacks.sort(() => 0.5 - Math.random()).slice(0, 6))
+        }
 
         renderMemories(allMemories.memories)
 
@@ -187,14 +188,11 @@ function renderMemories(memories: Memory[]): void {
     })
 }
 
-function displayIfHasFourFlashbacks(): void {
-    const memoryFlashbackList = q('#flashback-list')
-    const parent = memoryFlashbackList.parentElement!
-    if (memoryFlashbackList.querySelectorAll('li').length >= 4) parent.setAttribute('aria-hidden', 'false')
-}
-
 function renderFlashbacks(memories: Memory[]): void {
     const memoryFlashbackList = q('#flashback-list')
+    const parent = memoryFlashbackList.parentElement!
+
+    if (parent.ariaHidden) parent.setAttribute('aria-hidden', 'false')
 
     const memoryFlashbackhTemplate = q<HTMLTemplateElement>('#memory-flashback-thumbnail')
 
@@ -214,7 +212,6 @@ function renderFlashbacks(memories: Memory[]): void {
             }
 
             memoryFlashbackList.appendChild(node)
-            displayIfHasFourFlashbacks()
         })
 }
 
@@ -541,8 +538,10 @@ class LatestMemoriesByUserId {
                     if (+new Date(newMemory.date) > +Date.now())
                         renderCountdowns(allMemories.memories.filter(memory => Date.now() < +new Date(memory.date)))
 
-                    if (Date.now() - +new Date(newMemory.date) > 1000 * 60 * 60 * 24 * 365)
-                        renderFlashbacks([newMemory])
+                    if (Date.now() - +new Date(newMemory.date) > 1000 * 60 * 60 * 24 * 365) {
+                        allMemories.flashbacks.push(newMemory)
+                        if (allMemories.flashbacks.length >= 4) renderFlashbacks(allMemories.flashbacks)
+                    }
                 }
             )
             .subscribe()
