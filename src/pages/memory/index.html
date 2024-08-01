@@ -157,16 +157,8 @@
                 alt="Memory cover"
                 class="h-full w-full object-cover aria-hidden:hidden md:w-full"
             />
-            <button
-                id="edit-memory"
-                class="absolute flex w-12 aspect-square rounded-full text-white top-8 right-6 bg-thick-blue-500"
-            >
-                <i data-feather="edit" class="m-auto"></i>
-            </button>
-            <a href="../" class="absolute top-8 left-6 text-ui-50 font-semibold">← Back</a>
-
             <div
-                class="flex flex-col items-center gap-3 justify-end h-4/5 absolute z-10 bottom-0 w-full bg-gradient-to-b from-transparent to-black/30 rounded-lg p-4"
+                class="flex flex-col items-center gap-3 justify-end h-4/5 absolute bottom-0 w-full bg-gradient-to-b from-transparent to-black/30 rounded-lg p-4"
             >
                 <h2
                     data-past-memory-area
@@ -196,6 +188,14 @@
                     <span data-memory="cover-location"></span>
                 </div>
             </div>
+
+            <button
+                id="edit-memory"
+                class="absolute flex w-12 aspect-square rounded-full text-white top-8 right-6 bg-thick-blue-500"
+            >
+                <i data-feather="edit" class="m-auto"></i>
+            </button>
+            <a href="../" class="absolute top-8 left-6 text-ui-50 font-semibold">← Back</a>
         </div>
 
         <main class="max-w-[1400px] mx-auto px-6 pb-6">
