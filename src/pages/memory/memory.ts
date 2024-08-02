@@ -78,9 +78,11 @@ function toggleOnIfMemoryIsPast(isPast: boolean, memory: Memory): void {
 async function renderCover(memory: Memory): Promise<void> {
     const memoryLocation = memory.location ? await getLocationInfo(memory.location) : null
     document.querySelectorAll('[data-memory="title"]').forEach(e => (e.innerHTML = memory.title))
-    q<HTMLImageElement>('[data-memory="cover-sticker"]').src = memory.stickerId
-        ? prefixPath(`/sticker/${memory.stickerId}.svg`)
-        : ''
+    if (memory.stickerId) {
+        document.querySelectorAll<HTMLImageElement>('[data-memory="cover-sticker"]').forEach(el => {
+            el.src = prefixPath(`/sticker/${memory.stickerId}.svg`)
+        })
+    }
     q<HTMLSpanElement>('[data-memory="cover-date"]').innerHTML = memory.date
     q<HTMLSpanElement>('[data-memory="cover-location"]').innerHTML = memoryLocation
         ? `, ${memoryLocation.city ? `${memoryLocation.city}, ` : ''}${memoryLocation.country}`
