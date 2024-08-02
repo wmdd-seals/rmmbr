@@ -142,7 +142,6 @@ function renderMemories(memories: Memory[]): void {
         }
 
         if (memory.stickerId) {
-            console.log(memory)
             const sticker = q<HTMLImageElement>('[data-memory=sticker]', node)
             sticker.src = prefixPath(`/sticker/${memory.stickerId}.svg`)
             sticker.classList.toggle('hidden')
