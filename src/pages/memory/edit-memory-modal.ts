@@ -236,6 +236,7 @@ class EditMemoryModal extends ModalBaseLayer {
             'coconut-palm-tree',
             'glasses',
             'globe',
+            'graduation',
             'heart-heart',
             'heart',
             'i-love-you',
