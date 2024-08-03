@@ -1,7 +1,7 @@
 import './memory-creation-modal'
 import { memoryApi, storageApi, supabase, userApi } from '#api'
 import { createMapWithMarkers, formatDate, Maybe, prefixPath, q, updateCurrentUserChip } from '#utils'
-import { Location, LocationInfo } from '#utils'
+import { LocationInfo } from '#utils'
 import { getLocationInfo } from 'src/utils/gmap'
 import { Memory, User } from '#domain'
 import { daysUntil } from '#utils'
@@ -121,7 +121,7 @@ userApi
 
         renderMemories(allMemories.memories)
 
-        renderMapMarks(allMemories.memories)
+        void renderMapMarks(allMemories.memories)
 
         LatestMemoriesByUserId.init(user.id)
     })
@@ -365,7 +365,7 @@ function renderCountdowns(memories: Memory[]): void {
     })
 }
 
-function renderMapMarks(memories: Memory[]): void {
+async function renderMapMarks(memories: Memory[]): Promise<void> {
     if (memories.length === 0) {
         q('#location').style.display = 'none'
         q('#location h2').innerHTML = ''
@@ -374,7 +374,7 @@ function renderMapMarks(memories: Memory[]): void {
 
     const locations = memories.filter(memory => !!memory.location).map(memory => memory.location!)
 
-    const map = q('#locations-map')
+    const mapEl = q('#locations-map')
 
     q('[data-user=locations-count]').innerHTML = `${locations.length} place${locations.length === 1 ? '' : 's'}`
 
@@ -382,16 +382,21 @@ function renderMapMarks(memories: Memory[]): void {
         q('#map-overlay').style.display = 'none'
     }
 
-    navigator.geolocation.getCurrentPosition(
-        position => {
-            const center: Location = [position.coords.longitude, position.coords.latitude]
+    try {
+        const map = await createMapWithMarkers(mapEl, {
+            markers: locations,
+            // enter the center manually, then update it after getting geolocation to speed up map loading
+            center: [-123.10409393638729, 49.261978262672294]
+        })
 
-            void createMapWithMarkers(map, { center, markers: locations })
-        },
-        () => {
-            void createMapWithMarkers(map, { markers: locations })
-        }
-    )
+        navigator.geolocation.getCurrentPosition(
+            position => map.setCenter({ lat: position.coords.latitude, lng: position.coords.longitude }),
+            console.error,
+            { enableHighAccuracy: false, timeout: Infinity }
+        )
+    } catch (err) {
+        console.error(err)
+    }
 }
 
 const memoryLocations = new Map<Memory['id'], Maybe<LocationInfo>>()
