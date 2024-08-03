@@ -538,8 +538,11 @@ class LatestMemoriesByUserId {
                     allMemories.memories.push(newMemory)
                     renderMemories(allMemories.memories.sort((a, b) => +new Date(b.date) - +new Date(a.date)))
 
-                    if (+new Date(newMemory.date) > +Date.now())
+                    if (+new Date(newMemory.date) > +Date.now()) {
+                        // remove all previous countdowns before pasting new ones
+                        document.querySelectorAll('#countdown-list > li').forEach(el => el.remove())
                         renderCountdowns(allMemories.memories.filter(memory => Date.now() < +new Date(memory.date)))
+                    }
 
                     if (Date.now() - +new Date(newMemory.date) > 1000 * 60 * 60 * 24 * 365) {
                         allMemories.flashbacks.push(newMemory)
