@@ -68,8 +68,11 @@
                     </span>
                 </p>
             </div>
-            <div data-main-content aria-hidden class="aria-hidden:hidden max-w-[1304px] mx-auto flex flex-col gap-6 md:gap-10">
-
+            <div
+                data-main-content
+                aria-hidden
+                class="aria-hidden:hidden max-w-[1304px] mx-auto flex flex-col gap-6 md:gap-10"
+            >
                 <div class="flex justify-center items-center pt-36 pb-40 md:pt-16 md:pb-0">
                     <div
                         class="flex flex-col gap-8 md:grow md:flex-row md:justify-between md:items-end lg:row-start-1 lg:col-span-2 items-center"
@@ -107,7 +110,7 @@
                         >
                     </section>
 
-                    <section id="home" class="flex flex-col gap-9 overflow-hidden grow md:flex lg:flex-row">
+                    <section id="home" class="flex flex-col gap-9 grow md:flex lg:flex-row">
                         <div class="grow shrink flex flex-col gap-12 lg:w-2/3">
                             <div class="grow flex flex-col gap-4 md:gap-2">
                                 <h2 class="font-bold text-xl flex justify-between items-center">
@@ -135,40 +138,55 @@
                                     </div>
 
                                     <template id="countdown-thumbnail">
-                                        <li class="relative w-full snap-center shrink-0 flex justify-center items-center">
+                                        <li
+                                            class="relative w-full snap-center shrink-0 flex justify-center items-center"
+                                        >
                                             <a
                                                 class="absolute inset-0 z-5 w-full h-full bg-cover bg-center flex items-center justify-center"
                                                 id="countdown-eyecatch-banner"
                                                 style="
-                                                    background: radial-gradient(ellipse at bottom right, #F17645 0%,
-                                                        rgba(253, 237, 231, 0.20) 58.5%),
-                                                        linear-gradient(to bottom, #F1F5F9 27%, #4338CA 88%),white;
-                                                ">
+                                                    background: radial-gradient(
+                                                            ellipse at bottom right,
+                                                            #f17645 0%,
+                                                            rgba(253, 237, 231, 0.2) 58.5%
+                                                        ),
+                                                        linear-gradient(to bottom, #f1f5f9 27%, #4338ca 88%), white;
+                                                "
+                                            >
                                                 <img
                                                     aria-hidden="true"
                                                     data-cover-image
                                                     alt="Memory cover"
-                                                    class="absolute inset-0 z-0 object-cover w-full h-full opacity-50 blur-[2.5px] aria-hidden:hidden"
-                                                ></img>
+                                                    class="absolute inset-0 -0 object-cover w-full h-full opacity-50 blur-[2.5px] aria-hidden:hidden"
+                                                />
                                                 <div class="relative py-14 px-10 flex flex-col gap-2 items-center">
                                                     <div
                                                         class="flex flex-col text-center px-10 border-b border-dashed border-neutral-900 pb-2"
-                                                        >
-                                                        <span class="text-thick-blue-900 text-xs" data-memory="date"></span>
+                                                    >
+                                                        <span
+                                                            class="text-thick-blue-900 text-xs"
+                                                            data-memory="date"
+                                                        ></span>
                                                         <span
                                                             class="text-thick-blue-900 font-bold text-md"
                                                             data-memory="title"
-                                                            ></span>
+                                                        ></span>
                                                     </div>
-                                                    <span class="font-source text-5xl text-type-50" data-memory="countdown" ></span
-                                                    >
+                                                    <span
+                                                        class="font-source text-5xl text-type-50"
+                                                        data-memory="countdown"
+                                                    ></span>
                                                 </div>
                                             </a>
                                         </li>
                                     </template>
                                 </ul>
                             </div>
-                            <div class="grow flex-col gap-4 hidden md:gap-2" id="flashback">
+                            <div
+                                aria-hidden="true"
+                                class="aria-hidden:hidden flex grow flex-col gap-4 md:gap-2"
+                                id="flashback"
+                            >
                                 <h2 class="font-bold text-xl">Remember this?</h2>
 
                                 <ul class="flex gap-3 overflow-x-auto no-scrollbar w-full" id="flashback-list">
@@ -179,27 +197,29 @@
                                                 class="aspect-[4/5] h-80 md:h-64 flex flex-col bg-ui-100 rounded-2xl relative overflow-hidden"
                                                 data-memory="link"
                                             >
+                                                <div
+                                                    class="absolute inset-0 bg-gradient-to-b from-orange-300 to-indigo-500"
+                                                    aria-hidden="true"
+                                                ></div>
                                                 <img
                                                     src=""
                                                     alt="Memory cover"
-                                                    class="object-cover absolute z-10 aria-hidden:hidden h-full w-full"
+                                                    class="object-cover absolute aria-hidden:hidden h-full w-full"
                                                     data-memory="cover"
                                                     aria-hidden="true"
                                                 />
                                                 <div
-                                                    class="absolute inset-0 bg-gradient-to-b from-orange-300 to-indigo-500 z-0"
+                                                    class="absolute inset-0"
                                                     aria-hidden="true"
+                                                    style="
+                                                        background-image: linear-gradient(
+                                                            to bottom,
+                                                            transparent 62%,
+                                                            rgb(0 0 0 / 0.5) 100%
+                                                        );
+                                                    "
                                                 ></div>
-                                                <div
-                                                class="absolute inset-0 z-20"
-                                                aria-hidden="true"
-                                                style="
-                                                    background-image: linear-gradient(
-                                                        to bottom,
-                                                        transparent 62%,
-                                                        rgb(0 0 0 / 0.5) 100%);"
-                                                ></div>
-                                                <div class="mt-auto flex flex-col items-start p-4 text-white z-30">
+                                                <div class="relative mt-auto flex flex-col items-start p-4 text-white">
                                                     <span class="text-xs" data-memory="date"></span>
                                                     <span class="font-bold" data-memory="title"></span>
                                                 </div>
@@ -236,7 +256,9 @@
                     <div class="flex flex-col gap-4 md:gap-2">
                         <div class="flex flex-col gap-4 md:flex-row md:justify-between">
                             <h2 class="font-bold text-xl flex gap-5 justify-between items-center md:justify-start">
-                                Your memories<span class="font-normal"><span data-memory="count" class="text-type-200 text-base font-normal"></span></span>
+                                Your memories<span class="font-normal"
+                                    ><span data-memory="count" class="text-type-200 text-base font-normal"></span
+                                ></span>
                             </h2>
                             <button
                                 class="flex gap-1 justify-center items-center md:self-end btn-outlined btn-md"
@@ -254,7 +276,9 @@
                                     Capture a special moment and share it with the world!
                                 </p>
                             </div>
-                            <p data-memory="create" class="flex gap-1">Create New <i data-feather="plus-circle" aria-hidden="true"></i></p>
+                            <p data-memory="create" class="flex gap-1">
+                                Create New <i data-feather="plus-circle" aria-hidden="true"></i>
+                            </p>
                         </div>
 
                         <ul class="grid gap-y-6 gap-x-4 md:grid-cols-3 lg:grid-cols-4" id="memory-list">
@@ -263,28 +287,33 @@
                                     <a data-memory="link" href="" class="block">
                                         <div class="aspect-[5/3] relative flex">
                                             <div
-                                                class="absolute inset-0
-
-                                                bg-gradient-to-b from-orange-300 to-indigo-500 z-0"
+                                                class="absolute inset-0 bg-gradient-to-b from-orange-300 to-indigo-500 z-0"
                                                 aria-hidden="true"
-
                                             ></div>
                                             <img
                                                 src=""
                                                 alt="Memory cover"
                                                 class="relative object-cover w-full aria-hidden:hidden"
-                                                data-memory="cover" aria-hidden="true"
+                                                data-memory="cover"
+                                                aria-hidden="true"
                                             />
                                             <div
-                                            class="absolute inset-0"
-                                            aria-hidden="true"
-                                            style="
-                                                background-image: linear-gradient(
-                                                    to bottom,
-                                                    transparent 62%,
-                                                    rgb(0 0 0 / 0.5) 100%);"
+                                                class="absolute inset-0"
+                                                aria-hidden="true"
+                                                style="
+                                                    background-image: linear-gradient(
+                                                        to bottom,
+                                                        transparent 62%,
+                                                        rgb(0 0 0 / 0.5) 100%
+                                                    );
+                                                "
                                             ></div>
-                                            <img data-memory="sticker" src="" alt="Memory sticker" class="hidden absolute right-0 top-0">
+                                            <img
+                                                data-memory="sticker"
+                                                src=""
+                                                alt="Memory sticker"
+                                                class="hidden absolute right-0 top-0"
+                                            />
                                             <div
                                                 class="text-xs text-white absolute right-2 bottom-3"
                                                 data-memory="date"

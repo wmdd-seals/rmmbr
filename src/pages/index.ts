@@ -45,6 +45,11 @@ const anchors = {
     ['#memory']: document.querySelector('a[href="#memory"]')!
 }
 
+const allMemories: { [key: string]: Memory[] } = {
+    memories: [],
+    flashbacks: []
+}
+
 const isTab = (hash: string): hash is keyof typeof tabs => hash === '#home' || hash === '#memory'
 
 let currentTabId: keyof typeof tabs = '#home'
@@ -94,26 +99,26 @@ userApi
         q('[data-user=name]').innerHTML = user.firstName
 
         const memories = await memoryApi.getAll(user.id)
-        memories.sort((a, b) => +new Date(b.date) - +new Date(a.date))
-
-        if (memories.length === 0) {
+        allMemories.memories = memories.sort((a, b) => +new Date(b.date) - +new Date(a.date))
+        if (allMemories.memories.length === 0) {
             q('#filter-btn').classList.add('hidden')
         }
 
-        initFilterDrawer(memories)
+        initFilterDrawer(allMemories.memories)
 
-        renderCountdowns(memories.filter(memory => Date.now() < +new Date(memory.date)))
+        renderCountdowns(allMemories.memories.filter(memory => Date.now() < +new Date(memory.date)))
 
-        const flashbacks = memories.filter(memory => Date.now() - +new Date(memory.date) > 1000 * 60 * 60 * 24 * 365)
-
-        if (flashbacks.length >= 4) {
+        allMemories.flashbacks = allMemories.memories.filter(
+            memory => Date.now() - +new Date(memory.date) > 1000 * 60 * 60 * 24 * 365
+        )
+        if (allMemories.flashbacks.length >= 4) {
             // select up to 6 random memories
-            renderFlashbacks(flashbacks.sort(() => 0.5 - Math.random()).slice(0, 6))
+            renderFlashbacks(allMemories.flashbacks.sort(() => 0.5 - Math.random()).slice(0, 6))
         }
 
-        renderMemories(memories)
+        renderMemories(allMemories.memories)
 
-        renderMapMarks(memories)
+        renderMapMarks(allMemories.memories)
 
         LatestMemoriesByUserId.init(user.id)
     })
@@ -122,6 +127,8 @@ userApi
 function renderMemories(memories: Memory[]): void {
     const thumbnail = document.getElementById('memory-thumbnail') as HTMLTemplateElement
     const memoryList = document.getElementById('memory-list') as HTMLUListElement
+
+    memoryList.querySelectorAll('#memory-list>li').forEach(e => e.remove())
 
     if (memories.length > 0) {
         q('#memory-overlay').style.display = 'none'
@@ -185,8 +192,7 @@ function renderFlashbacks(memories: Memory[]): void {
     const memoryFlashbackList = q('#flashback-list')
     const parent = memoryFlashbackList.parentElement!
 
-    parent.classList.toggle('hidden')
-    parent.classList.toggle('flex')
+    if (parent.ariaHidden) parent.setAttribute('aria-hidden', 'false')
 
     const memoryFlashbackhTemplate = q<HTMLTemplateElement>('#memory-flashback-thumbnail')
 
@@ -525,7 +531,17 @@ class LatestMemoriesByUserId {
                 },
                 payload => {
                     if (Object.keys(payload.new).length === 0) return
-                    renderMemories([payload.new as Memory])
+                    const newMemory = payload.new as Memory
+                    allMemories.memories.push(newMemory)
+                    renderMemories(allMemories.memories.sort((a, b) => +new Date(b.date) - +new Date(a.date)))
+
+                    if (+new Date(newMemory.date) > +Date.now())
+                        renderCountdowns(allMemories.memories.filter(memory => Date.now() < +new Date(memory.date)))
+
+                    if (Date.now() - +new Date(newMemory.date) > 1000 * 60 * 60 * 24 * 365) {
+                        allMemories.flashbacks.push(newMemory)
+                        if (allMemories.flashbacks.length >= 4) renderFlashbacks(allMemories.flashbacks)
+                    }
                 }
             )
             .subscribe()
