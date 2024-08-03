@@ -10,12 +10,12 @@ const loader = new Loader({
 export async function createMapWithMarkers(
     element: HTMLElement,
     options: { center?: Location; markers: Location[] }
-): Promise<void> {
+): Promise<google.maps.Map> {
     const { center, markers } = options
 
     const mapOptions = {
         center: center ? { lng: center[0], lat: center[1] } : null,
-        zoom: 7,
+        zoom: 11,
         mapId: 'rmmbr_map'
     }
 
@@ -35,6 +35,8 @@ export async function createMapWithMarkers(
             map
         })
     })
+
+    return map
 }
 
 export async function initAutoComplete(inputElement: HTMLInputElement): Promise<void> {
