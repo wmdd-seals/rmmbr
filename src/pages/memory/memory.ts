@@ -179,14 +179,21 @@ userApi
 
         selectAndDeleteMoments()
 
-        if (Date.now() >= Date.parse(memory.date)) {
+        const now = new Date()
+        const nowMs = +new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+        const [year, month, day] = memory.date.split('-').map(Number)
+
+        const memoryDate = +new Date(year, month - 1, day)
+
+        if (nowMs > memoryDate) {
             q('#time-passed').classList.toggle('hidden')
 
             q<HTMLSpanElement>('[data-years-count]').innerHTML = yearsFrom(memory.date).toString()
             q<HTMLSpanElement>('[data-months-count]').innerHTML = monthsFrom(memory.date).toString()
             q<HTMLSpanElement>('[data-weeks-count]').innerHTML = weeksFrom(memory.date).toString()
             q<HTMLSpanElement>('[data-days-count]').innerHTML = daysFrom(memory.date).toString()
-        } else {
+        } else if (nowMs < memoryDate) {
             q<HTMLSpanElement>('[data-countdown-num="hours"]').innerHTML = hoursUntil(memory.date).toString()
             q<HTMLSpanElement>('[data-countdown-num="days"]').innerHTML = daysUntil(memory.date).toString()
             q<HTMLSpanElement>('[data-countdown-num="weeks"]').innerHTML = weeksUntil(memory.date).toString()
@@ -205,6 +212,9 @@ userApi
             q<HTMLSpanElement>('[data-countdown-special-count="books"]').innerHTML = (
                 daysUntil(memory.date) / 5
             ).toString()
+        } else {
+            const todaySection = q<HTMLDivElement>('[data-memory-today]')
+            todaySection.setAttribute('aria-hidden', 'false')
         }
     })
     .catch(console.error)
