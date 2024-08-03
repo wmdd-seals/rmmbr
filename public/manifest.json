@@ -4,7 +4,7 @@
     "start_url": "index.html",
     "background_color": "#ffffff",
     "description": "Rmmbr is an app that allows you to upload, edit, and share your special moments with loved ones by preserving memories and looking forward to future events. Whether it’s a special trip, a happy celebration, or everyday moments, rmmbr lets you store your photos and videos securely and organized.",
-    "display": "minimal-ui",
+    "display": "fullscreen",
     "icons": [
         {
             "src": "./favicon.svg",
