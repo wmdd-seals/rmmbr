@@ -304,7 +304,7 @@ function filterMemories(memories: Memory[], filterCriteria: FilterCriteria): voi
         memoryList.removeChild(memory)
     })
 
-    renderMemories(filteredMemories.sort((a, b) => +new Date(a.date) - +new Date(b.date)))
+    renderMemories(filteredMemories.sort((a, b) => +new Date(b.date) - +new Date(a.date)))
 }
 
 function filterByDate(memory: Memory, filterCriteria: FilterCriteria): boolean {
