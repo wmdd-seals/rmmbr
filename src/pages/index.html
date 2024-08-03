@@ -13,7 +13,7 @@
         <link rel="manifest" href="/manifest.json" />
     </head>
 
-    <body class="relative z-0 bg-ui-50 bg-no-repeat">
+    <body class="relative bg-ui-50 bg-no-repeat">
         <div
             class="absolute z-1 top-0 inset-x-0 h-[38rem] md:h-[50rem] bg-[url('/sign-bg.jpg')] bg-[length:100%_100%]"
         ></div>
@@ -142,7 +142,7 @@
                                             class="relative w-full snap-center shrink-0 flex justify-center items-center"
                                         >
                                             <a
-                                                class="absolute inset-0 z-5 w-full h-full bg-cover bg-center flex items-center justify-center"
+                                                class="absolute inset-0 w-full h-full bg-cover bg-center flex items-center justify-center"
                                                 id="countdown-eyecatch-banner"
                                                 style="
                                                     background: radial-gradient(
@@ -283,11 +283,11 @@
 
                         <ul class="grid gap-y-6 gap-x-4 md:grid-cols-3 lg:grid-cols-4" id="memory-list">
                             <template id="memory-thumbnail">
-                                <li class="bg-white rounded-lg overflow-hidden">
+                                <li class="bg-white rounded-lg relative">
                                     <a data-memory="link" href="" class="block">
-                                        <div class="aspect-[5/3] relative flex">
+                                        <div class="aspect-[5/3] relative flex rounded-t-lg overflow-hidden">
                                             <div
-                                                class="absolute inset-0 bg-gradient-to-b from-orange-300 to-indigo-500 z-0"
+                                                class="absolute inset-0 bg-gradient-to-b from-orange-300 to-indigo-500"
                                                 aria-hidden="true"
                                             ></div>
                                             <img
@@ -308,12 +308,6 @@
                                                     );
                                                 "
                                             ></div>
-                                            <img
-                                                data-memory="sticker"
-                                                src=""
-                                                alt="Memory sticker"
-                                                class="hidden absolute right-0 top-0"
-                                            />
                                             <div
                                                 class="text-xs text-white absolute right-2 bottom-3"
                                                 data-memory="date"
@@ -323,6 +317,12 @@
                                             <h3 data-memory="title">title</h3>
                                             <p data-memory="location" class="text-xs">Somewhere on Earth</p>
                                         </div>
+                                        <img
+                                            data-memory="sticker"
+                                            src=""
+                                            alt="Memory sticker"
+                                            class="hidden absolute right-0 top-0 translate-x-1/2 -translate-y-1/2 z-[1]"
+                                        />
                                     </a>
                                 </li>
                             </template>
@@ -332,7 +332,7 @@
             </div>
         </main>
 
-        <footer class="relative flex flex-col gap-5 items-center pt-20 pb-6 z-10">
+        <footer class="relative flex flex-col gap-5 items-center pt-20 pb-6">
             <img src="/logo.svg" alt="logo" class="w-32" />
             <div class="text-gray-500 text-sm">&copy; 2024 rmmbr. All rights reserved.</div>
         </footer>
