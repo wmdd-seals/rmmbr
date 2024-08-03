@@ -106,7 +106,10 @@ userApi
 
         initFilterDrawer(allMemories.memories)
 
-        renderCountdowns(allMemories.memories.filter(memory => Date.now() < +new Date(memory.date)))
+        const now = new Date()
+        const nowMs = +new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+        renderCountdowns(allMemories.memories.filter(memory => nowMs < +new Date(memory.date)))
 
         allMemories.flashbacks = allMemories.memories.filter(
             memory => Date.now() - +new Date(memory.date) > 1000 * 60 * 60 * 24 * 365
@@ -343,7 +346,7 @@ function renderCountdowns(memories: Memory[]): void {
         q('#countdown-overlay').style.display = 'none'
     }
 
-    memories.forEach(memory => {
+    ;[...memories].reverse().forEach(memory => {
         const { title } = memory
 
         const node = thumbnail.content.cloneNode(true) as HTMLLIElement
