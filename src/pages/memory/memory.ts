@@ -1,5 +1,5 @@
 import { memoryApi, supabase, userApi, storageApi } from '#api'
-import { Memory, MemoryMessage, User } from '#domain'
+import { Collaborator, Memory, MemoryMessage, User } from '#domain'
 import {
     daysFrom,
     Maybe,
@@ -19,6 +19,7 @@ import { Moment } from '#domain'
 import './edit-memory-modal'
 import './add-moment-modal'
 import feather from 'feather-icons'
+import { ApiTable } from 'src/api/utils'
 
 if ('serviceWorker' in navigator) {
     void navigator.serviceWorker.register('../service-worker.js', { scope: '../' }).catch(console.error)
@@ -287,6 +288,8 @@ function checkIfImageExists(url: string): Promise<string> {
     })
 }
 
+const memoryCollaborators = new Map<User['id'], User>()
+
 class OnlineCollaboratorBadges {
     private static readonly collaborators = new Map<User['id'], OnlineCollaborator>()
     private static list: HTMLUListElement
@@ -301,6 +304,28 @@ class OnlineCollaboratorBadges {
         this.template = q<HTMLTemplateElement>('#collaborator-avatar', this.list)
 
         const room = supabase.channel(`collaborators:${memoryId}`)
+
+        const latestCollaborators = supabase.channel(`collaborators_${memoryId}`)
+
+        latestCollaborators
+            .on<Collaborator>(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: ApiTable.Collaborators,
+                    filter: `memoryId=eq.${memoryId}`
+                },
+                async payload => {
+                    if (Object.keys(payload.new).length === 0) return
+
+                    const collaborator = payload.new
+                    const user = await userApi.getUser({ key: 'id', value: collaborator.userId })
+
+                    if (user) memoryCollaborators.set(collaborator.userId, user)
+                }
+            )
+            .subscribe()
 
         room.on('presence', { event: 'sync' }, () => {
             const state = room.presenceState<OnlineCollaborator>()
@@ -489,7 +514,7 @@ class MemoryChat {
         const owner =
             currentUser.id === ownerId ? currentUser : ((await userApi.getUser({ key: 'id', value: ownerId })) as User)
 
-        const memoryCollaborators = new Map<User['id'], User>([[owner.id, owner]])
+        memoryCollaborators.set(owner.id, owner)
 
         const [messages, collaborators] = await Promise.all([
             memoryApi.getMessages(memoryId),
